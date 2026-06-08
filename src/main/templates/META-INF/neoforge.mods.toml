@@ -1,0 +1,75 @@
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
+# 当这个模组出现问题时，引导玩家去反馈问题的网址（URL）
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" # 选填 (optional)
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+# 用于查询该模组更新的网址。详见 JSON 更新规范：https://docs.neoforge.net/docs/misc/updatechecker/
+#updateJSONURL="https://change.me.example.invalid/updates.json" # 选填 (optional)
+# 模组的“主页”网址，会显示在游戏内的模组界面中
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" # 选填 (optional)
+logoFile = "parkour.png"
+credits = "【排名不分先后】瑞雪真冬、artemisSystem、alRex_U"
+authors = "${mod_authors}"
+description = '''
+简单跑酷，一个更简单、更易上手的新兴跑酷模组。
+Parkour, a simpler and more accessible emerging parkour mod.
+'''
+
+[[mixins]]
+config = "${mod_id}.mixins.json"
+[[mixins]]
+config = "${mod_id}.player_animation_library.mixins.json"
+
+# [[accessTransformers]] 区块允许你声明 AT（访问转换器）文件的位置。
+# 如果省略了这个区块，系统会尝试作为备用方案，从 META-INF/accesstransformer.cfg 路径下加载 AT 文件。
+#[[accessTransformers]]
+#file="META-INF/accesstransformer.cfg"
+
+# coremods（核心模组）的配置文件路径是不可更改的，始终固定从 META-INF/coremods.json 加载。
+
+[[dependencies."${mod_id}"]]
+# 被依赖的模组 ID
+modId = "neoforge"
+# 依赖的类型。可以是 "required"（必须）、"optional"（可选）、"incompatible"（不兼容）或 "discouraged"（不推荐）（不区分大小写）。
+# 'required' 表示缺少该模组当前模组就无法运行，'optional' 则表示没有该模组也能运行
+# 'incompatible' 表示如果存在该模组，游戏将无法加载；'discouraged' 则会在加载时显示一条警告
+type = "required"
+# 选填字段，用于说明为什么必须要有这个依赖，或者为什么它是不兼容的
+# reason="..."
+# 被依赖模组的版本范围
+versionRange = "${neo_version_range}"
+# 决定模组加载顺序的关系。
+# BEFORE - 当前模组会在被依赖的模组 之前 加载
+# AFTER - 当前模组会在被依赖的模组 之后 加载
+ordering = "NONE"
+# 该依赖生效的端 - BOTH（双端生效）、CLIENT（仅客户端）或 SERVER（仅服务端）
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "player_animation_library"
+type = "required"
+reason = '''
+Player Animation Library 是一个提供玩家动画支持的库模组，Parkour 的玩家动画功能依赖于它。
+Player Animation Library is a library mod that provides player animation support, and Parkour's player animation features depend on it.
+'''
+versionRange = "[1.1.4,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+# 特性 (Features) 是指游戏环境的具体属性，你可能需要在此声明你的模组需要它们。这个示例声明了：
+# 你的模组需要 OpenGL 3.2 或更高版本。未来还会添加其他特性支持。它们是区分物理端的，所以在这里声明
+# 不会导致你的模组在纯服务端上无法加载（服务端不需要图形渲染）。
+#[features."${mod_id}"]
+#openGLVersion="[3.2,)"

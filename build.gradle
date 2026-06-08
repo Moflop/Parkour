@@ -1,0 +1,187 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.131'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    // 指定使用的NeoForged版本
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
+            programArguments.addAll '--username', 'Dev'
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
+        }
+
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            // 推荐用于用户开发环境的日志数据
+            // 标记可以根据需要添加或移除，使用逗号分隔。
+            // "SCAN"：用于模组扫描。
+            // "REGISTRIES"：用于注册事件的触发。
+            // "REGISTRYDUMP"：用于获取所有注册表的内容。
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        name = "CurseForge"
+        url = "https://cursemaven.com"
+    }
+    mavenCentral()
+    maven {
+        name = "RedlanceMinecraft"
+        url = "https://repo.redlance.org/public"
+    }
+}
+
+dependencies {
+    // compileOnly runtimeOnly implementation
+    // 格式：模组名-MC版本号-模组版本号.jar
+    // 包名:模组名-MC版本号:模组版本号
+    // 用模组文件作为依赖的示例
+    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
+
+    //implementation "curse.maven:tacz-1-21-1-1353462:7374584"
+
+//    // 光影
+//    runtimeOnly "curse.maven:sodium-394468:6382651"
+//    runtimeOnly "curse.maven:irisshaders-455508:6661598"
+//
+//    // 输入法冲突修复
+//    runtimeOnly "curse.maven:imblocker-483760:7310357"
+//    // 减少输入延迟
+//    //runtimeOnly "curse.maven:reflex-antilag-1197629:6306767"
+
+    // 方便在游戏中修改配置文件
+    runtimeOnly "curse.maven:configured-457570:7276577"
+
+    // 玩家动画库
+    implementation(jarJar("com.zigythebird.playeranim:PlayerAnimationLibNeo:$pal_version")) {
+        exclude group: "com.google.code.gson", module: "gson"
+        exclude group: "org.slf4j", module: "slf4j-api"
+        exclude group: "it.unimi.dsi", module: "fastutil"
+        exclude group: "io.netty"
+    }
+
+//    // Replay
+//    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
+
+    // lombok
+    compileOnly "org.projectlombok:lombok:1.18.38"
+    annotationProcessor "org.projectlombok:lombok:1.18.38"
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [minecraft_version      : minecraft_version,
+                             minecraft_version_range: minecraft_version_range,
+                             neo_version            : neo_version,
+                             neo_version_range      : neo_version_range,
+                             loader_version_range   : loader_version_range,
+                             mod_id                 : mod_id,
+                             mod_name               : mod_name,
+                             mod_license            : mod_license,
+                             mod_version            : mod_version,
+                             mod_authors            : mod_authors]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.named('createMinecraftArtifacts').configure {
+    dependsOn generateModMetadata
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+// 必须，编码需要显式指定为 UTF
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+// 必须，编码需要显式指定为 UTF
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    // 编译源码文件，方便发布 maven
+    withSourcesJar()
+}

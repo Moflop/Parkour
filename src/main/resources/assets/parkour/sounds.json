@@ -1,0 +1,36 @@
+{
+  "slide": {
+    "subtitle": "parkour.subtitle.slide",
+    "sounds": [
+      "parkour:slide"
+    ]
+  },
+  "landing_roll": {
+    "subtitle": "parkour.subtitle.landing_roll",
+    "sounds": [
+      "parkour:landing_roll"
+    ]
+  },
+  "wall_jump": {
+    "subtitle": "parkour.subtitle.wall_jump",
+    "sounds": [
+      "parkour:wall_jump_1",
+      "parkour:wall_jump_2",
+      "parkour:wall_jump_3"
+    ]
+  },
+  "armhang": {
+    "subtitle": "parkour.subtitle.armhang",
+    "sounds": [
+      "parkour:armhang"
+    ]
+  },
+  "speed_vault": {
+    "subtitle": "parkour.subtitle.speed_vault",
+    "sounds": [
+      "parkour:speed_vault_1",
+      "parkour:speed_vault_2"
+    ]
+  }
+}
+
