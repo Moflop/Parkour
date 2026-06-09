@@ -5,6 +5,7 @@ import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.walljump.WallJumpAction;
 import mod.arcomit.parkour.content.action.walljump.network.WallJumpC2SPayload;
+import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
@@ -82,6 +83,9 @@ public class ClientWallJumpKeyInputHandler {
 			return;
 		}
 		if (!ParkourConfig.enableWallJump) {
+			return;
+		}
+		if (ParkourProxies.INPUT_PROXY.getShiftKeyDown(player)) {
 			return;
 		}
 

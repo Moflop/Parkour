@@ -30,7 +30,7 @@ public class WallRunAnimMath {
 			boolean isWallOnLeft) {
 		FrameData data = new FrameData();
 
-		// 【修复核心1】提前获取墙跑的目标偏航角 (targetYaw) 和香草身体偏航角
+		// 提前获取墙跑的目标偏航角 (targetYaw) 和香草身体偏航角
 		float currentVanillaBodyYaw =
 				Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
@@ -43,7 +43,7 @@ public class WallRunAnimMath {
 		// 头部计算
 		float pitch = Mth.rotLerp(partialTick, player.xRotO, player.getXRot());
 		float headYaw = Mth.rotLerp(partialTick, player.yHeadRotO, player.getYHeadRot());
-		float netYaw = Mth.wrapDegrees(headYaw - targetYaw); // 【修复核心2】抵消身体的强制旋转
+		float netYaw = Mth.wrapDegrees(headYaw - targetYaw); // 抵消身体的强制旋转
 
 		data.headRotX = pitch * Mth.DEG_TO_RAD;
 		data.headRotY = netYaw * Mth.DEG_TO_RAD;

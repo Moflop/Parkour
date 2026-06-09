@@ -43,7 +43,7 @@ public class WallSlideAnimState {
 				float yawToWall = Mth.wrapDegrees(targetWorldYaw - player.yBodyRot);
 				float absYaw = Math.abs(yawToWall);
 
-				// 【核心保留】：动画加载第一帧直接锁定目标姿势
+				// 动画加载第一帧直接锁定目标姿势
 				if (this.isFirstTick) {
 					this.isFirstTick = false;
 					if (absYaw > 130f) {

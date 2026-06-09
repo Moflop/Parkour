@@ -42,9 +42,11 @@ public class ClientSupportWallJumpHandler {
 		if (!(player instanceof LocalPlayer localPlayer)) {
 			return;
 		}
-		if (!ParkourProxies.INPUT_PROXY.getJumping(player)) {
+		if (!ParkourProxies.INPUT_PROXY.getJumping(
+				player) || ParkourProxies.INPUT_PROXY.getShiftKeyDown(player)) {
 			return;
 		}
+
 
 		SupportWallJumpAction.execute(localPlayer);
 		localPlayer.sendPosition();

@@ -97,19 +97,17 @@ dependencies {
     // 用模组文件作为依赖的示例
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
-    //implementation "curse.maven:tacz-1-21-1-1353462:7374584"
-
 //    // 光影
 //    runtimeOnly "curse.maven:sodium-394468:6382651"
 //    runtimeOnly "curse.maven:irisshaders-455508:6661598"
-//
 //    // 输入法冲突修复
 //    runtimeOnly "curse.maven:imblocker-483760:7310357"
 //    // 减少输入延迟
 //    //runtimeOnly "curse.maven:reflex-antilag-1197629:6306767"
-
-    // 方便在游戏中修改配置文件
-    runtimeOnly "curse.maven:configured-457570:7276577"
+//    // Replay
+//    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
+//    // 方便在游戏中修改配置文件
+//    runtimeOnly "curse.maven:configured-457570:7276577"
 
     // 玩家动画库
     implementation(jarJar("com.zigythebird.playeranim:PlayerAnimationLibNeo:$pal_version")) {
@@ -118,9 +116,6 @@ dependencies {
         exclude group: "it.unimi.dsi", module: "fastutil"
         exclude group: "io.netty"
     }
-
-//    // Replay
-//    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
 
     // lombok
     compileOnly "org.projectlombok:lombok:1.18.38"
@@ -162,11 +157,6 @@ publishing {
             url "file://${project.projectDir}/repo"
         }
     }
-}
-
-// 必须，编码需要显式指定为 UTF
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }
 
 idea {
