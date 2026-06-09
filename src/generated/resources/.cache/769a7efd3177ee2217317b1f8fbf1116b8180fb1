@@ -1,0 +1,4 @@
+// 26.1.2	2026-06-09T20:14:05.718762	Tags for minecraft:block mod id parkour
+1aaca6914c2cfd7f1d2355ada3a9adca96800b4e data/parkour/tags/block/climbable.json
+7ca02b7ce0f82b232f51c1487e882ae426c54cf3 data/parkour/tags/block/common_ignored_blocks.json
+53526cd95c809314459dae6a0b5e512f9a761443 data/parkour/tags/block/scaffolding_blocks.json
