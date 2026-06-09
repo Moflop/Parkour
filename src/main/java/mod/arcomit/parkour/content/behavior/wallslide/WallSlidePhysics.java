@@ -21,10 +21,10 @@ public class WallSlidePhysics {
 	 * 对玩家施加减速和墙面吸附。
 	 *
 	 * <p>水平速度乘以 {@value #HORIZONTAL_SLOWDOWN}，垂直速度乘以 {@value #VERTICAL_SLOWDOWN}，
-	 * 使玩家沿墙面缓慢下滑；同时向墙体法线方向施加 {@value ParkourConstants#WALL_ADHESION_FORCE} 的吸附力，
-	 * 通过 {@link Player#move} 实现以保证碰撞检测正确。
+	 * 使玩家沿墙面缓慢下滑；同时向墙体法线方向施加 {@value ParkourConstants#WALL_ADHESION_FORCE} 的吸附力， 通过
+	 * {@link Player#move} 实现以保证碰撞检测正确。
 	 *
-	 * @param player            目标玩家，不能为 null，速度被覆写，位置被 move 偏移
+	 * @param player           目标玩家，不能为 null，速度被覆写，位置被 move 偏移
 	 * @param wallMovementData 墙体数据，包含当前滑墙方向，不能为 null
 	 */
 	public static void applySlowdownAndAdhesion(Player player,

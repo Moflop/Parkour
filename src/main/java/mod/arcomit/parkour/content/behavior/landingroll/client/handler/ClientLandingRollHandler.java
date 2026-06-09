@@ -17,11 +17,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * 客户端落地翻滚窗口设置器 —— 监听滑铲键按下事件，当玩家处于危险坠落高度时
- * 激活翻滚窗口计时器，并同步到服务端。
+ * 客户端落地翻滚窗口设置器 —— 监听滑铲键按下事件，当玩家处于危险坠落高度时 激活翻滚窗口计时器，并同步到服务端。
  * <p>
- * 翻滚窗口是一个倒计时：空中按下滑铲键后，若在窗口耗尽前落地则触发落地翻滚。
- * 窗口已激活时重复按键不会重置计时。
+ * 翻滚窗口是一个倒计时：空中按下滑铲键后，若在窗口耗尽前落地则触发落地翻滚。 窗口已激活时重复按键不会重置计时。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -46,8 +44,7 @@ public class ClientLandingRollHandler {
 			return;
 		}
 
-		GroundMovementData groundMovementData =
-				ParkourContext.get(player).ground();
+		GroundMovementData groundMovementData = ParkourContext.get(player).ground();
 		if (groundMovementData.getLandingRollWindow() > 0) {
 			return;
 		}

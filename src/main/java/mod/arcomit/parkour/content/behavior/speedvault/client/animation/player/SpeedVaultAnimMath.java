@@ -17,10 +17,10 @@ public class SpeedVaultAnimMath {
 	 * <p>头部旋转完全由代码控制；四肢在溢出阶段（最后 {@code fadeOutDuration} tick）
 	 * 逐渐交还给原版走路动画的摆动值，实现动画到原版的平滑过渡。
 	 *
-	 * @param player         目标玩家，不能为 null
-	 * @param state          动画内部计时状态，不能为 null
-	 * @param partialTick    当前帧的部分 tick 插值因子，范围 [0, 1)
-	 * @param totalDuration  动画总持续 tick 数，大于 0
+	 * @param player          目标玩家，不能为 null
+	 * @param state           动画内部计时状态，不能为 null
+	 * @param partialTick     当前帧的部分 tick 插值因子，范围 [0, 1)
+	 * @param totalDuration   动画总持续 tick 数，大于 0
 	 * @param fadeOutDuration 溢出过渡阶段的 tick 数，大于 0
 	 * @return 当前帧的完整骨骼数据，永远不会为 null
 	 */

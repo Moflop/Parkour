@@ -36,8 +36,8 @@ public class SpeedVaultAnimModifier extends AbstractModifier {
 	}
 
 	/**
-	 * 每帧动画开始前，调用 {@link SpeedVaultAnimMath#calculate} 计算出当前帧的完整骨骼数据，
-	 * 缓存到 {@code currentFrameData} 供后续 {@code get3DTransform} 使用。
+	 * 每帧动画开始前，调用 {@link SpeedVaultAnimMath#calculate} 计算出当前帧的完整骨骼数据， 缓存到
+	 * {@code currentFrameData} 供后续 {@code get3DTransform} 使用。
 	 */
 	@Override
 	public void setupAnim(AnimationData state) {

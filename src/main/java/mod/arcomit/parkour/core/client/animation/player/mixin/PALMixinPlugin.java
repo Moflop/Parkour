@@ -11,10 +11,9 @@ import java.util.Set;
 /**
  * 条件 Mixin 插件，检测 Player Animation Library (PAL) 是否已安装。
  * <p>
- * 由于跑酷模组的玩家动画完全依赖 PAL 作为底层骨骼动画引擎，
- * 若 PAL 未安装则所有针对 PAL 内部类的 Mixin 将无法找到目标类。
- * 本插件在 {@code shouldApplyMixin} 中检查 {@code player_animation_library} 的 Mod ID，
- * 仅当 PAL 已加载时才启用本包的 Mixin，从而兼容无 PAL 的客户端环境。
+ * 由于跑酷模组的玩家动画完全依赖 PAL 作为底层骨骼动画引擎， 若 PAL 未安装则所有针对 PAL 内部类的 Mixin 将无法找到目标类。 本插件在
+ * {@code shouldApplyMixin} 中检查 {@code player_animation_library} 的 Mod ID， 仅当 PAL 已加载时才启用本包的
+ * Mixin，从而兼容无 PAL 的客户端环境。
  *
  * @author Mitok
  * @since 2026-06-08

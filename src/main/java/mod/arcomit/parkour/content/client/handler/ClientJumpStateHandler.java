@@ -14,8 +14,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * 客户端跳跃状态追踪器。
  *
  * <p>精确追踪本地玩家跳跃的各个阶段：起跳瞬间、是否在空中（已起跳但未落地）、
- * 以及跳跃键释放后的宽限期。这些数据供垂挂（armhang）等跑酷状态判断
- * 玩家的跳跃时机是否允许进入特定动作。
+ * 以及跳跃键释放后的宽限期。这些数据供垂挂（armhang）等跑酷状态判断 玩家的跳跃时机是否允许进入特定动作。
  *
  * <p>仅客户端运行，追踪精确到 tick 级别。
  *
@@ -63,8 +62,7 @@ public class ClientJumpStateHandler {
 	 * 追踪跳跃键输入状态，维护松开后的宽限计时。
 	 *
 	 * <p>按住跳跃键时重置宽限期为{@link #JUMP_KEY_RELEASE_GRACE_PERIOD}（6 tick），
-	 * 松开后每 tick 递减。宽限期内其他跑酷动作仍视为"跳跃键正按下"，
-	 * 避免因按键释放与逻辑评估之间的帧差导致误判。
+	 * 松开后每 tick 递减。宽限期内其他跑酷动作仍视为"跳跃键正按下"， 避免因按键释放与逻辑评估之间的帧差导致误判。
 	 */
 	@SubscribeEvent
 	public static void onJumpInput(PlayerTickEvent.Post event) {

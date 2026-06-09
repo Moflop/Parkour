@@ -12,9 +12,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 /**
  * {@link ISoundProxy} 的客户端实现。
  * <p>
- * 通过 {@code Minecraft.getInstance().getSoundManager()} 获取客户端
- * 音效管理器，创建并播放绑定在实体上的位置音效。
- * 标记为 {@link OnlyIn#CLIENT}，仅在客户端有效。
+ * 通过 {@code Minecraft.getInstance().getSoundManager()} 获取客户端 音效管理器，创建并播放绑定在实体上的位置音效。 标记为
+ * {@link OnlyIn#CLIENT}，仅在客户端有效。
  * </p>
  *
  * @author Mitok

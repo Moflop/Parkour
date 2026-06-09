@@ -24,8 +24,7 @@ public class ClientCameraAnimationEventHandler {
 	/**
 	 * 每帧渲染前计算当前摄像机角度时触发。
 	 * <p>
-	 * 副效应：推进 {@link CameraAnimationManager} 的时间轴——即使第三人称不应用旋转，
-	 * 时间仍需流逝以保证切回第一人称时进度正确。
+	 * 副效应：推进 {@link CameraAnimationManager} 的时间轴——即使第三人称不应用旋转， 时间仍需流逝以保证切回第一人称时进度正确。
 	 * <p>
 	 * 旋转偏移应用规则：pitch 正加、yaw 正加、roll 负减（与 Blockbench 的右手坐标系适配）。
 	 */

@@ -27,8 +27,9 @@ public abstract class InputMixin {
 	@Inject(method = "hasForwardImpulse", at = @At("HEAD"), cancellable = true)
 	private void hasImpulse(CallbackInfoReturnable<Boolean> cir) {
 		if (ParkourConfig.enableOmniSprint) {
-			cir.setReturnValue(Math.abs(this.forwardImpulse) > MIN_INPUT_MAGNITUDE || Math.abs(
-					this.leftImpulse) > MIN_INPUT_MAGNITUDE);
+			cir.setReturnValue(
+					Math.abs(this.forwardImpulse) > MIN_INPUT_MAGNITUDE || Math.abs(
+							this.leftImpulse) > MIN_INPUT_MAGNITUDE);
 		}
 	}
 }

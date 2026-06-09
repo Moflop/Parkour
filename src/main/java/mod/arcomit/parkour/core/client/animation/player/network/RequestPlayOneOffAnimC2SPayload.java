@@ -13,8 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 客户端请求播放动作动画的网络包（C2S）。
  * <p>
- * 本地玩家在预测执行动作后，通过此包通知服务端。服务端接收后将其广播给
- * 周围所有客户端，使其他玩家也能看到该动作。
+ * 本地玩家在预测执行动作后，通过此包通知服务端。服务端接收后将其广播给 周围所有客户端，使其他玩家也能看到该动作。
  *
  * @param actionId      动作动画标识符
  * @param interruptible 是否可被后续状态动画打断
@@ -42,9 +41,8 @@ public record RequestPlayOneOffAnimC2SPayload(ResourceLocation actionId, boolean
 	/**
 	 * 服务端收包处理器。
 	 * <p>
-	 * 将请求封装为 {@link BroadcastPlayOneOffAnimS2CPayload}，
-	 * 通过 {@code sendToPlayersTrackingEntityAndSelf} 广播给
-	 * 追踪该玩家的所有客户端（含发送者自己）。
+	 * 将请求封装为 {@link BroadcastPlayOneOffAnimS2CPayload}， 通过
+	 * {@code sendToPlayersTrackingEntityAndSelf} 广播给 追踪该玩家的所有客户端（含发送者自己）。
 	 */
 	public static class Server {
 		public static void handle(RequestPlayOneOffAnimC2SPayload packet,

@@ -2,7 +2,7 @@ package mod.arcomit.parkour.content.action.swimmingboost;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
-import mod.arcomit.parkour.content.context.SwimData;
+import mod.arcomit.parkour.content.context.SwimMovementData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,13 +24,13 @@ public class SwimmingBoostAction {
 	 * </ul>
 	 * </p>
 	 *
-	 * @param player 执行推进的玩家，不可为null
+	 * @param player   执行推进的玩家，不可为null
 	 * @param swimData 游泳数据容器，不可为null
 	 * @return true表示推进成功执行，false表示不满足准入条件
 	 * @sideeffect 直接修改玩家速度向量（叠加推进速度）
 	 * @sideeffect 写入 swimData 的冷却时间字段
 	 */
-	public static boolean execute(Player player, SwimData swimData) {
+	public static boolean execute(Player player, SwimMovementData swimData) {
 		if (!SwimmingBoostEligibilityChecker.check(player, swimData)) {
 			return false;
 		}

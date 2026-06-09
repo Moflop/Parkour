@@ -20,7 +20,7 @@ public class SupportWallJumpTypeResolver {
 	/**
 	 * 根据玩家与垂挂墙面的相对关系解析跳跃类型。
 	 *
-	 * @param player 执行跳跃的玩家；为null时返回NONE
+	 * @param player     执行跳跃的玩家；为null时返回NONE
 	 * @param armhangDir 垂挂状态记录的墙面方向；为null时返回NONE
 	 * @return 解析出的跳跃类型，NONE表示参数无效
 	 */

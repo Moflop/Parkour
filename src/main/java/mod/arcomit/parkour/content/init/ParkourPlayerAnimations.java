@@ -7,8 +7,8 @@ import mod.arcomit.parkour.core.client.animation.player.PlayerAnimation;
  * 跑酷玩家动画常量注册表。
  *
  * <p>集中定义所有跑酷动作对应的 GeckoLib 动画资源。
- * 每个动画由{@link mod.arcomit.parkour.core.client.animation.player.PlayerAnimation}封装，
- * 指向 {@code assets/parkour/animations/player/} 下的 JSON 动画文件。
+ * 每个动画由{@link mod.arcomit.parkour.core.client.animation.player.PlayerAnimation}封装， 指向
+ * {@code assets/parkour/animations/player/} 下的 JSON 动画文件。
  *
  * <p>方向性动画（如墙跑左右、速过左右）使用左/右分离的策略，
  * 由状态机根据墙面方向选择对应的动画实例。

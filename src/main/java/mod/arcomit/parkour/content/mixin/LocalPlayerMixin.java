@@ -1,9 +1,9 @@
 package mod.arcomit.parkour.content.mixin;
 
 import mod.arcomit.parkour.ParkourConfig;
-import mod.arcomit.parkour.content.init.ParkourAttachmentTypes;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.init.ParkourAttachmentTypes;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -56,8 +56,7 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 	 */
 	@Inject(method = "isMovingSlowly", at = @At("HEAD"), cancellable = true)
 	public void slideNotSlowDown(CallbackInfoReturnable<Boolean> cir) {
-		StateData stateData =
-				this.getData(ParkourAttachmentTypes.PARKOUR_CONTEXT).state();
+		StateData stateData = this.getData(ParkourAttachmentTypes.PARKOUR_CONTEXT).state();
 		if (stateData.getState() instanceof SlideState) {
 			cir.setReturnValue(false);
 		}

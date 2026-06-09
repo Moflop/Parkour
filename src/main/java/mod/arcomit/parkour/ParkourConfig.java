@@ -366,8 +366,7 @@ public class ParkourConfig {
 	 * 配置加载/重载时将 {@link ModConfigSpec} 中的最新值刷新到静态原始类型字段。
 	 *
 	 * <p>仅处理当前 SPEC 对应的事件，忽略无关配置事件和卸载事件。
-	 * 副作用：修改所有 {@code static boolean/int/double} 字段的值，
-	 * 这些字段被各跑酷行为处理器直接读取以决定是否启用对应功能。
+	 * 副作用：修改所有 {@code static boolean/int/double} 字段的值， 这些字段被各跑酷行为处理器直接读取以决定是否启用对应功能。
 	 */
 	@SubscribeEvent
 	static void onLoad(final ModConfigEvent event) {

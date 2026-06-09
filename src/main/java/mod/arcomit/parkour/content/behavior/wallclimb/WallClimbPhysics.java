@@ -18,16 +18,15 @@ import net.minecraft.world.phys.Vec3;
  */
 public class WallClimbPhysics {
 
-    /**
-     * 施加垂直爬升速度和水平墙面吸附。
-     *
-     * <p>垂直速度由配置项 {@code wallClimbSpeed} 决定；
-     * 吸附力将玩家推向面前墙体，防止飘离墙面；
-     * 每 tick 重置跌落高度，确保爬墙结束后不会因累计高度而受伤。
-     *
-     * @param player 目标玩家，不能为 null，速度直接被覆写，位置通过 move 偏移
-     */
-    public static void applyClimbAndAdhesion(Player player) {
+	/**
+	 * 施加垂直爬升速度和水平墙面吸附。
+	 *
+	 * <p>垂直速度由配置项 {@code wallClimbSpeed} 决定；
+	 * 吸附力将玩家推向面前墙体，防止飘离墙面； 每 tick 重置跌落高度，确保爬墙结束后不会因累计高度而受伤。
+	 *
+	 * @param player 目标玩家，不能为 null，速度直接被覆写，位置通过 move 偏移
+	 */
+	public static void applyClimbAndAdhesion(Player player) {
 		// 垂直向上爬升
 		player.setDeltaMovement(0, ParkourConfig.wallClimbSpeed, 0);
 

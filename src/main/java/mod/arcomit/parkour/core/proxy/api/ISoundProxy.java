@@ -7,8 +7,7 @@ import net.minecraft.world.entity.Entity;
 /**
  * 音效播放代理接口。
  * <p>
- * 封装客户端音效系统的调用——播放绑定在实体上的位置音效。
- * 服务端无 {@code SoundManager} 和 {@code EntityBoundSoundInstance}，
+ * 封装客户端音效系统的调用——播放绑定在实体上的位置音效。 服务端无 {@code SoundManager} 和 {@code EntityBoundSoundInstance}，
  * 通过此接口安全降级。
  * </p>
  *
@@ -19,8 +18,7 @@ public interface ISoundProxy {
 	/**
 	 * 播放一个跟随实体位置移动的音效实例。
 	 * <p>
-	 * 音效在实体所在位置以指定的音量和音高播放。实体移动时音效位置自动跟随。
-	 * 服务端调用时无操作——游戏中的声音必定由玩家客户端自行播放。
+	 * 音效在实体所在位置以指定的音量和音高播放。实体移动时音效位置自动跟随。 服务端调用时无操作——游戏中的声音必定由玩家客户端自行播放。
 	 * </p>
 	 *
 	 * @param soundEvent 音效事件，定义了要播放的具体音效资源，不可为null

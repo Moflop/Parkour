@@ -8,8 +8,7 @@ import java.util.Map;
 /**
  * 传感器数据载体，按水平方向（东西南北）分别持有独立的{@link CollisionCache}实例。
  * <p>
- * 每种传感器类型在{@link SensorDataManager}中对应一个 SensorData，每个方向独立缓存，
- * 避免不同面之间的碰撞检测相互干扰。
+ * 每种传感器类型在{@link SensorDataManager}中对应一个 SensorData，每个方向独立缓存， 避免不同面之间的碰撞检测相互干扰。
  * </p>
  *
  * @author Mitok

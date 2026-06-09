@@ -8,8 +8,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * {@link ILocalPlayerServicesProxy} 的客户端实现。
  * <p>
- * 将 {@code Player} 转型为 {@code LocalPlayer} 后调用其专有方法——
- * 位置数据包同步、移动输入判定、疾跑饱食度检查。
+ * 将 {@code Player} 转型为 {@code LocalPlayer} 后调用其专有方法—— 位置数据包同步、移动输入判定、疾跑饱食度检查。
  * 若传入非本地玩家实例则所有方法返回安全的默认值。
  * </p>
  *

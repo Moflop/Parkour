@@ -14,9 +14,8 @@ import net.neoforged.neoforge.common.NeoForge;
  * 跑酷自定义按键映射。
  *
  * <p>扩展原版 {@link KeyMapping}，在按键按下/释放时自动向 NeoForge 事件总线
- * 投递 {@link InputJustPressedEvent}（刚按下的瞬间触发一次）和
- * {@link InputReleasedEvent}（包含持续按住的总 tick 数）。
- * 持续按住时每 tick 递增 {@code pressedTicks}，松开后清零。
+ * 投递 {@link InputJustPressedEvent}（刚按下的瞬间触发一次）和 {@link InputReleasedEvent}（包含持续按住的总 tick 数）。 持续按住时每
+ * tick 递增 {@code pressedTicks}，松开后清零。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -30,10 +29,10 @@ public class ParkourKeyMapping extends KeyMapping {
 	private ParkourInputActions inputAction = ParkourInputActions.NONE;
 
 	/**
-	 * @param name 按键的翻译键名，如 "key.parkour.roll_slide"
-	 * @param inputType 输入设备类型（键盘/鼠标）
-	 * @param keyCode GLFW 按键码
-	 * @param category 按键分组类别的翻译键
+	 * @param name        按键的翻译键名，如 "key.parkour.roll_slide"
+	 * @param inputType   输入设备类型（键盘/鼠标）
+	 * @param keyCode     GLFW 按键码
+	 * @param category    按键分组类别的翻译键
 	 * @param inputAction 对应的跑酷输入动作，不为 null
 	 */
 	public ParkourKeyMapping(String name, InputConstants.Type inputType, int keyCode,

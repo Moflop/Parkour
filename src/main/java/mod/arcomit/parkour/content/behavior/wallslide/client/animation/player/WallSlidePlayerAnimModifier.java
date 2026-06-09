@@ -20,16 +20,16 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class WallSlidePlayerAnimModifier extends AbstractModifier {
 
-    private final Player player;
-    private final WallSlideAnimState animState = new WallSlideAnimState();
-    private int lastUpdateTick = -1;
+	private final Player player;
+	private final WallSlideAnimState animState = new WallSlideAnimState();
+	private int lastUpdateTick = -1;
 
-    private WallSlideAnimMath.FrameData currentFrameData;
+	private WallSlideAnimMath.FrameData currentFrameData;
 
-    /**
-     * @param player 动画所属玩家，不能为 null
-     */
-    public WallSlidePlayerAnimModifier(Player player) {
+	/**
+	 * @param player 动画所属玩家，不能为 null
+	 */
+	public WallSlidePlayerAnimModifier(Player player) {
 		this.player = player;
 	}
 

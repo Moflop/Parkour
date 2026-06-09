@@ -8,7 +8,7 @@ import mod.arcomit.parkour.content.client.event.InputJustPressedEvent;
 import mod.arcomit.parkour.content.client.input.ParkourKeyBindings;
 import mod.arcomit.parkour.content.client.input.ParkourKeyMapping;
 import mod.arcomit.parkour.content.context.ParkourContext;
-import mod.arcomit.parkour.content.context.SwimData;
+import mod.arcomit.parkour.content.context.SwimMovementData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
@@ -18,8 +18,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * 游泳加速客户端输入处理器——监听自定义"滑行键"按下事件，
- * 在客户端触发游泳加速并将结果同步到服务端。
+ * 游泳加速客户端输入处理器——监听自定义"滑行键"按下事件， 在客户端触发游泳加速并将结果同步到服务端。
  *
  * <p>推进成功后播放客户端侧音效；无论成功与否均发送位置和网络包到服务端。</p>
  *
@@ -52,7 +51,7 @@ public class ClientSwimmingBoostHandler {
 			return;
 		}
 
-		SwimData swimData = ParkourContext.get(player).swim();
+		SwimMovementData swimData = ParkourContext.get(player).swim();
 		if (SwimmingBoostAction.execute(player, swimData)) {
 			ClientSwimmingBoostSound.play(player);
 		}

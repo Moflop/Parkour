@@ -17,8 +17,8 @@ import java.util.Map;
 /**
  * 摄像机动画的集中注册与生命周期管理。
  * <p>
- * 实现 {@link ResourceManagerReloadListener}，在每次资源包重载时扫描
- * {@code camera_animations} 目录下所有 .json 文件，解析为 {@link CameraAnimation} 并缓存。
+ * 实现 {@link ResourceManagerReloadListener}，在每次资源包重载时扫描 {@code camera_animations} 目录下所有 .json 文件，解析为
+ * {@link CameraAnimation} 并缓存。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -35,8 +35,7 @@ public class CameraAnimationRegistry implements ResourceManagerReloadListener {
 	}
 
 	/**
-	 * 资源包重载回调：清空已有动画缓存，重新从所有数据包中扫描并解析动画定义。
-	 * 动画 ID 格式为 {@code modid:camera_animations/文件路径/动画名}。
+	 * 资源包重载回调：清空已有动画缓存，重新从所有数据包中扫描并解析动画定义。 动画 ID 格式为 {@code modid:camera_animations/文件路径/动画名}。
 	 * 解析失败的文件会打印堆栈并跳过。
 	 */
 	@Override

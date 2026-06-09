@@ -16,8 +16,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 /**
  * 悬挂状态下禁用原版前后移动输入。
  * <p>
- * 原版的前进和左右移动在悬挂时被清零，改为由 {@link ClientArmhangMovement}
- * 接管水平移动逻辑。左右原始输入值在清零前保存到 {@link InputData}，
+ * 原版的前进和左右移动在悬挂时被清零，改为由 {@link ClientArmhangMovement} 接管水平移动逻辑。左右原始输入值在清零前保存到 {@link InputData}，
  * 供悬挂平移计算方向使用。
  * <p>
  * 仅在客户端注册——服务端不需要处理移动输入。
@@ -29,8 +28,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 public class ClientArmhangDisableMoveHandler {
 
 	/**
-	 * 拦截移动输入更新事件：若玩家处于手臂悬挂状态，
-	 * 清零前进和左右移动，将原始左右输入保存用于悬挂平移方向判定。
+	 * 拦截移动输入更新事件：若玩家处于手臂悬挂状态， 清零前进和左右移动，将原始左右输入保存用于悬挂平移方向判定。
 	 */
 	@SubscribeEvent
 	public static void disableMoveWhileArmhanging(MovementInputUpdateEvent event) {

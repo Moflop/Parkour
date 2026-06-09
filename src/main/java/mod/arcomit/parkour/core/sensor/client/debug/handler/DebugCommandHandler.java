@@ -14,12 +14,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 /**
- * 客户端调试指令处理器，注册 {@code /parkour debug <类型>} 命令系列，
- * 用于在游戏中切换传感器碰撞盒的可视化渲染目标。
+ * 客户端调试指令处理器，注册 {@code /parkour debug <类型>} 命令系列， 用于在游戏中切换传感器碰撞盒的可视化渲染目标。
  * <p>
- * 支持的子命令对应 {@link SensorDebugType} 的每种值，切换后
- * {@link DebugSensorRenderHandler#DEBUG_TYPE} 将被更新，仅渲染对应类型的传感器碰撞盒。
- * 使用 {@code /parkour debug nothing} 关闭所有渲染。
+ * 支持的子命令对应 {@link SensorDebugType} 的每种值，切换后 {@link DebugSensorRenderHandler#DEBUG_TYPE}
+ * 将被更新，仅渲染对应类型的传感器碰撞盒。 使用 {@code /parkour debug nothing} 关闭所有渲染。
  * </p>
  *
  * @author Mitok

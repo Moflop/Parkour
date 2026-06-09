@@ -11,8 +11,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 根据玩家是否疾跑，自动调整跨越台阶的高度上限。
  * <p>
- * 疾跑时允许跨上更高的方块，步行时亦有小幅提升。
- * 当配置关闭该机制时，移除属性加成恢复原版行为。
+ * 疾跑时允许跨上更高的方块，步行时亦有小幅提升。 当配置关闭该机制时，移除属性加成恢复原版行为。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -33,8 +32,7 @@ public class StepHeightIncreaseMechanic {
 				ParkourConfig.sprintStepHeight - VANILLA_STEP_HEIGHT :
 				ParkourConfig.walkStepHeight - VANILLA_STEP_HEIGHT;
 
-		AttributeHelper.setModifier(player, Attributes.STEP_HEIGHT,
-				STEP_HEIGHT_MODIFIER_ID, stepHeightBonus,
-				AttributeModifier.Operation.ADD_VALUE);
+		AttributeHelper.setModifier(player, Attributes.STEP_HEIGHT, STEP_HEIGHT_MODIFIER_ID,
+				stepHeightBonus, AttributeModifier.Operation.ADD_VALUE);
 	}
 }

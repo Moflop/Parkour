@@ -22,8 +22,7 @@ public class Obstacles {
 	/**
 	 * 从玩家头顶向脚底逐层切片扫描，找出前方第一个阻挡方块的高度位置。
 	 * <p>
-	 * 以 {@value #SCAN_STEP} 格为步长，从头顶向下构建水平切片盒，沿玩家视线方向扩展
-	 * {@value #SCAN_REACH} 格做碰撞检测。
+	 * 以 {@value #SCAN_STEP} 格为步长，从头顶向下构建水平切片盒，沿玩家视线方向扩展 {@value #SCAN_REACH} 格做碰撞检测。
 	 * 可用于判断跑酷中面前障碍物的高度，以便决定是否需要蹲跳或攀爬。
 	 *
 	 * @param player    目标玩家，不可为null
@@ -55,8 +54,7 @@ public class Obstacles {
 			AABB sliceBox = new AABB(minX, sliceBottom, minZ, maxX, sliceTop,
 					maxZ).inflate(ParkourConstants.AABB_DEFLATE_EPSILON);
 
-			AABB checkBox = sliceBox.expandTowards(facing.x * SCAN_REACH,
-					0,
+			AABB checkBox = sliceBox.expandTowards(facing.x * SCAN_REACH, 0,
 					facing.z * SCAN_REACH);
 
 			if (!level.noCollision(player, checkBox)) {
@@ -69,25 +67,22 @@ public class Obstacles {
 
 
 	/**
-	 * 检测玩家在某方向上、从指定高度起一整格身高的空间是否无碰撞。
-	 * 常用于翻越障碍前判断上方是否有足够空间让玩家通过。
+	 * 检测玩家在某方向上、从指定高度起一整格身高的空间是否无碰撞。 常用于翻越障碍前判断上方是否有足够空间让玩家通过。
 	 *
 	 * @param player     目标玩家，不可为null
 	 * @param direction  检测方向
 	 * @param baseHeight 检测起始高度（相对玩家脚底），例如 1.0 表示从玩家腰部以上开始检测
 	 * @return true 表示该空间无障碍物，玩家可以通过
 	 */
-	public static boolean hasSpaceAbove(Player player, Direction direction,
-			double baseHeight) {
+	public static boolean hasSpaceAbove(Player player, Direction direction, double baseHeight) {
 		Vec3 pos = player.position();
 		Level level = player.level();
 
 		double halfWidth = player.getBbWidth() / 2;
 		double height = player.getBbHeight();
 
-		AABB baseBox = new AABB(pos.x - halfWidth, pos.y + baseHeight,
-				pos.z - halfWidth, pos.x + halfWidth,
-				pos.y + baseHeight + height, pos.z + halfWidth);
+		AABB baseBox = new AABB(pos.x - halfWidth, pos.y + baseHeight, pos.z - halfWidth,
+				pos.x + halfWidth, pos.y + baseHeight + height, pos.z + halfWidth);
 		AABB checkBox = baseBox.expandTowards(direction.getStepX() * SCAN_REACH,
 				direction.getStepY() * SCAN_REACH,
 				direction.getStepZ() * SCAN_REACH);

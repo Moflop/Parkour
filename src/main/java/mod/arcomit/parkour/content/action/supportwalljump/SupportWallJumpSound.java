@@ -6,8 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
- * 支撑蹬墙跳音效——与蹬墙跳共用同一音效资源（{@code WALL_JUMP}），
- * 仅在服务端播放。
+ * 支撑蹬墙跳音效——与蹬墙跳共用同一音效资源（{@code WALL_JUMP}）， 仅在服务端播放。
  *
  * @author Mitok
  * @since 2026-06-08

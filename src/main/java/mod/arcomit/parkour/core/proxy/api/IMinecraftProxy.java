@@ -3,8 +3,7 @@ package mod.arcomit.parkour.core.proxy.api;
 /**
  * Minecraft客户端设置代理接口。
  * <p>
- * 隔离对 {@code Minecraft.getInstance()} 的访问，用于查询客户端
- * 运行时的全局状态。服务端无MC实例，通过此接口返回安全的默认值。
+ * 隔离对 {@code Minecraft.getInstance()} 的访问，用于查询客户端 运行时的全局状态。服务端无MC实例，通过此接口返回安全的默认值。
  * </p>
  *
  * @author Mitok

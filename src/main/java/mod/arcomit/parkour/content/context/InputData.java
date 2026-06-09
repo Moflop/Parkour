@@ -25,9 +25,8 @@ import net.minecraft.network.codec.StreamCodec;
 @AllArgsConstructor
 public class InputData {
 	public static final Codec<InputData> CODEC = RecordCodecBuilder.create(
-			instance -> instance.group(
-							Codec.FLOAT.optionalFieldOf("leftImpulse", 0f)
-									.forGetter(InputData::getLeftImpulse))
+			instance -> instance.group(Codec.FLOAT.optionalFieldOf("leftImpulse", 0f)
+							.forGetter(InputData::getLeftImpulse))
 					.apply(instance, InputData::new));
 	public static final StreamCodec<ByteBuf, InputData> STREAM_CODEC =
 			StreamCodec.composite(ByteBufCodecs.FLOAT, InputData::getLeftImpulse,

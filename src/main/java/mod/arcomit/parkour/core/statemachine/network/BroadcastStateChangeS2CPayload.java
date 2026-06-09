@@ -47,7 +47,7 @@ public record BroadcastStateChangeS2CPayload(int entityId, ResourceLocation stat
 		 * <p>通过实体 ID 在客户端世界查找目标玩家，跳过本地玩家（本地玩家通过预测自行切换），
 		 * 仅处理其他远程玩家以保证其动画和姿势与当前服务端状态一致。
 		 *
-		 * @param packet 包含实体ID、目标状态ID和动画变体的广播包，不为 null
+		 * @param packet  包含实体ID、目标状态ID和动画变体的广播包，不为 null
 		 * @param context 网络上下文，用于切换到主线程执行
 		 */
 		public static void handle(BroadcastStateChangeS2CPayload packet,

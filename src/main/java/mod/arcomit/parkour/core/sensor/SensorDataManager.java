@@ -9,9 +9,8 @@ import java.util.Map;
 /**
  * 传感器数据管理器，集中管理所有传感器类型对应的{@link SensorData}实例。
  * <p>
- * 每个玩家通过 NeoForge 附件系统（{@code ParkourAttachmentTypes.SENSOR_DATA_MANAGER}）
- * 挂载一个 SensorDataManager，由传感器实现通过 {@link #get(Player)} 获取后
- * 再按{@link SensorType}取对应方向的缓存数据。
+ * 每个玩家通过 NeoForge 附件系统（{@code ParkourAttachmentTypes.SENSOR_DATA_MANAGER}） 挂载一个
+ * SensorDataManager，由传感器实现通过 {@link #get(Player)} 获取后 再按{@link SensorType}取对应方向的缓存数据。
  * </p>
  *
  * @author Mitok

@@ -51,8 +51,7 @@ public class WallRunCollision {
 	 * @return 碰撞方向仍有效返回 true，方向为 null 或墙体消失返回 false
 	 */
 	public static boolean wallCollisionIsValid(Player player, ParkourContext context) {
-		Direction wallDir = Direction.from3DDataValue(
-				context.wall().getRunCollisionRaw());
+		Direction wallDir = Direction.from3DDataValue(context.wall().getRunCollisionRaw());
 		if (wallDir == null) {
 			return false;
 		}

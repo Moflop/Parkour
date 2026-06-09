@@ -22,7 +22,7 @@ public class WallJumpTypeResolver {
 	/**
 	 * 根据玩家与墙面的相对关系解析跳跃类型。
 	 *
-	 * @param player 执行跳跃的玩家；为null时返回NONE
+	 * @param player  执行跳跃的玩家；为null时返回NONE
 	 * @param wallDir 目标墙面方向；为null时返回NONE
 	 * @return 解析出的跳跃类型，NONE表示当前不可跳跃
 	 */
@@ -49,7 +49,7 @@ public class WallJumpTypeResolver {
 	 * @return true表示前方有障碍物，应触发上跳
 	 */
 	public static boolean isBlockInFrontOfPlayer(Player player) {
-		return BlockCollisions.isBlockedTowards(player,
-				player.getDirection(), ParkourTags.Blocks.SCAFFOLDING_BLOCKS);
+		return BlockCollisions.isBlockedTowards(player, player.getDirection(),
+				ParkourTags.Blocks.SCAFFOLDING_BLOCKS);
 	}
 }

@@ -1,8 +1,8 @@
 package mod.arcomit.parkour.content.behavior.crawl;
 
 import mod.arcomit.parkour.ParkourConfig;
-import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
@@ -13,8 +13,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 爬行状态 —— 玩家降低身高以爬行姿态通过1格高的低矮空间。
  * <p>
- * 触发方式：静止站立时按下滑铲键。使用游泳姿态（SWIMMING）实现视觉上的
- * 匍匐效果，再次按下同一按键退出回到默认状态。
+ * 触发方式：静止站立时按下滑铲键。使用游泳姿态（SWIMMING）实现视觉上的 匍匐效果，再次按下同一按键退出回到默认状态。
  *
  * @author Mitok
  * @since 2026-06-08

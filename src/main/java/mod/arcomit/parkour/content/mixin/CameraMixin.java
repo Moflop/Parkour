@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 将相机动画位移注入原版Camera的setup流程。
  * <p>
- * 在每帧相机计算完成后，叠加由{@code CameraAnimationManager}驱动的额外位移，
- * 实现跑酷动作的相机跟随动画（如翻滚时的视角下沉、蹬墙跳时的相机偏移）。
+ * 在每帧相机计算完成后，叠加由{@code CameraAnimationManager}驱动的额外位移， 实现跑酷动作的相机跟随动画（如翻滚时的视角下沉、蹬墙跳时的相机偏移）。
  * 仅在动画管理器处于播放状态且相机未脱离眼睛时生效。
  *
  * @author Mitok
@@ -54,8 +53,10 @@ public abstract class CameraMixin {
 			if (position[0] != 0.0f || position[1] != 0.0f || position[2] != 0.0f) {
 				Vec3 currentPos = this.getPosition();
 
-				Vector3f moveVector = new Vector3f(position[0] * PIXEL_TO_BLOCK_SCALE,
-						position[1] * PIXEL_TO_BLOCK_SCALE, -position[2] * PIXEL_TO_BLOCK_SCALE);
+				Vector3f moveVector =
+						new Vector3f(position[0] * PIXEL_TO_BLOCK_SCALE,
+								position[1] * PIXEL_TO_BLOCK_SCALE,
+								-position[2] * PIXEL_TO_BLOCK_SCALE);
 
 				moveVector.rotateY(-this.getYRot() * Mth.DEG_TO_RAD);
 

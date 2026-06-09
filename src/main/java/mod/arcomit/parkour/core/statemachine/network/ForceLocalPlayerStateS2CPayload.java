@@ -44,7 +44,7 @@ public record ForceLocalPlayerStateS2CPayload(ResourceLocation correctStateId, i
 		 * <p>当客户端发起的预测性状态转换被服务端校验拒绝后，服务端通过此包告知
 		 * 客户端当前合法的状态，客户端无条件执行切换以消除两端不一致。
 		 *
-		 * @param packet 包含服务端认定的合法状态ID和动画变体，不为 null
+		 * @param packet  包含服务端认定的合法状态ID和动画变体，不为 null
 		 * @param context 网络上下文，用于切换到主线程执行
 		 */
 		public static void handle(ForceLocalPlayerStateS2CPayload packet,

@@ -1,10 +1,10 @@
 package mod.arcomit.parkour.core.statemachine;
 
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
-import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
+import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.network.ParkourNetworkSynchronizer;
@@ -61,6 +61,9 @@ public class ParkourStateMachine {
 
 		if (currentState == null)
 			return;
+
+		// TODO：也许应该迁移出去
+		handlePassiveStateSync(player, stateData, currentState);
 
 		// 基础 Tick 生命周期
 		stateData.setTicksInState(stateData.getTicksInState() + 1);
@@ -176,8 +179,8 @@ public class ParkourStateMachine {
 	/**
 	 * 执行权威状态切换（服务端或双端统一入口），自动生成动画变体。
 	 *
-	 * <p>调用 {@link IParkourState#generateVariant} 生成变体 ID 后委托 {@link ParkourStateEngine#executeCoreTransition} 执行完整生命周期。
-	 * 在服务端执行时会广播状态变更给所有追踪者。
+	 * <p>调用 {@link IParkourState#generateVariant} 生成变体 ID 后委托
+	 * {@link ParkourStateEngine#executeCoreTransition} 执行完整生命周期。 在服务端执行时会广播状态变更给所有追踪者。
 	 *
 	 * @param player      状态所属的玩家，不为 null
 	 * @param context     跑酷上下文，不为 null

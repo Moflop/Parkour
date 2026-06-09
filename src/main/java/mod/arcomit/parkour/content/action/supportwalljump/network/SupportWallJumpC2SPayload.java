@@ -31,15 +31,14 @@ public record SupportWallJumpC2SPayload() implements CustomPacketPayload {
 
 
 	/**
-	 * 服务端包处理器——在服务端线程执行支撑蹬墙跳并重置连接位置
-	 * 以避免反作弊检测触发回拉。
+	 * 服务端包处理器——在服务端线程执行支撑蹬墙跳并重置连接位置 以避免反作弊检测触发回拉。
 	 */
 	public static class Server {
 
 		/**
 		 * 在服务端主线程上排队执行支撑蹬墙跳。
 		 *
-		 * @param packet 收到的客户端包
+		 * @param packet  收到的客户端包
 		 * @param context 网络上下文，用于获取玩家
 		 * @sideeffect 执行支撑蹬墙跳动作（服务端）
 		 * @sideeffect 重置玩家连接位置记录（防反作弊误判）

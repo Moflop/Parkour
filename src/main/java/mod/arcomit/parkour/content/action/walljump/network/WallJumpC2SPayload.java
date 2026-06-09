@@ -11,8 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 蹬墙跳客户端->服务端网络包——客户端执行蹬墙跳后通知服务端同步执行，
- * 保证双端状态一致。
+ * 蹬墙跳客户端->服务端网络包——客户端执行蹬墙跳后通知服务端同步执行， 保证双端状态一致。
  *
  * <p>无载荷数据（仅作为事件信号），使用 {@code StreamCodec.unit} 编码。</p>
  *
@@ -32,15 +31,14 @@ public record WallJumpC2SPayload() implements CustomPacketPayload {
 
 
 	/**
-	 * 服务端包处理器——在服务端线程执行蹬墙跳动作并重置连接位置
-	 * 以避免服务端反作弊检测触发回拉。
+	 * 服务端包处理器——在服务端线程执行蹬墙跳动作并重置连接位置 以避免服务端反作弊检测触发回拉。
 	 */
 	public static class Server {
 
 		/**
 		 * 在服务端主线程上排队执行蹬墙跳。
 		 *
-		 * @param packet 收到的客户端包
+		 * @param packet  收到的客户端包
 		 * @param context 网络上下文，用于获取玩家
 		 * @sideeffect 执行蹬墙跳动作（服务端）
 		 * @sideeffect 重置玩家连接位置记录（防反作弊误判）

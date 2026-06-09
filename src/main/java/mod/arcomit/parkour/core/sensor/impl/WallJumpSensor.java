@@ -19,12 +19,10 @@ import java.util.List;
 /**
  * 蹬墙跳碰撞传感器，检测玩家脚部高度前方是否存在可蹬踏的墙面。
  * <p>
- * 沿指定水平方向生成一个位于脚部高度（0%~30% 身高）的 AABB 检测盒，
- * 仅需该区域与方块碰撞即判定有效。
+ * 沿指定水平方向生成一个位于脚部高度（0%~30% 身高）的 AABB 检测盒， 仅需该区域与方块碰撞即判定有效。
  * </p>
  * <p>
- * 与 {@link HeadFeetSensor} 不同，本传感器只关心脚部是否有墙面——蹬墙跳动作
- * 可以沿一面墙反复蹬跳，不需要头部也接触墙面。忽略的方块类型由标签
+ * 与 {@link HeadFeetSensor} 不同，本传感器只关心脚部是否有墙面——蹬墙跳动作 可以沿一面墙反复蹬跳，不需要头部也接触墙面。忽略的方块类型由标签
  * {@code SCAFFOLDING_BLOCKS} 定义（脚手架等非实体方块）。
  * </p>
  *
@@ -94,9 +92,8 @@ public class WallJumpSensor {
 			collisionCache.setPosition(currentPos);
 
 			List<AABB> boxes = new ArrayList<>();
-			boxes.add(BlockCollisions.buildBox(player, direction,
-					BOX_MIN_HEIGHT_RATIO, BOX_MAX_HEIGHT_RATIO,
-					COLLISION_CHECK_DISTANCE));
+			boxes.add(BlockCollisions.buildBox(player, direction, BOX_MIN_HEIGHT_RATIO,
+					BOX_MAX_HEIGHT_RATIO, COLLISION_CHECK_DISTANCE));
 			collisionCache.setCollisionBoxes(boxes);
 
 			for (AABB box : boxes) {

@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.base.DefaultState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.statemachine.ParkourStateMachine;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
@@ -46,22 +47,20 @@ public class ParkourSyncHandler {
 	 * 玩家开始追踪另一个实体时触发，用于向新追踪者发送目标玩家的状态特有数据。
 	 *
 	 * <p>Minecraft 的实体追踪系统只在玩家进入视野时同步基础数据。如果目标玩家当前处于特殊跑酷状态
-	 * （如自定义碰撞箱、特殊动画），追踪者不会自动获得这些信息。此方法通过
-	 * {@link IParkourState#onTrackingStart} 向追踪者补发这些额外数据包。
+	 * 追踪者可能不会自动获得完整的数据信息。此方法通过 {@link IParkourState#onTrackingStart} 向追踪者补发这些额外数据包。
 	 *
 	 * @param event 开始追踪事件，不为 null
 	 */
 	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
-		if (event.getTarget() instanceof Player targetPlayer) {
-			if (event.getEntity() instanceof ServerPlayer tracker) {
-				ParkourContext context = ParkourContext.get(targetPlayer);
-				IParkourState currentState = context.state().getState();
-				if (currentState != null) {
-					currentState.onTrackingStart(tracker, targetPlayer,
-							context);
-				}
-			}
+		if (!(event.getTarget() instanceof Player targetPlayer) || !(event.getEntity() instanceof ServerPlayer tracker)) {
+			return;
 		}
+		ParkourContext context = ParkourContext.get(targetPlayer);
+		IParkourState currentState = context.state().getState();
+		if (currentState instanceof DefaultState) {
+			return;
+		}
+		currentState.onTrackingStart(tracker, targetPlayer, context);
 	}
 }

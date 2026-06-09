@@ -20,19 +20,19 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class WallRunPlayerAnimModifier extends AbstractModifier {
 
-    private final Player player;
-    /** 墙体是否在玩家左侧，决定手臂和躯干支撑方向 */
-    private final boolean isWallOnLeft;
-    private final WallRunAnimState animState = new WallRunAnimState();
-    private int lastUpdateTick = -1;
+	private final Player player;
+	/** 墙体是否在玩家左侧，决定手臂和躯干支撑方向 */
+	private final boolean isWallOnLeft;
+	private final WallRunAnimState animState = new WallRunAnimState();
+	private int lastUpdateTick = -1;
 
-    private WallRunAnimMath.FrameData currentFrameData;
+	private WallRunAnimMath.FrameData currentFrameData;
 
-    /**
-     * @param player       动画所属玩家，不能为 null
-     * @param isWallOnLeft 墙体是否在玩家左侧
-     */
-    public WallRunPlayerAnimModifier(Player player, boolean isWallOnLeft) {
+	/**
+	 * @param player       动画所属玩家，不能为 null
+	 * @param isWallOnLeft 墙体是否在玩家左侧
+	 */
+	public WallRunPlayerAnimModifier(Player player, boolean isWallOnLeft) {
 		this.player = player;
 		this.isWallOnLeft = isWallOnLeft;
 	}

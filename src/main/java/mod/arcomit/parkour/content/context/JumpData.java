@@ -33,15 +33,15 @@ import net.minecraft.network.codec.StreamCodec;
 @Setter
 @NoArgsConstructor
 public class JumpData {
-	public static final Codec<JumpData> CODEC =
-			RecordCodecBuilder.create(instance -> instance.group(
-							Codec.BOOL.optionalFieldOf("isJumped", false)
+	public static final Codec<JumpData> CODEC = RecordCodecBuilder.create(
+			instance -> instance.group(Codec.BOOL.optionalFieldOf("isJumped", false)
 									.forGetter(JumpData::isJumped),
 							Codec.INT.optionalFieldOf("lastViewWallJumpDir3DData", -1)
 									.forGetter(JumpData::getLastViewJumpRaw),
 							Codec.INT.optionalFieldOf("lastUpWallJumpDir3DData", -1)
 									.forGetter(JumpData::getLastUpJumpRaw),
-							Codec.INT.optionalFieldOf("lastParallelWallJumpDir3DData", -1)
+							Codec.INT.optionalFieldOf("lastParallelWallJumpDir3DData",
+											-1)
 									.forGetter(JumpData::getLastParallelJumpRaw),
 							Codec.INT.optionalFieldOf("lastWallJumpDir3DData", -1)
 									.forGetter(JumpData::getLastJumpRaw),
@@ -59,8 +59,7 @@ public class JumpData {
 				ByteBufCodecs.VAR_INT.encode(buf, data.getLastJumpRaw());
 				ByteBufCodecs.VAR_INT.encode(buf, data.getTicksSinceLastJump());
 				ByteBufCodecs.VAR_INT.encode(buf, data.getJumpReleaseGraceTicks());
-			}, buf -> new JumpData(
-					ByteBufCodecs.BOOL.decode(buf),
+			}, buf -> new JumpData(ByteBufCodecs.BOOL.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
@@ -83,8 +82,8 @@ public class JumpData {
 	private transient Direction lastParallelJump;
 
 	public JumpData(boolean jumped, int lastViewJumpRaw, int lastUpJumpRaw,
-			int lastParallelJumpRaw, int lastJumpRaw,
-			int ticksSinceLastJump, int jumpReleaseGraceTicks) {
+			int lastParallelJumpRaw, int lastJumpRaw, int ticksSinceLastJump,
+			int jumpReleaseGraceTicks) {
 		this.jumped = jumped;
 		this.lastViewJumpRaw = lastViewJumpRaw;
 		this.lastUpJumpRaw = lastUpJumpRaw;
@@ -101,7 +100,8 @@ public class JumpData {
 	}
 
 	private static Direction resolve(int raw, Direction cache) {
-		if (cache != null) return cache;
+		if (cache != null)
+			return cache;
 		return raw == -1 ? null : Direction.from3DDataValue(raw);
 	}
 
@@ -129,7 +129,9 @@ public class JumpData {
 
 	// ==================== ViewJump ====================
 
-	public int getLastViewJumpRaw() { return lastViewJumpRaw; }
+	public int getLastViewJumpRaw() {
+		return lastViewJumpRaw;
+	}
 
 	public void setLastViewJumpRaw(int raw) {
 		lastViewJumpRaw = raw;
@@ -160,7 +162,9 @@ public class JumpData {
 
 	// ==================== UpJump ====================
 
-	public int getLastUpJumpRaw() { return lastUpJumpRaw; }
+	public int getLastUpJumpRaw() {
+		return lastUpJumpRaw;
+	}
 
 	public void setLastUpJumpRaw(int raw) {
 		lastUpJumpRaw = raw;
@@ -191,7 +195,9 @@ public class JumpData {
 
 	// ==================== ParallelJump ====================
 
-	public int getLastParallelJumpRaw() { return lastParallelJumpRaw; }
+	public int getLastParallelJumpRaw() {
+		return lastParallelJumpRaw;
+	}
 
 	public void setLastParallelJumpRaw(int raw) {
 		lastParallelJumpRaw = raw;
@@ -222,7 +228,9 @@ public class JumpData {
 
 	// ==================== LastJump（纯内部追踪，仅Raw） ====================
 
-	public int getLastJumpRaw() { return lastJumpRaw; }
+	public int getLastJumpRaw() {
+		return lastJumpRaw;
+	}
 
 	public void setLastJumpRaw(int raw) {
 		lastJumpRaw = raw;

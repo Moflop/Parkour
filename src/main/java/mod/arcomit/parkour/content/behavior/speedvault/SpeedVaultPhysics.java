@@ -23,11 +23,10 @@ public class SpeedVaultPhysics {
 	private static final double VAULT_HORIZONTAL_SPEED = 0.1;
 
 	/**
-	 * 计算并施加翻越位移：垂直速度根据障碍物高度和玩家身高自适应计算，
-	 * 确保在 {@value #MAX_VAULT_TICK} tick 内能跨过障碍物；
-	 * 水平速度取 WASD 输入方向的 {@value #VAULT_HORIZONTAL_SPEED} 倍慢速位移。
+	 * 计算并施加翻越位移：垂直速度根据障碍物高度和玩家身高自适应计算， 确保在 {@value #MAX_VAULT_TICK} tick 内能跨过障碍物； 水平速度取 WASD
+	 * 输入方向的 {@value #VAULT_HORIZONTAL_SPEED} 倍慢速位移。
 	 *
-	 * @param player  目标玩家，不能为 null，速度直接被覆写
+	 * @param player   目标玩家，不能为 null，速度直接被覆写
 	 * @param wallData 墙体运动数据，包含已探测的障碍物高度，不能为 null
 	 */
 	public static void applyVaultMovement(Player player, WallMovementData wallData) {
@@ -42,8 +41,7 @@ public class SpeedVaultPhysics {
 	}
 
 	/**
-	 * 退出速过时施加向前的水平初速度（{@value #FORWARD_VELOCITY} 倍输入方向），
-	 * 垂直速度设为 0 交由重力接管自然下落。
+	 * 退出速过时施加向前的水平初速度（{@value #FORWARD_VELOCITY} 倍输入方向）， 垂直速度设为 0 交由重力接管自然下落。
 	 *
 	 * @param player 目标玩家，不能为 null，速度直接被覆写
 	 */

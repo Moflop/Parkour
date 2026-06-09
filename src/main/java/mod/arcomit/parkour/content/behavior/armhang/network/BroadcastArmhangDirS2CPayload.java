@@ -16,9 +16,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 服务端广播某个玩家的悬挂方向给所有追踪该玩家的客户端。
  * <p>
- * 当服务端收到客户端发来的悬挂方向同步
- * （{@link SyncArmhangDirC2SPayload}）后，通过此包将方向变化广播给
- * 周围的其他玩家，使远程玩家的动画姿态与悬挂方向一致。
+ * 当服务端收到客户端发来的悬挂方向同步 （{@link SyncArmhangDirC2SPayload}）后，通过此包将方向变化广播给 周围的其他玩家，使远程玩家的动画姿态与悬挂方向一致。
  *
  * @param entityId  目标玩家的实体 ID，不可为负数
  * @param direction 新的悬挂方向，不可为 null
@@ -43,8 +41,7 @@ public record BroadcastArmhangDirS2CPayload(int entityId, Direction direction)
 
 
 	/**
-	 * 客户端接收处理：为非本地玩家的远程实体更新悬挂方向，
-	 * 使第三人称视角下其他玩家的悬挂动画朝向正确。
+	 * 客户端接收处理：为非本地玩家的远程实体更新悬挂方向， 使第三人称视角下其他玩家的悬挂动画朝向正确。
 	 */
 	public static class Client {
 		/**

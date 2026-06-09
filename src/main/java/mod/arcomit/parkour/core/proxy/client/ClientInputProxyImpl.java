@@ -10,9 +10,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 /**
  * {@link IInputProxy} 的客户端实现。
  * <p>
- * 将 {@code Player} 向下转型为 {@code LocalPlayer} 后直读其
- * {@code input} 字段中的按键状态。若传入的不是本地玩家实例则返回
- * 安全的默认值（0 或 false），保证在非客户端的调用路径下不崩溃。
+ * 将 {@code Player} 向下转型为 {@code LocalPlayer} 后直读其 {@code input} 字段中的按键状态。若传入的不是本地玩家实例则返回 安全的默认值（0 或
+ * false），保证在非客户端的调用路径下不崩溃。
  * </p>
  *
  * @author Mitok

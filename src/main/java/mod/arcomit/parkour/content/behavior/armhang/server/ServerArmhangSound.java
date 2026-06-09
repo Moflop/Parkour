@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.content.behavior.armhang.client;
+package mod.arcomit.parkour.content.behavior.armhang.server;
 
 import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.context.WallMovementData;
@@ -11,67 +11,63 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * 客户端悬挂移动音效。
+ * 服务端悬挂移动音效。
  * <p>
- * 根据玩家每 tick 实际移动距离累计步伐计数器，达到阈值后在本地播放步骤音效。
- * 音效来源为悬挂方向对应的墙壁方块，确保不同材质（石头、木头等）播放对应脚步声。
- * <p>
- * 仅在客户端执行——服务端不播放，避免双端重复。
+ * 纯逻辑系统：从 WallMovementData 中读取上帧状态，计算实际位移后触发音效， 并写回数据。避免了使用外部 Map 导致的数据分散问题。
  *
  * @author Mitok
  * @since 2026-06-08
  */
-public class ClientArmhangSound {
-	/** 移动距离低于此值不计入步数，防止微小抖动触发音效 */
+public class ServerArmhangSound {
 	private static final double ZERO_THRESHOLD = 1.0E-7;
-	/** 步伐距离乘数，大于 1 使音效触发更密集 */
-	private static final float SOUND_DISTANCE_MULTIPLIER = 1.2F;
-	/** 音量缩放系数，悬挂音效比正常行走轻 */
+	private static final float SOUND_DISTANCE_MULTIPLIER = 0.6F;
 	private static final float SOUND_VOLUME_MULTIPLIER = 0.15F;
 
-	/**
-	 * 按移动距离累计步伐计数器，达到阈值时播放墙壁材质的脚步声。
-	 * <p>
-	 * 根据当前悬挂检测类型（眼部传感器或顶部传感器）选择不同的脚步判定高度，
-	 * 以适配不同方块形状下抓握位置的差异。
-	 *
-	 * @param player           目标玩家，不可为 null
-	 * @param wallMovementData 墙面移动数据，提供当前悬挂方向，不可为 null
-	 */
 	public static void playMovementSound(Player player, WallMovementData wallMovementData) {
 		Level level = player.level();
-		// 必须在客户端执行
-		if (!level.isClientSide()) {
+		if (level.isClientSide()) {
 			return;
 		}
 
 		Direction wallDirection = wallMovementData.getArmhang();
-		if (wallDirection == null) {
+		Vec3 lastPos = wallMovementData.getArmhangLastPos();
+
+		if (wallDirection == null || lastPos == null) {
 			return;
 		}
 
-		// 因为移动是在客户端触发的，我们可以准确获取到平滑的坐标变化
-		double dx = player.getX() - player.xo;
-		double dy = player.getY() - player.yo;
-		double dz = player.getZ() - player.zo;
+		// 1. 获取当前坐标并计算真实的 tick 间距差
+		Vec3 currentPos = player.position();
+		double dx = currentPos.x - lastPos.x;
+		double dy = currentPos.y - lastPos.y;
+		double dz = currentPos.z - lastPos.z;
 		float distanceMovedThisTick = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+		// 刷新上一帧坐标供下个 tick 使用
+		wallMovementData.setArmhangLastPos(currentPos);
 
 		if (distanceMovedThisTick < ZERO_THRESHOLD) {
 			return;
 		}
 
-		player.moveDist += distanceMovedThisTick * SOUND_DISTANCE_MULTIPLIER;
+		// 2. 累加步数
+		float currentDist = wallMovementData.getArmhangMoveDist();
+		currentDist += distanceMovedThisTick * SOUND_DISTANCE_MULTIPLIER;
 
-		if (player.moveDist <= player.nextStep) {
+		if (currentDist < 1.0F) {
+			wallMovementData.setArmhangMoveDist(currentDist);
 			return;
 		}
-		player.nextStep = player.moveDist + 1.0F;
 
-		// 依然使用眼睛高度判定抓握的墙壁方块
+		wallMovementData.setArmhangMoveDist(currentDist - 1.0F);
+
+		// 3. 寻找方块并广播音效
 		BlockPos playerPos = BlockPos.containing(player.getX(),
 				player.getY() + player.getEyeHeight(), player.getZ());
+
 		if (ArmhangEyeSensor.isValidCollision(player, wallDirection)) {
 			double height = player.getBbHeight();
 			playerPos = BlockPos.containing(player.getX(),
@@ -80,8 +76,10 @@ public class ClientArmhangSound {
 		} else if (ArmhangTopSensor.isValidCollision(player, wallDirection)) {
 			double height = player.getBbHeight();
 			playerPos = BlockPos.containing(player.getX(),
-					player.getY() + height - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO), player.getZ());
+					player.getY() + height - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO),
+					player.getZ());
 		}
+
 		BlockPos wallPos = playerPos.relative(wallDirection);
 		BlockState blockState = level.getBlockState(wallPos);
 
@@ -93,9 +91,7 @@ public class ClientArmhangSound {
 		float volume = soundType.getVolume() * SOUND_VOLUME_MULTIPLIER;
 		float pitch = soundType.getPitch();
 
-		// 客户端本地播放声音，不会有延迟
-		level.playLocalSound(wallPos.getX() + 0.5D, wallPos.getY() + 0.5D,
-				wallPos.getZ() + 0.5D, soundType.getStepSound(),
-				SoundSource.PLAYERS, volume, pitch, false);
+		level.playSound(null, wallPos.getX(), wallPos.getY(), wallPos.getZ(),
+				soundType.getStepSound(), SoundSource.PLAYERS, volume, pitch);
 	}
 }

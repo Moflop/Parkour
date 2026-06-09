@@ -14,23 +14,23 @@ import net.minecraft.world.entity.player.Player;
  * @since 2026-06-08
  */
 public class WallRunAnimState {
-    /** 上一帧的动画相位 */
-    public float animPhaseO = 0f;
-    /** 当前动画相位，持续累加以驱动正弦波摆动 */
-    public float animPhase = 0f;
-    /** 上一帧的振幅 */
-    public float amplitudeO = 0f;
-    /** 当前振幅，范围 [0, 1]，控制四肢摆动幅度 */
-    public float amplitude = 0f;
+	/** 上一帧的动画相位 */
+	public float animPhaseO = 0f;
+	/** 当前动画相位，持续累加以驱动正弦波摆动 */
+	public float animPhase = 0f;
+	/** 上一帧的振幅 */
+	public float amplitudeO = 0f;
+	/** 当前振幅，范围 [0, 1]，控制四肢摆动幅度 */
+	public float amplitude = 0f;
 
-    /**
-     * 每客户端帧推进动画状态：备份上一帧数据，根据移动强度更新相位和振幅。
-     *
-     * <p>相位以固定步长 0.6662 累加；振幅以 0.2 权重向目标值平滑插值。
-     *
-     * @param player 目标玩家，不能为 null
-     */
-    public void tick(Player player) {
+	/**
+	 * 每客户端帧推进动画状态：备份上一帧数据，根据移动强度更新相位和振幅。
+	 *
+	 * <p>相位以固定步长 0.6662 累加；振幅以 0.2 权重向目标值平滑插值。
+	 *
+	 * @param player 目标玩家，不能为 null
+	 */
+	public void tick(Player player) {
 		this.animPhaseO = this.animPhase;
 		this.amplitudeO = this.amplitude;
 

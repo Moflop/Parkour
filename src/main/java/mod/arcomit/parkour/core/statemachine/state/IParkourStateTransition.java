@@ -1,7 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.state;
 
-import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;

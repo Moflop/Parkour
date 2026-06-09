@@ -32,6 +32,7 @@ public class CameraAnimationDefinition {
 	@SerializedName("bones")
 	public Bones bones;
 
+
 	/**
 	 * 骨骼分组，仅保留摄像机动画所需的 camera 骨骼。
 	 */
@@ -39,6 +40,7 @@ public class CameraAnimationDefinition {
 		@SerializedName("camera")
 		public Camera camera;
 	}
+
 
 	/**
 	 * 摄像机骨骼的关键帧数据。

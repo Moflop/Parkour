@@ -58,8 +58,7 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 	 * @param mapper            将方块坐标与碰撞形状映射为结果类型 T 的函数
 	 */
 	public FilteredBlockCollisions(CollisionGetter collisionGetter, @Nullable Entity entity,
-			AABB bounds, boolean filterSuffocating,
-			TagKey<Block> skipTag,
+			AABB bounds, boolean filterSuffocating, TagKey<Block> skipTag,
 			BiFunction<BlockPos.MutableBlockPos, VoxelShape, T> mapper) {
 		this.getter = collisionGetter;
 		this.context = entity == null ?
@@ -95,8 +94,7 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 		if (this.cachedChunk != null && this.cachedChunkPos == key) {
 			return this.cachedChunk;
 		} else {
-			BlockGetter chunk = this.getter.getChunkForCollisions(sectionX,
-					sectionZ);
+			BlockGetter chunk = this.getter.getChunkForCollisions(sectionX, sectionZ);
 			this.cachedChunk = chunk;
 			this.cachedChunkPos = key;
 			return chunk;
@@ -106,8 +104,8 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 	/**
 	 * 迭代查找下一个与包围盒碰撞且未被过滤的方块，通过 mapper 转换为结果类型。
 	 * <p>
-	 * 过滤规则：跳过 skipTag 方块、非窒息方块（当开启过滤时）、无大型碰撞形状的方块
-	 * 以及非移动中的活塞方块。完整方块直接检查包围盒相交，非完整方块用 VoxelShape 做布尔与运算。
+	 * 过滤规则：跳过 skipTag 方块、非窒息方块（当开启过滤时）、无大型碰撞形状的方块 以及非移动中的活塞方块。完整方块直接检查包围盒相交，非完整方块用 VoxelShape
+	 * 做布尔与运算。
 	 *
 	 * @return mapper 映射后的结果，遍历完毕时返回 {@link #endOfData()}
 	 */
@@ -132,9 +130,8 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 				continue;
 			}
 
-			boolean suffocating =
-					!this.filterSuffocating || state.isSuffocating(
-							chunk, this.mutablePos);
+			boolean suffocating = !this.filterSuffocating || state.isSuffocating(chunk,
+					this.mutablePos);
 			if (!suffocating) {
 				continue;
 			}
@@ -143,18 +140,17 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 			if (!hasLargeShape) {
 				continue;
 			}
-			boolean isPiston =
-					type != Cursor3D.TYPE_EDGE || state.is(
-							Blocks.MOVING_PISTON);
+			boolean isPiston = type != Cursor3D.TYPE_EDGE || state.is(
+					Blocks.MOVING_PISTON);
 			if (!isPiston) {
 				continue;
 			}
 
-			VoxelShape shape = state.getCollisionShape(this.getter,
-					this.mutablePos, this.context);
+			VoxelShape shape = state.getCollisionShape(this.getter, this.mutablePos,
+					this.context);
 			if (shape == Shapes.block()) {
-				if (this.bounds.intersects(x, y, z, x + BLOCK_SIZE,
-						y + BLOCK_SIZE, z + BLOCK_SIZE)) {
+				if (this.bounds.intersects(x, y, z, x + BLOCK_SIZE, y + BLOCK_SIZE,
+						z + BLOCK_SIZE)) {
 					return this.mapper.apply(this.mutablePos,
 							shape.move(x, y, z));
 				}
@@ -162,8 +158,7 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 				VoxelShape moved = shape.move(x, y, z);
 				if (!moved.isEmpty() && Shapes.joinIsNotEmpty(moved,
 						this.boundsShape, BooleanOp.AND)) {
-					return this.mapper.apply(this.mutablePos,
-							moved);
+					return this.mapper.apply(this.mutablePos, moved);
 				}
 			}
 		}

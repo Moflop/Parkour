@@ -7,8 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * {@link ICameraAnimProxy} 的客户端实现。
  * <p>
- * 直接委托给 {@link CameraAnimationManager} 单例，在客户端执行真实的
- * 摄像机动画播放与停止逻辑。仅在物理客户端 {@code Dist.CLIENT} 端加载。
+ * 直接委托给 {@link CameraAnimationManager} 单例，在客户端执行真实的 摄像机动画播放与停止逻辑。仅在物理客户端 {@code Dist.CLIENT} 端加载。
  * </p>
  *
  * @author Mitok

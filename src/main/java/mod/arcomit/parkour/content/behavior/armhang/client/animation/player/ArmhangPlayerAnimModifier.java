@@ -35,15 +35,13 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 	}
 
 	/**
-	 * 在每一帧骨骼渲染开始前，一次性计算所有骨骼的插值偏移数据。
-	 * 若当前不在悬挂状态（armhangDir 为 null），帧数据置空，后续骨骼变换将被跳过。
+	 * 在每一帧骨骼渲染开始前，一次性计算所有骨骼的插值偏移数据。 若当前不在悬挂状态（armhangDir 为 null），帧数据置空，后续骨骼变换将被跳过。
 	 */
 	@Override
 	public void setupAnim(AnimationData state) {
 		super.setupAnim(state);
 
-		WallMovementData wallMovementData =
-				ParkourContext.get(this.player).wall();
+		WallMovementData wallMovementData = ParkourContext.get(this.player).wall();
 		Direction armhangDir = wallMovementData.getArmhang();
 
 		if (armhangDir != null) {
@@ -71,8 +69,7 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 	/**
 	 * 将预计算的帧数据叠加到指定骨骼的旋转变换上。
 	 * <p>
-	 * 当前影响头部（朝向）、身体（Y 旋转+弹跳）、左臂和右臂（摆动+下垂）。
-	 * 若帧数据为空（非悬挂状态），直接返回原始骨骼不做修改。
+	 * 当前影响头部（朝向）、身体（Y 旋转+弹跳）、左臂和右臂（摆动+下垂）。 若帧数据为空（非悬挂状态），直接返回原始骨骼不做修改。
 	 *
 	 * @param bone 要变换的骨骼，不可为 null
 	 * @return 叠加了悬挂动画偏移的骨骼，不可为 null

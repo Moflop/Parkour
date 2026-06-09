@@ -27,7 +27,7 @@ public class WallJumpEligibilityChecker {
 	/**
 	 * 检查玩家在当前状态下是否满足蹬墙跳的触发条件。
 	 *
-	 * @param player 待检查的玩家，不可为null
+	 * @param player       待检查的玩家，不可为null
 	 * @param currentState 玩家当前的行为状态，不可为null
 	 * @return true表示允许蹬墙跳，false表示当前不满足条件
 	 */

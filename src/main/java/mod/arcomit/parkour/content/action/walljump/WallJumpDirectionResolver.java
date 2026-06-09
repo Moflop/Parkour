@@ -24,8 +24,8 @@ public class WallJumpDirectionResolver {
 	/**
 	 * 根据当前行为状态解析弹跳基准墙面方向。
 	 *
-	 * @param player 执行蹬墙跳的玩家，不可为null
-	 * @param state 当前行为状态，不可为null
+	 * @param player  执行蹬墙跳的玩家，不可为null
+	 * @param state   当前行为状态，不可为null
 	 * @param context 跑酷上下文，不可为null
 	 * @return 弹跳应参照的墙面方向；无法判定时返回null（调用方应立即中止执行）
 	 */

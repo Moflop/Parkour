@@ -26,7 +26,7 @@ public class TimerHandler {
 		Player player = event.getEntity();
 		ParkourContext context = ParkourContext.get(player);
 		GroundMovementData groundMovementData = context.ground();
-		SwimData swimData = context.swim();
+		SwimMovementData swimData = context.swim();
 
 		// 滑铲冷却
 		int slideCooldown = groundMovementData.getSlideCooldown();

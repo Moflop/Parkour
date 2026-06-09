@@ -20,14 +20,12 @@ import java.util.List;
 /**
  * 手臂悬挂（头顶高度）碰撞传感器。
  * <p>
- * 在玩家身高高度（{@link Player#getBbHeight()}）沿指定水平方向生成两个 AABB 检测盒：
- * 一个<b>底部盒</b>（从身高高度向下延伸约 {@value ParkourConstants#ARMHANG_GRIP_HEIGHT_RATIO} 身高）用于确认下方有方块支撑，
- * 一个<b>顶部盒</b>（从身高高度向上延伸至头顶上方）用于确认上方通畅无方块阻挡。
- * 只有底部有碰撞且顶部无碰撞时，才判定为满足悬挂条件。
+ * 在玩家身高高度（{@link Player#getBbHeight()}）沿指定水平方向生成两个 AABB 检测盒： 一个<b>底部盒</b>（从身高高度向下延伸约
+ * {@value ParkourConstants#ARMHANG_GRIP_HEIGHT_RATIO} 身高）用于确认下方有方块支撑，
+ * 一个<b>顶部盒</b>（从身高高度向上延伸至头顶上方）用于确认上方通畅无方块阻挡。 只有底部有碰撞且顶部无碰撞时，才判定为满足悬挂条件。
  * </p>
  * <p>
- * 与 {@link ArmhangEyeSensor} 的区别：本传感器以<b>头顶高度</b>为基准检测，
- * 适用于判断玩家头顶上方的横梁是否可抓握。
+ * 与 {@link ArmhangEyeSensor} 的区别：本传感器以<b>头顶高度</b>为基准检测， 适用于判断玩家头顶上方的横梁是否可抓握。
  * </p>
  *
  * @author Mitok
@@ -131,9 +129,10 @@ public class ArmhangTopSensor {
 	}
 
 	/**
-	 * 基于玩家包围盒构造身高高度的两个碰撞检测盒（底部支撑+顶部通畅），
-	 * 并按方向偏移 {@value ParkourConstants#ARMHANG_SENSOR_CHECK_DISTANCE} 格后返回。
-	 * <p>底部盒从 baseHeight 向下延伸约 {@value ParkourConstants#ARMHANG_GRIP_HEIGHT_RATIO} 身高，顶部盒从 baseHeight 向上延伸至头顶上方。</p>
+	 * 基于玩家包围盒构造身高高度的两个碰撞检测盒（底部支撑+顶部通畅）， 并按方向偏移
+	 * {@value ParkourConstants#ARMHANG_SENSOR_CHECK_DISTANCE} 格后返回。
+	 * <p>底部盒从 baseHeight 向下延伸约 {@value ParkourConstants#ARMHANG_GRIP_HEIGHT_RATIO} 身高，顶部盒从
+	 * baseHeight 向上延伸至头顶上方。</p>
 	 *
 	 * @param player     目标玩家，不能为 null
 	 * @param direction  水平方向，不能为 null
@@ -154,8 +153,8 @@ public class ArmhangTopSensor {
 		double baseY = pos.y + baseHeight;
 
 		AABB bottomBox = new AABB(minX, baseY, minZ, maxX,
-				baseY - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO), maxZ).deflate(
-				ParkourConstants.AABB_DEFLATE_EPSILON);
+				baseY - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO),
+				maxZ).deflate(ParkourConstants.AABB_DEFLATE_EPSILON);
 
 		AABB topBox = new AABB(minX, baseY, minZ, maxX, baseY + topOffset, maxZ).deflate(
 				ParkourConstants.AABB_DEFLATE_EPSILON);

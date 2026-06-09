@@ -7,9 +7,8 @@ import net.minecraft.world.phys.Vec2;
 /**
  * {@link IInputProxy} 的服务端空操作实现。
  * <p>
- * 服务端不存在 {@code LocalPlayer#input} 对象，所有按键查询均返回
- * 安全的零值——这对状态机安全性无影响，因为服务端不应基于客户端输入
- * 做任何行为判断。返回 {@code false} 或 {@code 0} 等同于"无输入"。
+ * 服务端不存在 {@code LocalPlayer#input} 对象，所有按键查询均返回 安全的零值——这对状态机安全性无影响，因为服务端不应基于客户端输入 做任何行为判断。返回
+ * {@code false} 或 {@code 0} 等同于"无输入"。
  * </p>
  *
  * @author Mitok

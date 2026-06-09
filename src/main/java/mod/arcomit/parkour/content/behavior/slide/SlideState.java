@@ -4,10 +4,10 @@ import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.behavior.slide.client.ClientSlideLogic;
 import mod.arcomit.parkour.content.behavior.slide.client.ClientSlideSound;
-import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.content.context.GroundMovementData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
@@ -21,9 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * 滑铲状态 —— 玩家在地面向前滑行通过低矮空间，持续{@value #SLIDE_DURATION}刻。
  * <p>
- * 触发方式：向前或静止时按下滑铲键（且冷却计时器已归零）。
- * 会在随机0或1两种变体中选择一种播放对应动画。
- * 退出条件：玩家松开移动键（forward impulse为0）或超过最大持续时间。
+ * 触发方式：向前或静止时按下滑铲键（且冷却计时器已归零）。 会在随机0或1两种变体中选择一种播放对应动画。 退出条件：玩家松开移动键（forward impulse为0）或超过最大持续时间。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -51,15 +49,6 @@ public class SlideState extends AbstractParkourState {
 	}
 
 	/**
-	 * 进入滑铲时设置冷却计时器，防止连续触发。
-	 */
-	@Override
-	public void onEnter(Player player, ParkourContext context) {
-		super.onEnter(player, context);
-		SlideLogic.setCooldown(player, context);
-	}
-
-	/**
 	 * 客户端播放滑铲音效，本地玩家额外施加物理推进并同步位置到服务端。
 	 */
 	@Override
@@ -71,11 +60,20 @@ public class SlideState extends AbstractParkourState {
 	}
 
 	/**
+	 * 进入滑铲时设置冷却计时器，防止连续触发。
+	 */
+	@Override
+	public void onSimulationEnter(Player player, ParkourContext context) {
+		context.ground().setSlideCooldown(ParkourConfig.slideCooldown);
+	}
+
+	/**
 	 * 滑铲期间碰撞箱缩小为0.6x0.6，视点降至0.4格，模拟压低姿态。
 	 */
 	@Override
 	public EntityDimensions getCustomDimensions(Player player) {
-		return EntityDimensions.fixed(ParkourConstants.CROUCH_HITBOX_SIZE, ParkourConstants.CROUCH_HITBOX_SIZE)
+		return EntityDimensions.fixed(ParkourConstants.CROUCH_HITBOX_SIZE,
+						ParkourConstants.CROUCH_HITBOX_SIZE)
 				.withEyeHeight(ParkourConstants.CROUCH_EYE_HEIGHT);
 	}
 

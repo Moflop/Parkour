@@ -28,9 +28,9 @@ public class DataGenerationHandler {
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-		ParkourBlockTagsProvider
-				blockTags = new ParkourBlockTagsProvider(packOutput, lookupProvider,
-				ParkourMod.MODID, existingFileHelper);
+		ParkourBlockTagsProvider blockTags =
+				new ParkourBlockTagsProvider(packOutput, lookupProvider,
+						ParkourMod.MODID, existingFileHelper);
 		dataGenerator.addProvider(event.includeServer(), blockTags);
 	}
 }

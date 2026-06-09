@@ -19,8 +19,7 @@ public class WallSlideAnimMath {
 	 * 逐帧计算滑墙动画的所有骨骼数据。
 	 *
 	 * <p>头部独立跟随鼠标视角旋转；手臂根据玩家与墙面的相对角度计算两种姿态：
-	 * 面朝墙时做出双手扶墙动作（手臂上举、侧倾），背对墙时做出自然下垂姿态，
-	 * 两姿态通过 {@code backWeight} 平滑过渡；身体 Y 轴正弦起伏模拟下落微动。
+	 * 面朝墙时做出双手扶墙动作（手臂上举、侧倾），背对墙时做出自然下垂姿态， 两姿态通过 {@code backWeight} 平滑过渡；身体 Y 轴正弦起伏模拟下落微动。
 	 *
 	 * @param player      目标玩家，不能为 null
 	 * @param state       动画状态机，提供背对权重等数据，不能为 null
@@ -77,8 +76,10 @@ public class WallSlideAnimMath {
 
 		// --- 姿态 2: 背对墙 ---
 		float BACK_PITCH = 0.5f, BACK_YAW = 0.3f, BACK_ROLL = 0.2f;
-		float backRightArmRotX = BACK_PITCH, backRightArmRotY = BACK_YAW, backRightArmRotZ = BACK_ROLL;
-		float backLeftArmRotX = BACK_PITCH, backLeftArmRotY = -BACK_YAW, backLeftArmRotZ = -BACK_ROLL;
+		float backRightArmRotX = BACK_PITCH, backRightArmRotY = BACK_YAW, backRightArmRotZ =
+				BACK_ROLL;
+		float backLeftArmRotX = BACK_PITCH, backLeftArmRotY = -BACK_YAW, backLeftArmRotZ =
+				-BACK_ROLL;
 
 		// --- 丝滑应用插值保存到 FrameData ---
 		data.rightArmRotX = Mth.lerp(backWeight, frontRightArmRotX, backRightArmRotX);

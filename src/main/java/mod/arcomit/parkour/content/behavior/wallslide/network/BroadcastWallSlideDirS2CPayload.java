@@ -25,31 +25,30 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * @since 2026-06-08
  */
 public record BroadcastWallSlideDirS2CPayload(int entityId, Direction direction)
-        implements CustomPacketPayload {
-    public static final Type<BroadcastWallSlideDirS2CPayload> TYPE =
-            new Type<>(ParkourMod.prefix("broadcast_wall_slide_dir_s2c"));
+		implements CustomPacketPayload {
+	public static final Type<BroadcastWallSlideDirS2CPayload> TYPE =
+			new Type<>(ParkourMod.prefix("broadcast_wall_slide_dir_s2c"));
 
-    public static final StreamCodec<FriendlyByteBuf, BroadcastWallSlideDirS2CPayload>
-            STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT,
-            BroadcastWallSlideDirS2CPayload::entityId, Direction.STREAM_CODEC,
-            BroadcastWallSlideDirS2CPayload::direction,
-            BroadcastWallSlideDirS2CPayload::new);
+	public static final StreamCodec<FriendlyByteBuf, BroadcastWallSlideDirS2CPayload>
+			STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT,
+			BroadcastWallSlideDirS2CPayload::entityId, Direction.STREAM_CODEC,
+			BroadcastWallSlideDirS2CPayload::direction,
+			BroadcastWallSlideDirS2CPayload::new);
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 
-    /**
-     * 客户端侧数据包处理器。
-     */
-    public static class Client {
-        /**
-         * 在主线程将接收到的滑墙方向写入对应 RemotePlayer 的墙体数据中，
-         * 使第三方玩家能看到正确的滑墙动画朝向。
-         */
-        public static void handle(BroadcastWallSlideDirS2CPayload packet,
-                IPayloadContext context) {
+	/**
+	 * 客户端侧数据包处理器。
+	 */
+	public static class Client {
+		/**
+		 * 在主线程将接收到的滑墙方向写入对应 RemotePlayer 的墙体数据中， 使第三方玩家能看到正确的滑墙动画朝向。
+		 */
+		public static void handle(BroadcastWallSlideDirS2CPayload packet,
+				IPayloadContext context) {
 			context.enqueueWork(() -> {
 				ClientLevel level = Minecraft.getInstance().level;
 				if (level != null) {
@@ -57,8 +56,7 @@ public record BroadcastWallSlideDirS2CPayload(int entityId, Direction direction)
 					// 只需给其他人(RemotePlayer)更新方向。LocalPlayer 自己在本地早就更新了。
 					if (entity instanceof Player player && !player.isLocalPlayer()) {
 						ParkourContext.get(player).wall()
-								.setSlide(
-										packet.direction());
+								.setSlide(packet.direction());
 					}
 				}
 			});

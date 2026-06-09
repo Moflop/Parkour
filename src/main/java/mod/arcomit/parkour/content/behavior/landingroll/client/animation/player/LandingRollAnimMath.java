@@ -6,8 +6,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 落地翻滚动画的骨骼数学计算层，每帧调用一次生成所有骨骼的偏移数据。
  * <p>
- * 核心逻辑：在动画退出过渡期（fadeOut）内，计算原版骨骼旋转目标（头部朝向、
- * 四肢步态摆动），再由外部修改器按权重线性插值到这些目标，实现翻滚结束时的平滑过渡。
+ * 核心逻辑：在动画退出过渡期（fadeOut）内，计算原版骨骼旋转目标（头部朝向、 四肢步态摆动），再由外部修改器按权重线性插值到这些目标，实现翻滚结束时的平滑过渡。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -17,10 +16,10 @@ public class LandingRollAnimMath {
 	/**
 	 * 计算当前帧的骨骼数据。
 	 *
-	 * @param player         目标玩家
-	 * @param state          动画状态，记录已播放的tick数
-	 * @param partialTick    部分tick值，用于平滑插值（范围 [0, 1)）
-	 * @param totalDuration  翻滚动画总时长（刻）
+	 * @param player          目标玩家
+	 * @param state           动画状态，记录已播放的tick数
+	 * @param partialTick     部分tick值，用于平滑插值（范围 [0, 1)）
+	 * @param totalDuration   翻滚动画总时长（刻）
 	 * @param fadeOutDuration 过渡消退时长（刻）
 	 * @return 帧数据，若当前时间尚未进入消退阶段则{@link FrameData#shouldApplyVanilla}为false
 	 */

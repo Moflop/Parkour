@@ -43,8 +43,7 @@ public interface IParkourState {
 	 * 进入状态时触发，自动判断当前逻辑端并分发到 Simulation/Server/Client 三层。
 	 *
 	 * <p>服务端：执行 Simulation + Server 层<br>
-	 * 客户端本地玩家：执行 Simulation + Client 层<br>
-	 * 客户端其他玩家：仅执行 Client 层
+	 * 客户端本地玩家：执行 Simulation + Client 层<br> 客户端其他玩家：仅执行 Client 层
 	 *
 	 * @param player  状态所属的玩家，不为 null
 	 * @param context 跑酷上下文，承载当前状态数据，不为 null
@@ -94,7 +93,8 @@ public interface IParkourState {
 	/**
 	 * 退出状态时触发，自动判断当前逻辑端并分发到对应的三层回调。
 	 *
-	 * <p>分发规则与 {@link #onEnter} 一致：服务端走 Simulation+Server，客户端本地玩家走 Simulation+Client，远程玩家仅走 Client。
+	 * <p>分发规则与 {@link #onEnter} 一致：服务端走 Simulation+Server，客户端本地玩家走 Simulation+Client，远程玩家仅走
+	 * Client。
 	 *
 	 * @param player  状态所属的玩家，不为 null
 	 * @param context 跑酷上下文，不为 null
@@ -234,8 +234,7 @@ public interface IParkourState {
 	 * 当状态机决定进入此状态时调用，用于生成并分配一个变体 ID。
 	 *
 	 * <p>默认返回 {@link #DEFAULT_ANIM_VARIANT}（0，代表无变体或默认动画）。
-	 * 如需随机变体，应使用双端一致的随机数生成方式，确保服务器和客户端生成的变体 ID 一致，
-	 * 以避免动画不同步。
+	 * 如需随机变体，应使用双端一致的随机数生成方式，确保服务器和客户端生成的变体 ID 一致， 以避免动画不同步。
 	 *
 	 * @param player 状态所属的玩家，不为 null
 	 * @return 动画变体 ID，取值范围取决于具体状态实现

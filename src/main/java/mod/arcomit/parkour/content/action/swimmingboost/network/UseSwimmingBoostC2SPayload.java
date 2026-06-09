@@ -5,15 +5,14 @@ import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.swimmingboost.SwimmingBoostAction;
 import mod.arcomit.parkour.content.action.swimmingboost.SwimmingBoostSound;
 import mod.arcomit.parkour.content.context.ParkourContext;
-import mod.arcomit.parkour.content.context.SwimData;
+import mod.arcomit.parkour.content.context.SwimMovementData;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * 游泳加速客户端->服务端网络包——客户端执行加速后通知服务端同步执行，
- * 并在服务端播放音效。
+ * 游泳加速客户端->服务端网络包——客户端执行加速后通知服务端同步执行， 并在服务端播放音效。
  *
  * <p>无载荷事件信号包，使用 {@code StreamCodec.unit} 编码。</p>
  *
@@ -33,15 +32,14 @@ public record UseSwimmingBoostC2SPayload() implements CustomPacketPayload {
 
 
 	/**
-	 * 服务端包处理器——在服务端线程重放游泳加速逻辑并播放音效，
-	 * 最后重置连接位置以避免反作弊回拉。
+	 * 服务端包处理器——在服务端线程重放游泳加速逻辑并播放音效， 最后重置连接位置以避免反作弊回拉。
 	 */
 	public static class Server {
 
 		/**
 		 * 在服务端主线程上排队执行游泳加速。
 		 *
-		 * @param packet 收到的客户端包
+		 * @param packet  收到的客户端包
 		 * @param context 网络上下文，用于获取玩家
 		 * @sideeffect 执行游泳加速（服务端）
 		 * @sideeffect 成功时在服务端播放音效
@@ -51,7 +49,8 @@ public record UseSwimmingBoostC2SPayload() implements CustomPacketPayload {
 				IPayloadContext context) {
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
-					SwimData swimData = ParkourContext.get(player).swim();
+					SwimMovementData swimData =
+							ParkourContext.get(player).swim();
 					if (SwimmingBoostAction.execute(player, swimData)) {
 						SwimmingBoostSound.play(player);
 					}

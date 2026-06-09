@@ -1,9 +1,9 @@
 package mod.arcomit.parkour.core.statemachine.network;
 
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.init.ParkourRegistries;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.init.ParkourRegistries;
 import mod.arcomit.parkour.core.statemachine.ParkourStateMachine;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,10 +49,9 @@ public record RequestStateTransitionC2SPayload(ResourceLocation targetStateId, i
 		 * 服务端收到客户端的状态转换请求后进行权威校验。
 		 *
 		 * <p>通过 {@link IParkourState#canEnter} 二次确认玩家是否满足进入目标状态的条件。
-		 * 合法则执行转换；不合法则通过 {@link ForceLocalPlayerStateS2CPayload}
-		 * 将客户端回滚到当前服务端认定的合法状态。
+		 * 合法则执行转换；不合法则通过 {@link ForceLocalPlayerStateS2CPayload} 将客户端回滚到当前服务端认定的合法状态。
 		 *
-		 * @param packet 包含客户端请求的目标状态ID和动画变体，不为 null
+		 * @param packet  包含客户端请求的目标状态ID和动画变体，不为 null
 		 * @param context 网络上下文，从中提取发包的 ServerPlayer
 		 */
 		public static void handle(RequestStateTransitionC2SPayload packet,
@@ -71,8 +70,8 @@ public record RequestStateTransitionC2SPayload(ResourceLocation targetStateId, i
 						ParkourStateMachine.transitionTo(player, pkContext,
 								targetState, animVariant);
 					} else {
-						StateData stateData = ParkourContext.get(player)
-								.state();
+						StateData stateData =
+								ParkourContext.get(player).state();
 						IParkourState currentState = stateData.getState();
 						ResourceLocation currentStateId =
 								ParkourRegistries.PARKOUR_STATE_REGISTRY.getKey(

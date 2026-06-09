@@ -7,8 +7,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 /**
  * 玩家动画的轻量级句柄，仅保存动画资源标识符。
  * <p>
- * 实际动画数据由 PAL ({@code Player Animation Library}) 管理，
- * 本类作为跑酷模组与 PAL 之间的桥梁——通过 id 在 PAL 的动画存储中定位具体的骨骼动画资源。
+ * 实际动画数据由 PAL ({@code Player Animation Library}) 管理， 本类作为跑酷模组与 PAL 之间的桥梁——通过 id 在 PAL
+ * 的动画存储中定位具体的骨骼动画资源。
  *
  * @author Mitok
  * @since 2026-06-08

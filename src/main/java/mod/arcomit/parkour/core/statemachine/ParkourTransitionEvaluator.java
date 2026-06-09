@@ -1,7 +1,7 @@
 package mod.arcomit.parkour.core.statemachine;
 
-import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
@@ -80,8 +80,7 @@ public class ParkourTransitionEvaluator {
 	 * 评估当前状态中基于 Tick 的转换规则，匹配即执行权威切换。
 	 *
 	 * <p>在服务端和客户端本地玩家上调用。遍历当前状态的转换规则列表，
-	 * 逐个检查 {@link IParkourStateTransition#shouldTransitionOnTick}，
-	 * 首次匹配即切换并返回（短路评估）。
+	 * 逐个检查 {@link IParkourStateTransition#shouldTransitionOnTick}， 首次匹配即切换并返回（短路评估）。
 	 *
 	 * @param player  当前玩家，不为 null
 	 * @param context 跑酷上下文，不为 null

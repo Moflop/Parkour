@@ -6,8 +6,7 @@ import net.minecraft.client.Minecraft;
 /**
  * {@link IMinecraftProxy} 的客户端实现。
  * <p>
- * 通过 {@code Minecraft.getInstance()} 获取当前客户端实例，
- * 查询视角类型等全局设置。仅在客户端环境下有效。
+ * 通过 {@code Minecraft.getInstance()} 获取当前客户端实例， 查询视角类型等全局设置。仅在客户端环境下有效。
  * </p>
  *
  * @author Mitok

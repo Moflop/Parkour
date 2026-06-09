@@ -76,8 +76,7 @@ public class ClientAnimationRegistry {
 	/**
 	 * 注册动作动画的 Modifier 构造工厂。
 	 * <p>
-	 * 区别于状态动画：动作 Modifier 按玩家实例生成，
-	 * 因为动作可能需要根据玩家当前姿态动态调整关节约束。
+	 * 区别于状态动画：动作 Modifier 按玩家实例生成， 因为动作可能需要根据玩家当前姿态动态调整关节约束。
 	 *
 	 * @param actionId 动作标识符，与动画文件名对应
 	 * @param factory  接受玩家实例并返回对应的 Modifier，不可为 null

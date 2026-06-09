@@ -5,8 +5,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 网络连接状态代理接口。
  * <p>
- * 查询玩家当前的连接是否有效。客户端直接访问
- * {@code Connection} 对象，而服务端不存在连接对象，通过此接口隔离差异。
+ * 查询玩家当前的连接是否有效。客户端直接访问 {@code Connection} 对象，而服务端不存在连接对象，通过此接口隔离差异。
  * </p>
  *
  * @author Mitok

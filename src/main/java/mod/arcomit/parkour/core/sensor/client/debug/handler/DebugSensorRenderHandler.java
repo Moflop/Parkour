@@ -51,8 +51,7 @@ public class DebugSensorRenderHandler {
 			List.of(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
 	/**
-	 * 当前调试渲染类型，由{@code /parkour debug} 指令动态切换。
-	 * 设为{@link SensorDebugType#NONE} 时不渲染任何碰撞盒。
+	 * 当前调试渲染类型，由{@code /parkour debug} 指令动态切换。 设为{@link SensorDebugType#NONE} 时不渲染任何碰撞盒。
 	 */
 	public static SensorDebugType DEBUG_TYPE = SensorDebugType.NONE;
 
@@ -147,15 +146,15 @@ public class DebugSensorRenderHandler {
 	/**
 	 * 对单个方向进行碰撞检测并渲染所有相关 AABB 线框。
 	 *
-	 * @param player       目标玩家，不能为 null
-	 * @param direction    要检测的方向，不能为 null
-	 * @param checker      碰撞检测方法引用
-	 * @param provider     碰撞盒获取方法引用
-	 * @param poseStack    渲染姿态栈
+	 * @param player         目标玩家，不能为 null
+	 * @param direction      要检测的方向，不能为 null
+	 * @param checker        碰撞检测方法引用
+	 * @param provider       碰撞盒获取方法引用
+	 * @param poseStack      渲染姿态栈
 	 * @param vertexConsumer 线条顶点消费者
-	 * @param offsetX      平滑渲染 X 偏移量
-	 * @param offsetY      平滑渲染 Y 偏移量
-	 * @param offsetZ      平滑渲染 Z 偏移量
+	 * @param offsetX        平滑渲染 X 偏移量
+	 * @param offsetY        平滑渲染 Y 偏移量
+	 * @param offsetZ        平滑渲染 Z 偏移量
 	 */
 	private static void renderDirectionBoxes(Player player, Direction direction,
 			CollisionChecker checker, BoxProvider provider, PoseStack poseStack,

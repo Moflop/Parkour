@@ -16,8 +16,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * 数据生成阶段自动收集可攀爬方块，生成方块标签JSON。
  * <p>
- * 将栅栏门、锁链、末地烛及所有原版栅栏归入自定义的{@code CLIMBABLE}标签，
- * 供游戏内攀爬逻辑查询。同时生成脚手架方块标签和通用忽略方块标签。
+ * 将栅栏门、锁链、末地烛及所有原版栅栏归入自定义的{@code CLIMBABLE}标签， 供游戏内攀爬逻辑查询。同时生成脚手架方块标签和通用忽略方块标签。
  *
  * @author Mitok
  * @since 2026-06-08

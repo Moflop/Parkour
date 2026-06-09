@@ -13,8 +13,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
  * 跑酷自定义注册表容器。
  *
  * <p>通过 {@link net.neoforged.neoforge.registries.NewRegistryEvent} 创建自定义注册表。
- * 当前包含一个同步型跑酷状态注册表，客户端和服务端均可通过该注册表查找状态实例。
- * 注册表默认键指向 {@link ParkourStates#DEFAULT}，用于在查找失败时回退。
+ * 当前包含一个同步型跑酷状态注册表，客户端和服务端均可通过该注册表查找状态实例。 注册表默认键指向 {@link ParkourStates#DEFAULT}，用于在查找失败时回退。
  *
  * @author Mitok
  * @since 2026-06-08

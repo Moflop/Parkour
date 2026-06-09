@@ -9,6 +9,7 @@ import lombok.Setter;
 import net.minecraft.core.Direction;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 墙体移动数据上下文，追踪玩家与墙面的碰撞关系。
@@ -38,7 +39,8 @@ public class WallMovementData {
 									.forGetter(WallMovementData::getClimbRaw),
 							Codec.INT.optionalFieldOf("wallSlideCollisionDir3DData", -1)
 									.forGetter(WallMovementData::getSlideRaw),
-							Codec.INT.optionalFieldOf("lastWallMovementCollisionDir3DData", -1)
+							Codec.INT.optionalFieldOf(
+											"lastWallMovementCollisionDir3DData", -1)
 									.forGetter(WallMovementData::getLastCollisionRaw),
 							Codec.INT.optionalFieldOf("armhangDir3DData", -1)
 									.forGetter(WallMovementData::getArmhangRaw),
@@ -57,8 +59,7 @@ public class WallMovementData {
 				ByteBufCodecs.VAR_INT.encode(buf, data.getArmhangRaw());
 				ByteBufCodecs.VAR_INT.encode(buf, data.getArmhangCooldown());
 				ByteBufCodecs.DOUBLE.encode(buf, data.getObstaclesHeight());
-			}, buf -> new WallMovementData(
-					ByteBufCodecs.VAR_INT.decode(buf),
+			}, buf -> new WallMovementData(ByteBufCodecs.VAR_INT.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
 					ByteBufCodecs.VAR_INT.decode(buf),
@@ -77,6 +78,10 @@ public class WallMovementData {
 	@Setter
 	private int armhangCooldown = 0;
 	@Setter
+	private Vec3 armhangLastPos = null;
+	@Setter
+	private float armhangMoveDist = 0f;
+	@Setter
 	private double obstaclesHeight = 0.0;
 
 	// ---- Direction 缓存字段（惰性加载，不参与序列化） ----
@@ -86,10 +91,9 @@ public class WallMovementData {
 	private Direction slide;
 	private Direction armhang;
 
-	public WallMovementData(int runCollisionRaw, int runMoveRaw,
-			int climbRaw, int slideRaw,
-			int lastCollisionRaw, int armhangRaw,
-			int armhangCooldown, double obstaclesHeight) {
+	public WallMovementData(int runCollisionRaw, int runMoveRaw, int climbRaw, int slideRaw,
+			int lastCollisionRaw, int armhangRaw, int armhangCooldown,
+			double obstaclesHeight) {
 		this.runCollisionRaw = runCollisionRaw;
 		this.runMoveRaw = runMoveRaw;
 		this.climbRaw = climbRaw;
@@ -107,13 +111,16 @@ public class WallMovementData {
 	}
 
 	private static Direction resolve(int raw, Direction cache) {
-		if (cache != null) return cache;
+		if (cache != null)
+			return cache;
 		return raw == -1 ? null : Direction.from3DDataValue(raw);
 	}
 
 	// ==================== WallRun Collision ====================
 
-	public int getRunCollisionRaw() { return runCollisionRaw; }
+	public int getRunCollisionRaw() {
+		return runCollisionRaw;
+	}
 
 	public void setRunCollisionRaw(int raw) {
 		runCollisionRaw = raw;
@@ -138,7 +145,9 @@ public class WallMovementData {
 
 	// ==================== WallRun Move ====================
 
-	public int getRunMoveRaw() { return runMoveRaw; }
+	public int getRunMoveRaw() {
+		return runMoveRaw;
+	}
 
 	public void setRunMoveRaw(int raw) {
 		runMoveRaw = raw;
@@ -161,7 +170,9 @@ public class WallMovementData {
 
 	// ==================== WallClimb Collision ====================
 
-	public int getClimbRaw() { return climbRaw; }
+	public int getClimbRaw() {
+		return climbRaw;
+	}
 
 	public void setClimbRaw(int raw) {
 		climbRaw = raw;
@@ -186,7 +197,9 @@ public class WallMovementData {
 
 	// ==================== WallSlide Collision ====================
 
-	public int getSlideRaw() { return slideRaw; }
+	public int getSlideRaw() {
+		return slideRaw;
+	}
 
 	public void setSlideRaw(int raw) {
 		slideRaw = raw;
@@ -217,7 +230,9 @@ public class WallMovementData {
 
 	// ==================== Armhang ====================
 
-	public int getArmhangRaw() { return armhangRaw; }
+	public int getArmhangRaw() {
+		return armhangRaw;
+	}
 
 	public void setArmhangRaw(int raw) {
 		armhangRaw = raw;
@@ -240,7 +255,9 @@ public class WallMovementData {
 
 	// ==================== LastWallMovement Collision（纯内部追踪，无Direction API） ====================
 
-	public int getLastCollisionRaw() { return lastCollisionRaw; }
+	public int getLastCollisionRaw() {
+		return lastCollisionRaw;
+	}
 
 	public void setLastCollisionRaw(int raw) {
 		lastCollisionRaw = raw;

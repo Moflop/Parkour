@@ -21,8 +21,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class BackstepInvincibleHandler {
 
 	/**
-	 * 当玩家处于后撤步状态时，拦截所有伤害。
-	 * 副作用：直接将事件的canceled置为true，伤害事件完全中止。
+	 * 当玩家处于后撤步状态时，拦截所有伤害。 副作用：直接将事件的canceled置为true，伤害事件完全中止。
 	 */
 	@SubscribeEvent
 	public static void onPlayerIncomingDamage(LivingIncomingDamageEvent event) {

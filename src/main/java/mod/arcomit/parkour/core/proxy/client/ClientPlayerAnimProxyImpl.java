@@ -11,10 +11,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 /**
  * {@link IPlayerAnimProxy} 的客户端实现。
  * <p>
- * 将 {@code Player} 向下转型为 {@code AbstractClientPlayer}，
- * 然后委托给 {@link PlayerAnimationManager} 单例执行实际的动画播放。
- * 若传入的不是客户端玩家实例则所有方法静默跳过。
- * 标记为 {@link OnlyIn#CLIENT}，仅客户端类加载器访问。
+ * 将 {@code Player} 向下转型为 {@code AbstractClientPlayer}， 然后委托给 {@link PlayerAnimationManager}
+ * 单例执行实际的动画播放。 若传入的不是客户端玩家实例则所有方法静默跳过。 标记为 {@link OnlyIn#CLIENT}，仅客户端类加载器访问。
  * </p>
  *
  * @author Mitok

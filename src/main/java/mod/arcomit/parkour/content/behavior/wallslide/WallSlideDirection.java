@@ -20,7 +20,7 @@ public class WallSlideDirection {
 	 *
 	 * <p>客户端自身也会执行此逻辑，因此 S2C 包只更新非本地玩家（RemotePlayer）的滑墙方向。
 	 *
-	 * @param player            目标玩家，不能为 null
+	 * @param player           目标玩家，不能为 null
 	 * @param wallMovementData 墙体数据，方向变化时会被覆写，不能为 null
 	 */
 	public static void trySwitchCollisionDirection(Player player,

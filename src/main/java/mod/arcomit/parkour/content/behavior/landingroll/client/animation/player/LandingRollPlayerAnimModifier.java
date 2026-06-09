@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * 落地翻滚动画修改器 —— 协调{@link LandingRollAnimState}的tick推进和
  * {@link LandingRollAnimMath}的帧计算，将计算结果按骨骼名称分发到对应关节。
  * <p>
- * 只作用于消退过渡阶段（fadeOut），在此阶段之前自定义动画完全主导骨骼。
- * 消退期内按权重将头部和四肢逐步过渡回原版行走/旋转姿态，实现翻滚结束时的自然衔接。
+ * 只作用于消退过渡阶段（fadeOut），在此阶段之前自定义动画完全主导骨骼。 消退期内按权重将头部和四肢逐步过渡回原版行走/旋转姿态，实现翻滚结束时的自然衔接。
  *
  * @author Mitok
  * @since 2026-06-08

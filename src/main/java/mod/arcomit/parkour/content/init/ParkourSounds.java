@@ -12,8 +12,7 @@ import java.util.function.Supplier;
  * 跑酷音效注册表。
  *
  * <p>通过 {@link DeferredRegister} 注册所有跑酷动作对应的 {@link SoundEvent}：
- * 滑铲、落地翻滚、蹬墙跳、垂挂、撑墙跳、速过。音效文件位于
- * {@code assets/parkour/sounds/} 下。
+ * 滑铲、落地翻滚、蹬墙跳、垂挂、撑墙跳、速过。音效文件位于 {@code assets/parkour/sounds/} 下。
  *
  * @author Mitok
  * @since 2026-06-08

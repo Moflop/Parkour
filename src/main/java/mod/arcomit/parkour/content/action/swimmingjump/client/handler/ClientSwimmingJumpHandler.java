@@ -14,8 +14,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * 游泳跳跃客户端输入处理器——每Tick检查并触发游泳跳跃，
- * 将位置和事件同步到服务端。
+ * 游泳跳跃客户端输入处理器——每Tick检查并触发游泳跳跃， 将位置和事件同步到服务端。
  *
  * <p>仅对本地玩家生效，以LOWEST优先级处理。准入条件不满足时
  * {@link SwimmingJumpAction#execute} 会静默返回。</p>

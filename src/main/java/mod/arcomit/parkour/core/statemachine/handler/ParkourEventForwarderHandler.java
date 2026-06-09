@@ -1,8 +1,8 @@
 package mod.arcomit.parkour.core.statemachine.handler;
 
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.core.statemachine.ParkourStateMachine;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
@@ -14,8 +14,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /**
  * 跑酷状态机的事件转发器，监听 NeoForge 总线的物理事件并桥接到状态机。
  *
- * <p>职责：将原版 Tick、摔落、跳跃事件转换为状态机的 {@code tryFallTransition} / {@code tryJumpTransition} / {@code tick} 调用。
- * 自身不含任何业务逻辑，仅做类型检查和事件转发。
+ * <p>职责：将原版 Tick、摔落、跳跃事件转换为状态机的 {@code tryFallTransition} / {@code tryJumpTransition} /
+ * {@code tick} 调用。 自身不含任何业务逻辑，仅做类型检查和事件转发。
  *
  * <p>双端均注册，但摔落事件在客户端会通过 {@code ParkourChecks.isFallUnsafe} 做额外的安全性过滤。
  *

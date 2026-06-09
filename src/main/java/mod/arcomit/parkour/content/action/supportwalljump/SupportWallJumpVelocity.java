@@ -27,7 +27,7 @@ public class SupportWallJumpVelocity {
 	 * 根据跳跃类型和玩家朝向计算弹跳速度向量。
 	 *
 	 * @param player 执行跳跃的玩家，不可为null
-	 * @param type 支撑蹬墙跳类型，不能为NONE（应在上层过滤）
+	 * @param type   支撑蹬墙跳类型，不能为NONE（应在上层过滤）
 	 * @return 速度向量，NONE类型返回零向量
 	 */
 	static Vec3 computeJumpVelocity(Player player, SupportWallJumpType type) {

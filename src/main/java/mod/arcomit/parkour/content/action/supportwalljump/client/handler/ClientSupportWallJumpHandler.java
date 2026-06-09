@@ -15,8 +15,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * 支撑蹬墙跳客户端输入处理器——每Tick检查跳跃键状态，
- * 若玩家按住跳跃键则触发支撑蹬墙跳。
+ * 支撑蹬墙跳客户端输入处理器——每Tick检查跳跃键状态， 若玩家按住跳跃键则触发支撑蹬墙跳。
  *
  * <p>仅在客户端注册，以LOWEST优先级处理，确保其他Tick逻辑先执行。</p>
  *

@@ -28,8 +28,7 @@ import net.minecraft.network.codec.StreamCodec;
 @AllArgsConstructor
 public class GroundMovementData {
 	public static final Codec<GroundMovementData> CODEC = RecordCodecBuilder.create(
-			instance -> instance.group(
-							Codec.INT.optionalFieldOf("slideCooldown", 0)
+			instance -> instance.group(Codec.INT.optionalFieldOf("slideCooldown", 0)
 									.forGetter(GroundMovementData::getSlideCooldown),
 							Codec.INT.optionalFieldOf("landingRollWindow", 0)
 									.forGetter(GroundMovementData::getLandingRollWindow))

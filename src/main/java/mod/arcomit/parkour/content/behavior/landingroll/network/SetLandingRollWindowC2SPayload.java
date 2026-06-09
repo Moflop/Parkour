@@ -13,8 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 客户端到服务端网络包：通知服务端设置落地翻滚窗口计时。
  * <p>
- * 由于是单向通知（无参数），使用{@code StreamCodec.unit}实现空载荷编解码。
- * 服务端接收到后立即设置相同的窗口值，确保双方状态一致。
+ * 由于是单向通知（无参数），使用{@code StreamCodec.unit}实现空载荷编解码。 服务端接收到后立即设置相同的窗口值，确保双方状态一致。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -44,8 +43,7 @@ public record SetLandingRollWindowC2SPayload() implements CustomPacketPayload {
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
 					GroundMovementData groundMovementData =
-							ParkourContext.get(player)
-									.ground();
+							ParkourContext.get(player).ground();
 					groundMovementData.setLandingRollWindow(
 							ParkourConfig.landingRollWindow);
 				}

@@ -12,8 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 /**
  * 客户端滑铲物理计算与位置同步 —— 仅对本地玩家生效。
  * <p>
- * 根据玩家输入冲量方向计算推进速度，并叠加到当前deltaMovement上。
- * 空中启用Tap-Strafing时，还会将玩家朝向转向其实际移动方向。
+ * 根据玩家输入冲量方向计算推进速度，并叠加到当前deltaMovement上。 空中启用Tap-Strafing时，还会将玩家朝向转向其实际移动方向。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -24,8 +23,7 @@ public class ClientSlideLogic {
 	/**
 	 * 计算滑铲推进速度并同步位置到服务端。
 	 * <p>
-	 * 副作用：修改玩家的setDeltaMovement；若在空中且启用Tap-Strafing则修改玩家Yaw朝向；
-	 * 调用sendPosition向服务端同步坐标。
+	 * 副作用：修改玩家的setDeltaMovement；若在空中且启用Tap-Strafing则修改玩家Yaw朝向； 调用sendPosition向服务端同步坐标。
 	 *
 	 * @param player 目标玩家（仅本地玩家时生效）
 	 */

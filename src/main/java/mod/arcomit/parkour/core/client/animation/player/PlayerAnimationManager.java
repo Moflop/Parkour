@@ -8,10 +8,10 @@ import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifie
 import com.zigythebird.playeranimcore.easing.EasingType;
 import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.init.ParkourRegistries;
-import mod.arcomit.parkour.core.client.animation.player.network.RequestPlayOneOffAnimC2SPayload;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.init.ParkourRegistries;
+import mod.arcomit.parkour.core.client.animation.player.network.RequestPlayOneOffAnimC2SPayload;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -121,12 +121,12 @@ public class PlayerAnimationManager {
 	/**
 	 * 播放一次性动作动画，支持淡入过渡。
 	 * <p>
-	 * 若该玩家已有正在播放的动作，会先停止旧动作并移除旧层。
-	 * 动画通过 {@link ClientAnimationRegistry} 查找对应的 Modifier 工厂动态构造姿态约束。
-	 * 对于本地玩家，同时向服务端发送 {@link RequestPlayOneOffAnimC2SPayload} 以广播给其他客户端。
+	 * 若该玩家已有正在播放的动作，会先停止旧动作并移除旧层。 动画通过 {@link ClientAnimationRegistry} 查找对应的 Modifier
+	 * 工厂动态构造姿态约束。 对于本地玩家，同时向服务端发送 {@link RequestPlayOneOffAnimC2SPayload} 以广播给其他客户端。
 	 *
 	 * @param player        目标玩家，不可为 null
-	 * @param animationId   动作动画标识符，需已通过 {@link ClientAnimationRegistry#registerActionModifier} 注册
+	 * @param animationId   动作动画标识符，需已通过 {@link ClientAnimationRegistry#registerActionModifier}
+	 *                      注册
 	 * @param interruptible 是否可被状态动画打断
 	 * @param fadeTicks     淡入过渡时长，单位 tick（20 tick = 1 秒），0 表示无过渡直接触发
 	 */
@@ -237,8 +237,7 @@ public class PlayerAnimationManager {
 	}
 
 	/**
-	 * 停止并移除所有玩家（包括本地和远程）的动画控制器。
-	 * 通常在客户端登出或资源重载时调用。
+	 * 停止并移除所有玩家（包括本地和远程）的动画控制器。 通常在客户端登出或资源重载时调用。
 	 */
 	public void clearAll() {
 		stateControllers.values().forEach(PlayerAnimationController::stop);
@@ -249,8 +248,7 @@ public class PlayerAnimationManager {
 	}
 
 	/**
-	 * 移除指定玩家的所有动画控制器。
-	 * 在该玩家实体离开客户端视野时调用。
+	 * 移除指定玩家的所有动画控制器。 在该玩家实体离开客户端视野时调用。
 	 *
 	 * @param uuid 要移除的玩家 UUID
 	 */

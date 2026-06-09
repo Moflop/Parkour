@@ -21,9 +21,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * 跑酷状态注册集。
  *
  * <p>将所有跑酷动作状态（滑铲、墙跑、蹬墙跳等）注册到{@link ParkourRegistries#PARKOUR_STATE_REGISTRY}中。
- * 每个状态对应一种跑酷动作，包含进入条件、Tick行为、退出逻辑和客户端动画配置。
- * 状态实例通过 {@link net.neoforged.neoforge.registries.DeferredHolder} 延迟初始化，
- * 通过 {@link IParkourState#getId()} 返回的 {@link net.minecraft.resources.ResourceLocation} 作为注册键。
+ * 每个状态对应一种跑酷动作，包含进入条件、Tick行为、退出逻辑和客户端动画配置。 状态实例通过
+ * {@link net.neoforged.neoforge.registries.DeferredHolder} 延迟初始化， 通过 {@link IParkourState#getId()}
+ * 返回的 {@link net.minecraft.resources.ResourceLocation} 作为注册键。
  *
  * <p>默认状态 {@link #DEFAULT} 代表原版无跑酷动作的普通状态。
  *
@@ -37,12 +37,17 @@ public class ParkourStates {
 	public static final DeferredHolder<IParkourState, BackstepState> BACKSTEP =
 			PARKOUR_STATES.register("backstep", BackstepState::new);
 	public static final DeferredHolder<IParkourState, LandingRollState> LANDING_ROLL =
-			PARKOUR_STATES.register("landing_roll", LandingRollState::new);	public static final DeferredHolder<IParkourState, DefaultState> DEFAULT =
-			PARKOUR_STATES.register("default", DefaultState::new);
+			PARKOUR_STATES.register("landing_roll", LandingRollState::new);
 
 	public static void register(IEventBus modEventBus) {
 		PARKOUR_STATES.register(modEventBus);
 	}
+
+	public static final DeferredHolder<IParkourState, DefaultState> DEFAULT =
+			PARKOUR_STATES.register("default", DefaultState::new);
+
+
+
 	public static final DeferredHolder<IParkourState, CrawlState> CRAWL =
 			PARKOUR_STATES.register("crawl", CrawlState::new);
 

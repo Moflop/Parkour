@@ -16,8 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 
 /**
- * 蹬墙跳客户端输入处理器——监听键盘/鼠标的跳跃键按下事件，
- * 在客户端侧执行蹬墙跳动作并将位置和事件同步到服务端。
+ * 蹬墙跳客户端输入处理器——监听键盘/鼠标的跳跃键按下事件， 在客户端侧执行蹬墙跳动作并将位置和事件同步到服务端。
  *
  * <p>仅客户端注册（{@code @OnlyIn(Dist.CLIENT)}），监听键盘和鼠标两个
  * 输入通道，合并到统一的处理逻辑中。内置150ms冷却防连点。</p>
@@ -67,7 +66,7 @@ public class ClientWallJumpKeyInputHandler {
 	 * </ol>
 	 * </p>
 	 *
-	 * @param action 输入动作类型，{@code InputConstants.PRESS}表示按下
+	 * @param action   输入动作类型，{@code InputConstants.PRESS}表示按下
 	 * @param inputKey 按键/按钮的整型码
 	 * @sideeffect 执行蹬墙跳动作（修改玩家速度）
 	 * @sideeffect 发送客户端位置到服务端
@@ -102,8 +101,8 @@ public class ClientWallJumpKeyInputHandler {
 	/**
 	 * 判断输入事件是否为跳跃键按下。
 	 *
-	 * @param mc Minecraft客户端实例，不可为null
-	 * @param action 输入动作类型，必须是PRESS才返回true
+	 * @param mc       Minecraft客户端实例，不可为null
+	 * @param action   输入动作类型，必须是PRESS才返回true
 	 * @param inputKey 按键码，必须等于当前绑定的跳跃键才返回true
 	 * @return true表示用户按下了跳跃键
 	 */

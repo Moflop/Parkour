@@ -18,8 +18,8 @@ public class WallJumpSameWallGuard {
 	/**
 	 * 判断本次蹬跳墙面是否与同类型的上一次蹬跳墙面相同。
 	 *
-	 * @param data 跳跃数据容器，不可为null；NONE类型不会调用此方法
-	 * @param type 蹬墙跳类型，取值 UP/PARALLEL/VIEW 之一
+	 * @param data    跳跃数据容器，不可为null；NONE类型不会调用此方法
+	 * @param type    蹬墙跳类型，取值 UP/PARALLEL/VIEW 之一
 	 * @param wallDir 本次弹跳的墙面方向，不可为null
 	 * @return true表示同一面墙，应阻止跳跃；false表示允许跳跃
 	 */
@@ -49,8 +49,8 @@ public class WallJumpSameWallGuard {
 	 * <p>VIEW类型会同时更新VIEW和PARALLEL两条记录，因为向前跳与侧跳共享
 	 * 同向判定逻辑。</p>
 	 *
-	 * @param data 跳跃数据容器，不可为null
-	 * @param type 蹬墙跳类型
+	 * @param data    跳跃数据容器，不可为null
+	 * @param type    蹬墙跳类型
 	 * @param wallDir 本次的墙面方向，不可为null
 	 * @sideeffect 写入 JumpData 的相应字段
 	 */

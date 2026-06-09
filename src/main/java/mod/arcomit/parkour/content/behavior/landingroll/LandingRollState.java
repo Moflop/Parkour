@@ -18,8 +18,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 落地翻滚状态 —— 从高处坠落时通过翻滚动作减少伤害，持续{@value #LANDING_ROLL_DURATION}刻。
  * <p>
- * 进入条件：必须在空中提前按下滑铲键激活翻滚窗口，落地时该窗口仍有剩余时间。
- * 客户端播放翻滚动画和音效，服务端给玩家短暂的速度效果，碰撞箱缩小模拟蜷缩姿态。
+ * 进入条件：必须在空中提前按下滑铲键激活翻滚窗口，落地时该窗口仍有剩余时间。 客户端播放翻滚动画和音效，服务端给玩家短暂的速度效果，碰撞箱缩小模拟蜷缩姿态。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -52,7 +51,9 @@ public class LandingRollState extends AbstractParkourState {
 	 */
 	@Override
 	public void onServerEnter(Player player, ParkourContext context) {
-		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ParkourConstants.EXIT_SPEED_BOOST_DURATION, ParkourConstants.EXIT_SPEED_BOOST_AMPLIFIER));
+		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
+				ParkourConstants.EXIT_SPEED_BOOST_DURATION,
+				ParkourConstants.EXIT_SPEED_BOOST_AMPLIFIER));
 	}
 
 	/**
@@ -67,12 +68,14 @@ public class LandingRollState extends AbstractParkourState {
 	}
 
 	/**
-	 * 翻滚期间碰撞箱缩小为{@value ParkourConstants#CROUCH_HITBOX_SIZE}x{@value ParkourConstants#CROUCH_HITBOX_SIZE}，
+	 * 翻滚期间碰撞箱缩小为{@value ParkourConstants#CROUCH_HITBOX_SIZE}x{@value
+	 * ParkourConstants#CROUCH_HITBOX_SIZE}，
 	 * 视点高度降至{@value ParkourConstants#CROUCH_EYE_HEIGHT}格，模拟蜷缩姿态。
 	 */
 	@Override
 	public EntityDimensions getCustomDimensions(Player player) {
-		return EntityDimensions.fixed(ParkourConstants.CROUCH_HITBOX_SIZE, ParkourConstants.CROUCH_HITBOX_SIZE)
+		return EntityDimensions.fixed(ParkourConstants.CROUCH_HITBOX_SIZE,
+						ParkourConstants.CROUCH_HITBOX_SIZE)
 				.withEyeHeight(ParkourConstants.CROUCH_EYE_HEIGHT);
 	}
 

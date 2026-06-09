@@ -20,8 +20,7 @@ public class BoneRotator {
 	/**
 	 * 在骨骼当前旋转基础上叠加相对旋转（绕自身局部坐标轴），解决万向节死锁与基础动画覆盖问题。
 	 * <p>
-	 * Yaw 绕局部 Y 轴，Pitch 绕局部 Z 轴，Roll 绕局部 X 轴。
-	 * 使用线程局部四元数避免频繁分配，零角度调用会提前返回。
+	 * Yaw 绕局部 Y 轴，Pitch 绕局部 Z 轴，Roll 绕局部 X 轴。 使用线程局部四元数避免频繁分配，零角度调用会提前返回。
 	 *
 	 * @param bone     目标骨骼，不可为null；修改其 rotX/rotY/rotZ 字段
 	 * @param yawRad   绕局部 Y 轴的旋转弧度
@@ -52,7 +51,8 @@ public class BoneRotator {
 	}
 
 	/**
-	 * 在骨骼上叠加 yaw/pitch 相对旋转（roll=0），等价于 {@link #applyRelativeRotation(PlayerAnimBone, float, float, float)}。
+	 * 在骨骼上叠加 yaw/pitch 相对旋转（roll=0），等价于
+	 * {@link #applyRelativeRotation(PlayerAnimBone, float, float, float)}。
 	 */
 	public static void applyRelativeRotation(PlayerAnimBone bone, float yawRad,
 			float pitchRad) {

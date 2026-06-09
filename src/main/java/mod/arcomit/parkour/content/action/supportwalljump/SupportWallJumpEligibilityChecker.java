@@ -23,7 +23,7 @@ public class SupportWallJumpEligibilityChecker {
 	/**
 	 * 检查玩家是否满足支撑蹬墙跳的触发条件。
 	 *
-	 * @param player 待检查的玩家，不可为null
+	 * @param player       待检查的玩家，不可为null
 	 * @param currentState 玩家当前的行为状态，不可为null
 	 * @return true表示允许支撑蹬墙跳，false表示功能未启用或不在垂挂状态
 	 */

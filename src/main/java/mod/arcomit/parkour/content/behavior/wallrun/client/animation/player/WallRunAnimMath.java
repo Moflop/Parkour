@@ -18,8 +18,7 @@ public class WallRunAnimMath {
 	 * 逐帧计算跑墙动画的所有骨骼数据。
 	 *
 	 * <p>身体偏航角补偿使视觉朝向与运动方向一致；头部在身体强制转向的基础上
-	 * 独立旋转以平滑跟随鼠标视角；四肢以正弦波模拟跑步摆幅，
-	 * 靠墙侧手臂做出按压墙面的支撑动作，非靠墙侧手臂正常摆动。
+	 * 独立旋转以平滑跟随鼠标视角；四肢以正弦波模拟跑步摆幅， 靠墙侧手臂做出按压墙面的支撑动作，非靠墙侧手臂正常摆动。
 	 *
 	 * @param player       目标玩家，不能为 null
 	 * @param state        动画内部状态（振幅和相位），不能为 null
@@ -35,8 +34,8 @@ public class WallRunAnimMath {
 		float currentVanillaBodyYaw =
 				Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		float targetYaw = Direction.from3DDataValue(
-				wallMovementData.getRunMoveRaw()).toYRot();
+		float targetYaw = Direction.from3DDataValue(wallMovementData.getRunMoveRaw())
+				.toYRot();
 
 		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);
 		data.bodyRotY = yawDiff * Mth.DEG_TO_RAD; // 为 body 保存补偿角

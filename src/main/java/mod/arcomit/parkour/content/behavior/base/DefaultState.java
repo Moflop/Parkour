@@ -3,9 +3,9 @@ package mod.arcomit.parkour.content.behavior.base;
 import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.behavior.wallclimb.WallClimbState;
 import mod.arcomit.parkour.content.behavior.wallrun.WallRunState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.init.ParkourStates;
-import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
@@ -17,11 +17,9 @@ import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 /**
  * 默认状态 —— 所有跑酷行为的入口和回退目标。
  * <p>
- * 玩家处于空闲/行走等常规移动时均在此状态内，它根据玩家输入和环境条件
- * 将控制权分发给滑铲、后撤步、爬行、壁跑、落地翻滚等专项行为状态。
+ * 玩家处于空闲/行走等常规移动时均在此状态内，它根据玩家输入和环境条件 将控制权分发给滑铲、后撤步、爬行、壁跑、落地翻滚等专项行为状态。
  * <p>
- * 转移类型分为三类：按键触发（滑铲键 -> 根据移动方向分流到爬行/滑铲/后撤步）、
- * 每Tick轮询（壁跑/壁攀/壁滑/悬挂）和事件驱动（坠落 -> 落地翻滚，跳跃 -> 速越）。
+ * 转移类型分为三类：按键触发（滑铲键 -> 根据移动方向分流到爬行/滑铲/后撤步）、 每Tick轮询（壁跑/壁攀/壁滑/悬挂）和事件驱动（坠落 -> 落地翻滚，跳跃 -> 速越）。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -81,8 +79,7 @@ public class DefaultState extends AbstractParkourState {
 	 * 手臂悬挂准入：刚完成跳跃、未按潜行键、且处于下落过程中。
 	 */
 	private boolean canArmHang(Player player, ParkourContext context) {
-		return context.jump().isJumped() && !isShiftKeyDown(player) && isFalling(
-				player);
+		return context.jump().isJumped() && !isShiftKeyDown(player) && isFalling(player);
 	}
 
 	/**

@@ -41,8 +41,7 @@ public class CameraAnimation {
 	}
 
 	/**
-	 * 将源关键帧 Map 中的时间戳字符串解析为浮点数后存入目标 TreeMap。
-	 * 无法解析的键会被静默忽略。
+	 * 将源关键帧 Map 中的时间戳字符串解析为浮点数后存入目标 TreeMap。 无法解析的键会被静默忽略。
 	 *
 	 * @param source 键为时间戳字符串（如 "0.0"、"1.5"），值为旋转/位移数组
 	 * @param target 解析后的输出容器，按时间升序排列

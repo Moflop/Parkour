@@ -13,8 +13,7 @@ import net.minecraft.world.entity.player.Player;
 public class ParkourChecks {
 
 	/**
-	 * 判断玩家是否处于允许跑酷动作的基础状态。
-	 * 排除观察者、骑乘、睡觉、三叉戟激流、鞘翅滑翔、创造飞行等与跑酷互斥的状态。
+	 * 判断玩家是否处于允许跑酷动作的基础状态。 排除观察者、骑乘、睡觉、三叉戟激流、鞘翅滑翔、创造飞行等与跑酷互斥的状态。
 	 *
 	 * @param player 目标玩家，不可为null
 	 * @return true 表示玩家可以进行跑酷动作
@@ -24,8 +23,8 @@ public class ParkourChecks {
 	}
 
 	/**
-	 * 判断玩家是否允许执行跑酷行为动作（如蹲跳、攀爬等需要特定姿态的操作）。
-	 * 在 {@link #canPerformAction(Player)} 基础上，额外排除游泳姿态（强制姿态除外）。
+	 * 判断玩家是否允许执行跑酷行为动作（如蹲跳、攀爬等需要特定姿态的操作）。 在 {@link #canPerformAction(Player)}
+	 * 基础上，额外排除游泳姿态（强制姿态除外）。
 	 *
 	 * @param player 目标玩家，不可为null
 	 * @return true 表示玩家姿态允许执行跑酷行为
@@ -36,8 +35,7 @@ public class ParkourChecks {
 	}
 
 	/**
-	 * 判断玩家当前坠落距离是否超过安全阈值，超限后将触发受伤判定。
-	 * 阈值由 {@link ParkourConfig#safeFallHeight} 配置。
+	 * 判断玩家当前坠落距离是否超过安全阈值，超限后将触发受伤判定。 阈值由 {@link ParkourConfig#safeFallHeight} 配置。
 	 *
 	 * @param player 目标玩家，不可为null
 	 * @return true 表示坠落高度已达到受伤标准

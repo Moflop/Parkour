@@ -15,8 +15,7 @@ public class SpeedVaultAnimState {
 	private int lastUpdateTick = -1;
 
 	/**
-	 * 每客户端帧推进动画计时。利用玩家 {@code tickCount} 去重，
-	 * 同一游戏 tick 内只推进一次，保证动画速度与游戏时间同步。
+	 * 每客户端帧推进动画计时。利用玩家 {@code tickCount} 去重， 同一游戏 tick 内只推进一次，保证动画速度与游戏时间同步。
 	 *
 	 * @param player 目标玩家，不能为 null
 	 */

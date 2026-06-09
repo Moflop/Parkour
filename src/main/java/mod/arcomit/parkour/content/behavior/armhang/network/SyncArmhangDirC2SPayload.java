@@ -13,8 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 客户端向服务端同步本地悬挂方向。
  * <p>
- * 客户端在完成外角旋转、切换悬挂方向后发送此包。服务端收到后更新该玩家的
- * 悬挂方向，并立即通过 {@link BroadcastArmhangDirS2CPayload} 广播给追踪者，
+ * 客户端在完成外角旋转、切换悬挂方向后发送此包。服务端收到后更新该玩家的 悬挂方向，并立即通过 {@link BroadcastArmhangDirS2CPayload} 广播给追踪者，
  * 保证其他玩家看到的该玩家悬挂姿态与实际一致。
  *
  * @param direction 新的悬挂方向，不可为 null

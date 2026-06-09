@@ -2,12 +2,12 @@ package mod.arcomit.parkour.content.behavior.armhang;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement;
-import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangSound;
-import mod.arcomit.parkour.content.init.ParkourSounds;
-import mod.arcomit.parkour.content.init.ParkourStates;
+import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourSounds;
+import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
@@ -19,8 +19,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 手臂悬挂状态。
  * <p>
- * 玩家向前走到方块边缘时自动抓住边缘悬挂。悬挂时可以左右平移，按下跳跃键翻上平台，
- * 按下潜行键主动退出。退出后有短暂冷却防止立即重新挂上同一位置。
+ * 玩家向前走到方块边缘时自动抓住边缘悬挂。悬挂时可以左右平移，按下跳跃键翻上平台， 按下潜行键主动退出。退出后有短暂冷却防止立即重新挂上同一位置。
  * <p>
  * 该状态在逻辑端与服务端同时运行（模拟端），客户端额外负责移动输入和音效表现。
  *
@@ -58,17 +57,13 @@ public class ArmhangState extends AbstractParkourState {
 	}
 
 	/**
-	 * 进入手臂悬挂状态时，记录当前面向方向作为悬挂方向，并可配置是否重置攀爬数据。
+	 * 进入手臂悬挂状态时，记录当前面向方向作为悬挂方向。
 	 */
 	@Override
 	public void onEnter(Player player, ParkourContext context) {
 		super.onEnter(player, context);
 		WallMovementData wallMovementData = context.wall();
 		wallMovementData.setArmhang(player.getDirection());
-
-		if (ParkourConfig.armhangResetWallClimb) {
-			wallMovementData.resetClimb();
-		}
 	}
 
 	/**
@@ -83,13 +78,26 @@ public class ArmhangState extends AbstractParkourState {
 	}
 
 	/**
-	 * 进入状态时立即应用一次悬浮与吸附物理，消除进入前的垂直速度，
-	 * 避免玩家因残余动量在下一 tick 满足退出条件而闪退。
+	 * 进入状态时设置玩家起始坐标用于后续垂挂移动音效播放。
+	 */
+	@Override
+	public void onServerEnter(Player player, ParkourContext context) {
+		WallMovementData wallMovementData = context.wall();
+		wallMovementData.setArmhangLastPos(player.position());
+		wallMovementData.setArmhangMoveDist(0f);
+	}
+
+	/**
+	 * 进入状态时立即应用一次悬浮与吸附物理，消除进入前的垂直速度， 避免玩家因残余动量在下一 tick 满足退出条件而闪退。并并根据配置决定是否重置爬墙
 	 */
 	@Override
 	public void onSimulationEnter(Player player, ParkourContext context) {
 		WallMovementData wallMovementData = context.wall();
 		ArmhangPhysics.applyLevitateAndAdhesion(player, wallMovementData);
+
+		if (ParkourConfig.armhangResetWallClimb) {
+			wallMovementData.resetClimb();
+		}
 	}
 
 	/**
@@ -109,9 +117,15 @@ public class ArmhangState extends AbstractParkourState {
 	public void onClientTick(Player player, ParkourContext context) {
 		InputData inputData = context.input();
 		WallMovementData wallMovementData = context.wall();
-		ClientArmhangMovement.applyArmhangMovement(player, inputData, wallMovementData);
+		if (player.isLocalPlayer()) {
+			ClientArmhangMovement.applyArmhangMovement(player, inputData,
+					wallMovementData);
+		}
+	}
 
-		ClientArmhangSound.playMovementSound(player, wallMovementData);
+	@Override
+	public void onServerTick(Player player, ParkourContext context) {
+		ServerArmhangSound.playMovementSound(player, context.wall());
 	}
 
 	/**
@@ -126,8 +140,7 @@ public class ArmhangState extends AbstractParkourState {
 	/**
 	 * 判断是否允许进入手臂悬挂状态。
 	 * <p>
-	 * 准入条件：功能开启且不在攀爬/水中/熔岩中；不在冷却期内；
-	 * 当前摔落高度危险（或虽安全但离地足够远）；玩家前方存在有效的悬挂碰撞点。
+	 * 准入条件：功能开启且不在攀爬/水中/熔岩中；不在冷却期内； 当前摔落高度危险（或虽安全但离地足够远）；玩家前方存在有效的悬挂碰撞点。
 	 *
 	 * @return true 允许进入，false 拒绝
 	 */
@@ -140,8 +153,8 @@ public class ArmhangState extends AbstractParkourState {
 		if (wallMovementData.getArmhangCooldown() > 0) {
 			return false;
 		}
-		if (!ParkourChecks.isFallUnsafe(
-				player) && ArmhangCollision.isTooCloseToGround(player)) {
+		if (!ParkourChecks.isFallUnsafe(player) && ArmhangCollision.isTooCloseToGround(
+				player)) {
 			return false;
 		}
 		if (!ArmhangCollision.hasValidHangPoint(player, player.getDirection())) {

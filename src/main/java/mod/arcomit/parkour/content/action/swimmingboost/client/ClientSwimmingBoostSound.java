@@ -7,8 +7,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * 客户端游泳加速音效——通过音效代理以实体绑定方式播放，确保仅在
- * 客户端侧发声（避免服务端重复播放）。
+ * 客户端游泳加速音效——通过音效代理以实体绑定方式播放，确保仅在 客户端侧发声（避免服务端重复播放）。
  *
  * <p>与 {@link SwimmingBoostSound} 共用相同的音量和音调常量，
  * 但走自定义代理通道以精确控制客户端播放时机。</p>
