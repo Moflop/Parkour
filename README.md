@@ -9,6 +9,23 @@
 
 **简单跑酷（Parkour）**，一个更简单、更易上手的新兴跑酷模组。
 
+## 📖 模组提供的特性
+
+- 爬行；
+- 滑铲/闪避；
+- 速过（侧越）；
+- 墙滑；
+- 墙跑；
+- 墙爬；
+- 垂挂；
+- 蹬墙跳/撑墙跳；
+- 落地翻滚；
+- 移动机制改革；
+- 攀爬机制改革；
+- 游泳机制改革；
+- 水中推进；
+- <span style="color: red;">以上功能均已提供配置文件开启/关闭或调整数值，更多特性正在开发中...</span>
+
 ## 👍 鸣谢与归属
 
 本项目的开发离不开开源社区的贡献，部分代码逻辑参考或派生自以下项目。特此鸣谢：
@@ -64,6 +81,24 @@
 [![NeoForge](https://img.shields.io/badge/NeoForge-Compatible-orange?style=for-the-badge)](https://neoforged.net/)
 
 **Parkour** is a simpler and more accessible emerging parkour mod.
+
+## 📖 Features Provided by the Mod
+
+- Crawling;
+- Sliding/Dodging;
+- Speed Vault;
+- Wall Sliding;
+- Wall Running;
+- Wall Climbing;
+- Arm Hanging;
+- Wall Jumping;
+- Landing Roll;
+- Movement Mechanics Overhaul;
+- Climbing Mechanics Overhaul;
+- Swimming Mechanics Overhaul;
+- Swimming Boost;
+- <span style="color: red;">All the above features can be enabled/disabled or customized via configuration files, and more features are currently under development...
+  </span>
 
 ## 👍 Acknowledgements and Attribution
 
