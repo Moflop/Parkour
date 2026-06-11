@@ -29,12 +29,12 @@ public class ParkourKeyMapping extends KeyMapping {
 	 * @param name        按键的翻译键名，如 "key.parkour.roll_slide"
 	 * @param inputType   输入设备类型（键盘/鼠标）
 	 * @param keyCode     GLFW 按键码
-	 * @param category    按键分组类别的翻译键
+	 * @param category    按键分组类别
 	 * @param inputAction 对应的跑酷输入动作，不为 null
 	 */
 	public ParkourKeyMapping(String name, InputConstants.Type inputType, int keyCode,
-			String category, ParkourInputActions inputAction) {
-		super(name, inputType, keyCode, KeyMapping.Category.GAMEPLAY, 0);
+			Category category, ParkourInputActions inputAction) {
+		super(name, inputType, keyCode, category, 0);
 		this.inputAction = inputAction;
 	}
 

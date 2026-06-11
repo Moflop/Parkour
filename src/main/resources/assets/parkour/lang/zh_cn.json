@@ -1,5 +1,5 @@
 {
-  "key.categories.parkour": "简单跑酷",
+  "key.category.parkour.default": "简单跑酷",
   "key.parkour.roll_slide": "翻滚/滑铲",
   "parkour.configuration.online_settings": "在线设置",
   "parkour.configuration.online_settings.tooltip": "该设置允许你更改所有与多人游戏相关选项。",

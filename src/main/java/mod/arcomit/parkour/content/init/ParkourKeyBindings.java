@@ -1,8 +1,10 @@
-package mod.arcomit.parkour.content.client.input;
+package mod.arcomit.parkour.content.init;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.client.input.ParkourKeyMapping;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
+import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,7 +22,7 @@ import org.lwjgl.glfw.GLFW;
  */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public class ParkourKeyBindings {
-	private static final String CATEGORY = "key.categories." + ParkourMod.MODID;
+	private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(ParkourMod.prefix("default"));
 
 	/** 滑铲/翻滚键，默认 V，触发 {@link ParkourInputActions#SLIDE} */
 	public static final ParkourKeyMapping SLIDE_KEY =
@@ -30,6 +32,7 @@ public class ParkourKeyBindings {
 
 	@SubscribeEvent
 	public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+		event.registerCategory(CATEGORY);
 		event.register(SLIDE_KEY);
 	}
 }

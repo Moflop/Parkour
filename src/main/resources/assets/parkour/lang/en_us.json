@@ -1,5 +1,5 @@
 {
-  "key.categories.parkour": "Parkour",
+  "key.category.parkour.default": "Parkour",
   "key.parkour.roll_slide": "Roll/Slide",
   "parkour.configuration.online_settings": "Online Settings",
   "parkour.configuration.online_settings.tooltip": "Online settings let you change all options related to multiplayer.",
