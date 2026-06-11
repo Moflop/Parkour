@@ -34,9 +34,9 @@ public class ClientSlideDisableJumpHandler {
 
 		if (stateData.getState() instanceof SlideState) {
 			Input originalKeyPresses = event.getInput().keyPresses;
-			event.getInput().keyPresses = new Input(originalKeyPresses.left(),
-					originalKeyPresses.right(), originalKeyPresses.forward(),
-					originalKeyPresses.backward(), false,
+			event.getInput().keyPresses = new Input(originalKeyPresses.forward(),
+					originalKeyPresses.backward(), originalKeyPresses.left(),
+					originalKeyPresses.right(), false,
 					originalKeyPresses.shift(), originalKeyPresses.sprint());
 		}
 	}
