@@ -96,6 +96,7 @@ dependencies {
     // 用模组文件作为依赖的示例
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
+//    光影
 //    runtimeOnly "curse.maven:sodium-394468:8111040"
 //    runtimeOnly "curse.maven:irisshaders-455508:7867946"
 
