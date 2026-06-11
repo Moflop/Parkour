@@ -186,17 +186,23 @@ public class ArmhangState extends AbstractParkourState {
 		boolean hasValidPoint = ArmhangCollision.hasValidHangPoint(player, armhangDir);
 		StateData state = context.state();
 		if (!hasValidPoint) {
+			if (player.level().isClientSide()) {
+				return false;
+			}
+
 			int currentInvalidTicks = state.getStateInvalidTicks() + 1;
 			state.setStateInvalidTicks(currentInvalidTicks);
 
-			// 宽容阈值设定为 4 Ticks (0.2秒，足以掩盖高达 200ms 的网络位置不同步或 1 tick 的动量溢出)
+			// 4 Ticks (0.2秒)
 			if (currentInvalidTicks > 4) {
 				return false;
 			}
 
+			// 在服务端宽限期内，强行返回 true 维持状态
 			return true;
 		} else {
-			if (state.getStateInvalidTicks() > 0) {
+			// 只要在任意一个 tick 再次检测到了墙壁，立刻清零失效计数器（刷新宽限期）
+			if (!player.level().isClientSide() && state.getStateInvalidTicks() > 0) {
 				state.setStateInvalidTicks(0);
 			}
 			return true;
