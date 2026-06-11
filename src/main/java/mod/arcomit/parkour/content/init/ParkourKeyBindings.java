@@ -1,7 +1,8 @@
-package mod.arcomit.parkour.content.client.input;
+package mod.arcomit.parkour.content.init;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.client.input.ParkourKeyMapping;
 import mod.arcomit.parkour.core.input.ParkourInputActions;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
