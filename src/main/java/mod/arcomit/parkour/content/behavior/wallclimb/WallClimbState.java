@@ -34,7 +34,10 @@ public class WallClimbState extends AbstractParkourState {
 	 * 构造并注册状态转换：每客户端 tick 检测前进输入是否归零或跳跃键是否松开， 满足任一条件则切回默认状态。
 	 */
 	public WallClimbState() {
-		registerTransitions(IParkourStateTransition.onLocalTick(ParkourStates.DEFAULT::get,
+		registerTransitions(
+				IParkourStateTransition.onLocalTick(ParkourStates.ARMHANG::get,
+						((player, parkourContext) -> !ParkourProxies.INPUT_PROXY.getShiftKeyDown(player))),
+				IParkourStateTransition.onLocalTick(ParkourStates.DEFAULT::get,
 				(player, context) -> ParkourProxies.INPUT_PROXY.getForwardImpulse(
 						player) <= ParkourConstants.ZERO_THRESHOLD || !ParkourProxies.INPUT_PROXY.getJumping(
 						player)));

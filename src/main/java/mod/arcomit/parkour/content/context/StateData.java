@@ -39,6 +39,10 @@ public class StateData {
 	@Getter
 	@Setter
 	private int ticksInState = 0;
+	/** 记录状态暂时失效的连续 tick 数，用于网络容错 */
+	@Getter
+	@Setter
+	private int stateInvalidTicks = 0;
 	/** 动画变体索引，同一状态可对应多种动画（如墙跑左右），0 为默认 */
 	@Getter
 	@Setter

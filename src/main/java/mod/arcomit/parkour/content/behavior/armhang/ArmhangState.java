@@ -5,6 +5,7 @@ import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement
 import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.content.init.ParkourStates;
@@ -180,9 +181,25 @@ public class ArmhangState extends AbstractParkourState {
 		if (armhangDir == null) {
 			return false;
 		}
-		if (!ArmhangCollision.hasValidHangPoint(player, armhangDir)) {
-			return false;
+
+		// 墙壁检测可能因网络位置不同步偶尔失效，允许短暂的无效状态（宽容期）以提升体验稳定性。超过宽容期则退出。
+		boolean hasValidPoint = ArmhangCollision.hasValidHangPoint(player, armhangDir);
+		StateData state = context.state();
+		if (!hasValidPoint) {
+			int currentInvalidTicks = state.getStateInvalidTicks() + 1;
+			state.setStateInvalidTicks(currentInvalidTicks);
+
+			// 宽容阈值设定为 4 Ticks (0.2秒，足以掩盖高达 200ms 的网络位置不同步或 1 tick 的动量溢出)
+			if (currentInvalidTicks > 4) {
+				return false;
+			}
+
+			return true;
+		} else {
+			if (state.getStateInvalidTicks() > 0) {
+				state.setStateInvalidTicks(0);
+			}
+			return true;
 		}
-		return true;
 	}
 }
