@@ -3,7 +3,7 @@
 ![Logo](./src/main/resources/parkour.png)
 
 [![Code License](https://img.shields.io/badge/Code_License-GPL_v3-blue.svg?style=for-the-badge)](LICENSE)
-[![Asset License](https://img.shields.io/badge/Media_License-CC_BY--NC--SA_4.0-orange.svg?style=for-the-badge)](LICENSE-ASSET.md)
+[![Asset License](https://img.shields.io/badge/Media_License-CC_BY--NC--SA_4.0-blue.svg?style=for-the-badge)](LICENSE-ASSET.md)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green?style=for-the-badge)](https://www.minecraft.net/)
 [![NeoForge](https://img.shields.io/badge/NeoForge-Compatible-orange?style=for-the-badge)](https://neoforged.net/)
 
@@ -76,7 +76,7 @@
 ![Logo](./src/main/resources/parkour.png)
 
 [![Code License](https://img.shields.io/badge/Code_License-GPL_v3-blue.svg?style=for-the-badge)](LICENSE)
-[![Asset License](https://img.shields.io/badge/Media_License-CC_BY--NC--SA_4.0-orange.svg?style=for-the-badge)](LICENSE-ASSET.md)
+[![Asset License](https://img.shields.io/badge/Media_License-CC_BY--NC--SA_4.0-blue.svg?style=for-the-badge)](LICENSE-ASSET.md)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green?style=for-the-badge)](https://www.minecraft.net/)
 [![NeoForge](https://img.shields.io/badge/NeoForge-Compatible-orange?style=for-the-badge)](https://neoforged.net/)
 
