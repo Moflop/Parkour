@@ -5,6 +5,7 @@ import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement
 import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.content.init.ParkourStates;
@@ -98,6 +99,8 @@ public class ArmhangState extends AbstractParkourState {
 		if (ParkourConfig.armhangResetWallClimb) {
 			wallMovementData.resetClimb();
 		}
+
+		context.state().setStateInvalidTicks(0);
 	}
 
 	/**
@@ -180,9 +183,32 @@ public class ArmhangState extends AbstractParkourState {
 		if (armhangDir == null) {
 			return false;
 		}
-		if (!ArmhangCollision.hasValidHangPoint(player, armhangDir)) {
-			return false;
+
+		// 墙壁检测可能因网络位置不同步偶尔失效，允许短暂的无效状态（宽容期）以提升体验稳定性。超过宽容期则退出。
+		boolean hasValidPoint = ArmhangCollision.hasValidHangPoint(player, armhangDir);
+		StateData state = context.state();
+		if (!hasValidPoint) {
+			if (player.level().isClientSide()) {
+				return false;
+			}
+
+			int currentInvalidTicks = state.getStateInvalidTicks() + 1;
+			state.setStateInvalidTicks(currentInvalidTicks);
+
+			// 4 Ticks (0.2秒)
+			if (currentInvalidTicks > 4) {
+				return false;
+			}
+
+			// 在服务端宽限期内，强行返回 true 维持状态
+			return true;
+		} else {
+			// 只要在任意一个 tick 再次检测到了墙壁，立刻清零失效计数器（刷新宽限期）
+			if (!player.level().isClientSide() && state.getStateInvalidTicks() > 0) {
+				state.setStateInvalidTicks(0);
+			}
+			return true;
 		}
-		return true;
+
 	}
 }
