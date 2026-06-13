@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
 import mod.arcomit.parkour.content.context.StateData;
@@ -41,14 +43,16 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 	/**
 	 * 全方向疾跑
 	 */
-	@Inject(method = "hasEnoughImpulseToStartSprinting", at = @At("HEAD"), cancellable = true)
-	private void hasEnoughImpulseCanSprinting(CallbackInfoReturnable<Boolean> cir) {
+	@ModifyReturnValue(method = "hasEnoughImpulseToStartSprinting", at = @At("RETURN"))
+	private boolean modifyHasEnoughImpulseToStartSprinting(boolean original) {
 		if (ParkourConfig.enableOmniSprint) {
-			cir.setReturnValue(this.isUnderWater() ?
+			boolean omniSprintCondition = this.isUnderWater() ?
 					this.input.hasForwardImpulse() :
-					Math.abs(this.input.forwardImpulse) >= OMNI_SPRINT_INPUT_THRESHOLD || Math.abs(
-							this.input.leftImpulse) >= OMNI_SPRINT_INPUT_THRESHOLD);
+					(Math.abs(this.input.forwardImpulse) >= OMNI_SPRINT_INPUT_THRESHOLD ||
+					 Math.abs(this.input.leftImpulse) >= OMNI_SPRINT_INPUT_THRESHOLD);
+			return original || omniSprintCondition;
 		}
+		return original;
 	}
 
 	/**
@@ -65,9 +69,11 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 	/**
 	 * 撞墙不打断疾跑
 	 */
-	@Redirect(method = "aiStep", at = @At(value = "FIELD",
-			target = "Lnet/minecraft/client/player/LocalPlayer;horizontalCollision:Z"))
-	private boolean preventSprintInterruptionOnCollision(LocalPlayer instance) {
+	@ModifyExpressionValue(
+			method = "aiStep",
+			at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;horizontalCollision:Z")
+	)
+	private boolean preventSprintInterruptionOnCollision(boolean original) {
 		return false;
 	}
 }

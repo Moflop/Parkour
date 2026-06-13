@@ -119,6 +119,9 @@ dependencies {
         exclude group: "io.netty"
     }
 
+    // MixinExtras
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:0.5.4"))
+
     // lombok
     compileOnly "org.projectlombok:lombok:1.18.38"
     annotationProcessor "org.projectlombok:lombok:1.18.38"

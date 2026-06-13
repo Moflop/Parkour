@@ -1,5 +1,8 @@
 package mod.arcomit.parkour.content.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.init.ParkourTags;
@@ -159,9 +162,9 @@ public abstract class LivingEntityMixin extends Entity {
 	/**
 	 * 加速向下攀爬。 根据玩家的视角（俯仰角）调整下行速度。向下看时速度更快。
 	 */
-	@Redirect(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
+	@WrapOperation(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
 			at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(DD)D"))
-	private double accelerateDownClimbing(double currentYSpeed, double vanillaDownSpeed) {
+	private double accelerateDownClimbing(double currentYSpeed, double vanillaDownSpeed, Operation<Double> original) {
 		if (ParkourConfig.enableDownClimbSpeedIncrease) {
 			double maxSpeedIncrease =
 					vanillaDownSpeed * ParkourConfig.downClimbSpeedMultiplier;
@@ -179,8 +182,9 @@ public abstract class LivingEntityMixin extends Entity {
 					CLIMB_ACCELERATION_FINISH_TICK, vanillaDownSpeed,
 					acceleratedSpeed);
 		}
-		return Math.max(currentYSpeed, vanillaDownSpeed);
+		return original.call(currentYSpeed, vanillaDownSpeed);
 	}
+
 
 	/**
 	 * 更新攀爬计时器。 在每刻结束时调用，用于统计连续攀爬的时间。
@@ -209,33 +213,36 @@ public abstract class LivingEntityMixin extends Entity {
 	/**
 	 * 优化碰撞判定。 仅当玩家有移动输入时才计算水平碰撞
 	 */
-	@Redirect(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
-			at = @At(value = "FIELD",
-					target = "Lnet/minecraft/world/entity/LivingEntity;horizontalCollision:Z",
-					opcode = 180) // GETFIELD
+	@ModifyExpressionValue(
+			method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
+			at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;horizontalCollision:Z", opcode = 180) // GETFIELD
 	)
-	private boolean optimizeHorizontalCollision(LivingEntity livingEntity) {
+	private boolean optimizeHorizontalCollision(boolean original) {
+		// 这里的 original 就是原版读取到的 livingEntity.horizontalCollision 的值
+		LivingEntity livingEntity = (LivingEntity) (Object) this;
+
 		if (this.level().isClientSide() && (livingEntity instanceof Player player)) {
 			// 只有在有输入向量时才返回真实的碰撞状态
-			return livingEntity.horizontalCollision && ParkourProxies.INPUT_PROXY.getMoveVector(
-					player).length() > 0;
+			return original && ParkourProxies.INPUT_PROXY.getMoveVector(player).length() > 0;
 		}
-		return livingEntity.horizontalCollision;
+		// 否则返回原版的碰撞状态
+		return original;
 	}
+
 
 	/**
 	 * 优化攀爬的水平移动限制，在地面时或在跳跃时不减速
 	 */
-	@Redirect(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
+	@WrapOperation(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(DDD)D"))
-	private double modifyHorizontalClimbSpeed(double speed, double vanillaSpeedMin,
-			double vanillaSpeedMax) {
+	private double modifyHorizontalClimbSpeed(double speed, double vanillaSpeedMin, double vanillaSpeedMax, Operation<Double> original) {
 		if ((!this.onGround() && !this.jumping) || !ParkourConfig.climbableBlockNotSlowDown) {
-			return Mth.clamp(speed, vanillaSpeedMin, vanillaSpeedMax);
+			return original.call(speed, vanillaSpeedMin, vanillaSpeedMax);
 		} else {
 			return speed;
 		}
 	}
+
 
 	@Inject(method = "jumpFromGround", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/LivingEntity;getDeltaMovement()Lnet/minecraft/world/phys/Vec3;"),

@@ -1,8 +1,11 @@
 package mod.arcomit.parkour.content.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.arcomit.parkour.ParkourConfig;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
@@ -15,43 +18,15 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerGamePacketListenerImplMixin {
 
-	@ModifyConstant(method = "handleMovePlayer", constant = @Constant(floatValue = 100.0F))
-	private float modifyConstantPlayerMaxSpeed(float speed) {
+	@WrapOperation(
+			method = { "handleMovePlayer", "handleMoveVehicle" },
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;isSingleplayerOwner()Z")
+	)
+	private boolean bypassAntiCheat(ServerGamePacketListenerImpl instance, Operation<Boolean> original) {
+		// 强制告诉服务器“该玩家是房主”，无视后续的位移惩罚
 		if (ParkourConfig.removeSpeedLimits) {
-			return Float.MAX_VALUE;
+			return true;
 		}
-		return speed;
-	}
-
-	@ModifyConstant(method = "handleMovePlayer", constant = @Constant(floatValue = 300.0F))
-	private float modifyConstantElytraMaxSpeed(float speed) {
-		if (ParkourConfig.removeSpeedLimits) {
-			return Float.MAX_VALUE;
-		}
-		return speed;
-	}
-
-	@ModifyConstant(method = "handleMovePlayer", constant = @Constant(doubleValue = 0.0625))
-	private double modifyConstantMovedWrong(double speed) {
-		if (ParkourConfig.removeSpeedLimits) {
-			return Double.MAX_VALUE;
-		}
-		return speed;
-	}
-
-	@ModifyConstant(method = "handleMoveVehicle", constant = @Constant(doubleValue = 100.0))
-	private double modifyConstantVehicleMaxSpeed(double speed) {
-		if (ParkourConfig.removeSpeedLimits) {
-			return Double.MAX_VALUE;
-		}
-		return speed;
-	}
-
-	@ModifyConstant(method = "handleMoveVehicle", constant = @Constant(doubleValue = 0.0625))
-	private double modifyConstantVehicleMovedWrong(double speed) {
-		if (ParkourConfig.removeSpeedLimits) {
-			return Double.MAX_VALUE;
-		}
-		return speed;
+		return original.call(instance);
 	}
 }
