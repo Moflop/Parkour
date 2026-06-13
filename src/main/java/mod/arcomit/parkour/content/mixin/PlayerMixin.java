@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.mixin;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import mod.arcomit.parkour.content.behavior.crawl.CrawlState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.world.entity.Pose;
@@ -19,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Player.class)
 public abstract class PlayerMixin {
 
-	@Redirect(method = "causeExtraKnockback(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/phys/Vec3;)V",
-			at = @At(value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V"))
-	private void preventSprintInvalid(Player instance, boolean isSprinting) {
-		// 留空：不执行 setSprinting(false)，从而不打断疾跑
+	@WrapWithCondition(method = "causeExtraKnockback(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/phys/Vec3;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V"))
+	private boolean preventSprintInvalid(Player instance, boolean isSprinting) {
+		// 返回 false 阻止 setSprinting 运行，从而不打断疾跑
+		return false;
 	}
 
 	@Inject(method = "setForcedPose", at = @At("HEAD"), cancellable = true)

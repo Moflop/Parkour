@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.duck.IClientInputMixin;
 import net.minecraft.client.player.ClientInput;
@@ -24,13 +25,14 @@ public abstract class ClientInputMixin implements IClientInputMixin {
 	@Shadow
 	protected Vec2 moveVector;
 
-	@Inject(method = "hasForwardImpulse", at = @At("HEAD"), cancellable = true)
-	private void hasImpulse(CallbackInfoReturnable<Boolean> cir) {
+	@ModifyReturnValue(method = "hasForwardImpulse", at = @At("RETURN"))
+	private boolean modifyHasImpulse(boolean original) {
 		if (ParkourConfig.enableOmniSprint) {
-			cir.setReturnValue(
-					Math.abs(this.moveVector.y) > MIN_INPUT_MAGNITUDE || Math.abs(
-							this.moveVector.x) > MIN_INPUT_MAGNITUDE);
+			return original || Math.abs(
+					this.moveVector.y) > MIN_INPUT_MAGNITUDE || Math.abs(
+					this.moveVector.x) > MIN_INPUT_MAGNITUDE;
 		}
+		return original;
 	}
 
 	@Override
