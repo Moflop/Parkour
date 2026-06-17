@@ -28,25 +28,25 @@ public class WallJumpAction {
 	 * @sideeffect 在服务端播放蹬墙跳音效
 	 * @sideeffect 重置玩家摔落距离
 	 */
-	public static void execute(Player player) {
+	public static boolean execute(Player player) {
 		ParkourContext context = ParkourContext.get(player);
 		IParkourState currentState = context.state().getState();
 		if (!WallJumpEligibilityChecker.check(player, currentState))
-			return;
+			return false;
 
 		Direction wallDir =
 				WallJumpDirectionResolver.resolveWallDirection(player, currentState,
 						context);
 		if (wallDir == null)
-			return;
+			return false;
 
 		WallJumpType wallJumpType = WallJumpTypeResolver.resolve(player, wallDir);
 		if (wallJumpType == WallJumpType.NONE)
-			return;
+			return false;
 
 		JumpData jumpData = context.jump();
 		if (WallJumpSameWallGuard.isSameWallAsLastJump(jumpData, wallJumpType, wallDir))
-			return;
+			return false;
 
 		Vec3 velocity = WallJumpVelocity.computeJumpVelocity(player, wallJumpType);
 		player.setDeltaMovement(velocity);
@@ -61,5 +61,7 @@ public class WallJumpAction {
 		ParkourStateMachine.resetToDefaultState(player, context);
 		WallJumpSound.play(player);
 		player.resetFallDistance();
+
+		return true;
 	}
 }

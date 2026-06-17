@@ -24,14 +24,15 @@ public class SwimmingJumpAction {
 	 * @param player 执行跳跃的玩家，不可为null
 	 * @sideeffect 直接修改玩家垂直速度（保留水平速度分量）
 	 */
-	public static void execute(Player player) {
+	public static boolean execute(Player player) {
 		if (!SwimmingJumpEligibilityChecker.check(player)) {
-			return;
+			return false;
 		}
 		Vec3 motion = player.getDeltaMovement();
 		player.setDeltaMovement(motion.x, SWIMMING_JUMP_VERTICAL_SPEED, motion.z);
 
 		JumpData jumpData = ParkourContext.get(player).jump();
 		jumpData.setJumped(true);
+		return true;
 	}
 }

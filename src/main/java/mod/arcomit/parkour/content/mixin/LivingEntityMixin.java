@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
@@ -49,15 +51,6 @@ public abstract class LivingEntityMixin extends Entity {
 	private static final int CLIMB_ACCELERATION_FINISH_TICK = 60;
 	@Shadow
 	public boolean jumping;
-	// 记录向下攀爬的刻数，用于加速
-	@Unique
-	private int climbDownTicks = 0;
-	// 记录向上攀爬的刻数，用于加速
-	@Unique
-	private int climbUpTicks = 0;
-	// 标记当前刻是否正在向上攀爬
-	@Unique
-	private boolean climbingUpThisTick = false;
 
 	public LivingEntityMixin(EntityType<?> entityType, Level level) {
 		super(entityType, level);
@@ -140,7 +133,12 @@ public abstract class LivingEntityMixin extends Entity {
 					target = "Lnet/minecraft/world/phys/Vec3;<init>(DDD)V"),
 			index = 1)
 	private double accelerateUpClimbing(double vanillaClimbSpeed) {
-		climbingUpThisTick = true;
+		if (!((Object) this instanceof Player player) || !this.onClimbable()) {
+			return vanillaClimbSpeed;
+		}
+		WallMovementData wallData = ParkourContext.get(player).wall();
+		wallData.setClimbingUpThisTick(true);
+
 		// 基础速度提升
 		if (ParkourConfig.enableUpClimbSpeedIncrease) {
 			vanillaClimbSpeed *= ParkourConfig.upClimbSpeedMultiplier;
@@ -150,7 +148,7 @@ public abstract class LivingEntityMixin extends Entity {
 			double maxSpeed =
 					vanillaClimbSpeed * ParkourConfig.upClimbAccelerationMultiplier;
 			double climbYSpeed =
-					Mth.clampedMap(climbUpTicks, CLIMB_ACCELERATION_START_TICK,
+					Mth.clampedMap(wallData.getClimbUpTicks(), CLIMB_ACCELERATION_START_TICK,
 							CLIMB_ACCELERATION_FINISH_TICK,
 							vanillaClimbSpeed, maxSpeed);
 			return Math.max(this.getDeltaMovement().y, climbYSpeed);
@@ -165,6 +163,10 @@ public abstract class LivingEntityMixin extends Entity {
 	@WrapOperation(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
 			at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(DD)D"))
 	private double accelerateDownClimbing(double currentYSpeed, double vanillaDownSpeed, Operation<Double> original) {
+		if (!((Object) this instanceof Player player)) {
+			return original.call(currentYSpeed, vanillaDownSpeed);
+		}
+
 		if (ParkourConfig.enableDownClimbSpeedIncrease) {
 			double maxSpeedIncrease =
 					vanillaDownSpeed * ParkourConfig.downClimbSpeedMultiplier;
@@ -177,7 +179,8 @@ public abstract class LivingEntityMixin extends Entity {
 		if (ParkourConfig.enableClimbAccelerationOverTime) {
 			double acceleratedSpeed =
 					vanillaDownSpeed * ParkourConfig.downClimbAccelerationMultiplier;
-			vanillaDownSpeed = Mth.clampedMap(climbDownTicks,
+			WallMovementData wallData = ParkourContext.get(player).wall();
+			vanillaDownSpeed = Mth.clampedMap(wallData.getClimbDownTicks(),
 					CLIMB_ACCELERATION_START_TICK,
 					CLIMB_ACCELERATION_FINISH_TICK, vanillaDownSpeed,
 					acceleratedSpeed);
@@ -191,20 +194,24 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
 			at = @At("RETURN"), cancellable = true)
 	private void updateClimbTimer(CallbackInfoReturnable<Vec3> cir) {
+		if (!((Object) this instanceof Player player)) {
+			return;
+		}
 
+		WallMovementData wallData = ParkourContext.get(player).wall();
 		Vec3 movement = cir.getReturnValue();
 		// 如果在梯子上，且正在向下移动，且视角向下超过20度，增加下行计时器
 		if (this.onClimbable() && movement.y < 0 && this.getXRot() > DOWN_CLIMB_ACCELERATE_LOOK_MIN_PITCH.intValue()) {
-			climbDownTicks++;
+			wallData.incrementClimbDownTicks();
 		} else {
-			climbDownTicks = 0;
+			wallData.resetClimbDownTicks();
 		}
 
-		if (climbingUpThisTick) {
-			climbUpTicks++;
-			climbingUpThisTick = false;
+		if (wallData.isClimbingUpThisTick()) {
+			wallData.incrementClimbUpTicks();
+			wallData.setClimbingUpThisTick(false);
 		} else {
-			climbUpTicks = 0;
+			wallData.resetClimbUpTicks();
 		}
 		cir.setReturnValue(movement);
 	}

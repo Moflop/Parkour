@@ -29,21 +29,21 @@ public class SupportWallJumpAction {
 	 * @sideeffect 在服务端播放蹬墙跳音效
 	 * @sideeffect 重置玩家摔落距离和跳跃计时
 	 */
-	public static void execute(Player player) {
+	public static boolean execute(Player player) {
 		ParkourContext context = ParkourContext.get(player);
 		IParkourState currentState = context.state().getState();
 		if (!SupportWallJumpEligibilityChecker.check(player, currentState))
-			return;
+			return false;
 
 		WallMovementData wallMovementData = context.wall();
 		Direction wallDir = wallMovementData.getArmhang();
 		if (wallDir == null)
-			return;
+			return false;
 
 		SupportWallJumpType supportWallJumpType =
 				SupportWallJumpTypeResolver.resolve(player, wallDir);
 		if (supportWallJumpType == SupportWallJumpType.NONE)
-			return;
+			return false;
 
 		Vec3 velocity = SupportWallJumpVelocity.computeJumpVelocity(player,
 				supportWallJumpType);
@@ -55,5 +55,7 @@ public class SupportWallJumpAction {
 		ParkourStateMachine.resetToDefaultState(player, context);
 		SupportWallJumpSound.play(player);
 		player.resetFallDistance();
+
+		return true;
 	}
 }

@@ -52,9 +52,8 @@ public class ClientSwimmingBoostHandler {
 		SwimMovementData swimData = ParkourContext.get(player).swim();
 		if (SwimmingBoostAction.execute(player, swimData)) {
 			ClientSwimmingBoostSound.play(player);
+			player.sendPosition();
+			ClientPacketDistributor.sendToServer(new UseSwimmingBoostC2SPayload());
 		}
-
-		player.sendPosition();
-		ClientPacketDistributor.sendToServer(new UseSwimmingBoostC2SPayload());
 	}
 }

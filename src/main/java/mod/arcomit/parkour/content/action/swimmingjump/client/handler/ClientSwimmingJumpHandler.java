@@ -38,8 +38,9 @@ public class ClientSwimmingJumpHandler {
 			return;
 		}
 
-		SwimmingJumpAction.execute(localPlayer);
-		localPlayer.sendPosition();
-		ClientPacketDistributor.sendToServer(new UseSwimmingJumpC2SPayload());
+		if (SwimmingJumpAction.execute(localPlayer)) {
+			localPlayer.sendPosition();
+			ClientPacketDistributor.sendToServer(new UseSwimmingJumpC2SPayload());
+		}
 	}
 }
