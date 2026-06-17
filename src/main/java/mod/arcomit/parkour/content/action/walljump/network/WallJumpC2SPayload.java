@@ -46,10 +46,11 @@ public record WallJumpC2SPayload() implements CustomPacketPayload {
 		public static void handle(WallJumpC2SPayload packet, IPayloadContext context) {
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
-					WallJumpAction.execute(player);
-					// 避免触发服务端反作弊回拉
-					if (player.connection != null) {
-						player.connection.resetPosition();
+					if (WallJumpAction.execute(player)) {
+						// 避免触发服务端反作弊回拉
+						if (player.connection != null) {
+							player.connection.resetPosition();
+						}
 					}
 				}
 			});

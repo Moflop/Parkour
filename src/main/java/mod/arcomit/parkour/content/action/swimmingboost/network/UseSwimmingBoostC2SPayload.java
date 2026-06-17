@@ -53,11 +53,10 @@ public record UseSwimmingBoostC2SPayload() implements CustomPacketPayload {
 							ParkourContext.get(player).swim();
 					if (SwimmingBoostAction.execute(player, swimData)) {
 						SwimmingBoostSound.play(player);
-					}
-
-					// 避免触发服务端反作弊回拉
-					if (player.connection != null) {
-						player.connection.resetPosition();
+						// 避免触发服务端反作弊回拉
+						if (player.connection != null) {
+							player.connection.resetPosition();
+						}
 					}
 				}
 			});

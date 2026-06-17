@@ -48,8 +48,9 @@ public class ClientSupportWallJumpHandler {
 		}
 
 
-		SupportWallJumpAction.execute(localPlayer);
-		localPlayer.sendPosition();
-		PacketDistributor.sendToServer(new SupportWallJumpC2SPayload());
+		if (SupportWallJumpAction.execute(localPlayer)) {
+			localPlayer.sendPosition();
+			PacketDistributor.sendToServer(new SupportWallJumpC2SPayload());
+		}
 	}
 }

@@ -95,8 +95,7 @@ public class ClientWallJumpKeyInputHandler {
 		}
 		lastJumpPressMs = now;
 
-		WallJumpAction.execute(player);
-		if (player.isLocalPlayer()) {
+		if (WallJumpAction.execute(player)) {
 			player.sendPosition();
 			PacketDistributor.sendToServer(new WallJumpC2SPayload());
 		}

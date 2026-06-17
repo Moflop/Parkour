@@ -46,10 +46,11 @@ public record UseSwimmingJumpC2SPayload() implements CustomPacketPayload {
 				IPayloadContext context) {
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
-					SwimmingJumpAction.execute(player);
-					// 避免触发服务端反作弊回拉
-					if (player.connection != null) {
-						player.connection.resetPosition();
+					if (SwimmingJumpAction.execute(player)) {
+						// 避免触发服务端反作弊回拉
+						if (player.connection != null) {
+							player.connection.resetPosition();
+						}
 					}
 				}
 			});

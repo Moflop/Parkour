@@ -47,9 +47,10 @@ public record SupportWallJumpC2SPayload() implements CustomPacketPayload {
 				IPayloadContext context) {
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
-					SupportWallJumpAction.execute(player);
-					if (player.connection != null) {
-						player.connection.resetPosition();
+					if (SupportWallJumpAction.execute(player)) {
+						if (player.connection != null) {
+							player.connection.resetPosition();
+						}
 					}
 				}
 			});
