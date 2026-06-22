@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public record WallJumpC2SPayload() implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<WallJumpC2SPayload> TYPE =
-			new CustomPacketPayload.Type<>(ParkourMod.prefix("wall_jump"));
+			new CustomPacketPayload.Type<>(ParkourMod.prefix("wall_jump_c2s"));
 	public static final StreamCodec<ByteBuf, WallJumpC2SPayload> STREAM_CODEC =
 			StreamCodec.unit(new WallJumpC2SPayload());
 

@@ -2,7 +2,9 @@ package mod.arcomit.parkour.content.action.supportwalljump;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -28,6 +30,9 @@ public class SupportWallJumpEligibilityChecker {
 	 * @return true表示允许支撑蹬墙跳，false表示功能未启用或不在垂挂状态
 	 */
 	public static boolean check(Player player, IParkourState currentState) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return false;
+		}
 		if (!ParkourConfig.enableSupportWallJump) {
 			return false;
 		}

@@ -2,7 +2,9 @@ package mod.arcomit.parkour.content.mechanic.movespeed;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.utils.AttributeHelper;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,7 +24,7 @@ public class MoveSpeedIncreaseMechanic {
 	private static final double VANILLA_SPEED_MULTIPLIER = 1.0;
 
 	public static void handle(Player player) {
-		if (!ParkourConfig.enableMoveSpeedIncrease) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player)) || !ParkourConfig.enableMoveSpeedIncrease) {
 			AttributeHelper.removeModifier(player, Attributes.MOVEMENT_SPEED,
 					SPEED_MULTIPLIER_MODIFIER_ID);
 			return;

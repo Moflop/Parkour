@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public record ForceLocalPlayerStateS2CPayload(Identifier correctStateId, int animVariant)
 		implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<ForceLocalPlayerStateS2CPayload> TYPE =
-			new CustomPacketPayload.Type<>(ParkourMod.prefix("sync_state_to_local"));
+			new CustomPacketPayload.Type<>(ParkourMod.prefix("force_local_player_state_s2c"));
 
 	public static final StreamCodec<FriendlyByteBuf, ForceLocalPlayerStateS2CPayload>
 			STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC,

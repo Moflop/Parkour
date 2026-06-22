@@ -4,12 +4,15 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.init.ParkourAttachmentTypes;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,6 +48,10 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 	 */
 	@ModifyReturnValue(method = "canStartSprinting", at = @At("RETURN"))
 	private boolean modifyHasEnoughImpulseToStartSprinting(boolean original) {
+		if((Object) this instanceof Player player && ParkourChecks.isVanillaState(
+				ParkourContext.get(player))) {
+			return original;
+		}
 		if (ParkourConfig.enableOmniSprint) {
 			boolean omniSprintCondition = this.isUnderWater() ?
 					this.input.hasForwardImpulse() :
@@ -74,6 +81,10 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 			at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;horizontalCollision:Z")
 	)
 	private boolean preventSprintInterruptionOnCollision(boolean original) {
+		if((Object) this instanceof Player player && ParkourChecks.isVanillaState(
+				ParkourContext.get(player))) {
+			return original;
+		}
 		return false;
 	}
 }

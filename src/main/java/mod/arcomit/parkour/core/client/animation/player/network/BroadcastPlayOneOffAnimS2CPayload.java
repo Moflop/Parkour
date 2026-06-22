@@ -29,7 +29,7 @@ public record BroadcastPlayOneOffAnimS2CPayload(int entityId, Identifier actionI
                                                 boolean interruptible, int fadeTicks)
 		implements CustomPacketPayload {
 	public static final Type<BroadcastPlayOneOffAnimS2CPayload> TYPE =
-			new Type<>(ParkourMod.prefix("broadcast_play_action"));
+			new Type<>(ParkourMod.prefix("broadcast_play_one_off_anim_s2c"));
 
 	public static final StreamCodec<FriendlyByteBuf, BroadcastPlayOneOffAnimS2CPayload>
 			STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT,

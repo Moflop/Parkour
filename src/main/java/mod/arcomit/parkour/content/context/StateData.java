@@ -47,6 +47,10 @@ public class StateData {
 	@Getter
 	@Setter
 	private int animationVariant = 0;
+	/** 是否开启跑酷 */
+	@Getter
+	@Setter
+	private transient boolean parkourEnabled = true;
 
 	/** 当前状态的注册键缓存，避免重复调用 {@code Registry.getKey()} */
 	private transient Identifier cachedKey = ParkourStates.DEFAULT.getId();

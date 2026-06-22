@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public record BroadcastStateChangeS2CPayload(int entityId, Identifier stateId, int animVariant)
 		implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<BroadcastStateChangeS2CPayload> TYPE =
-			new CustomPacketPayload.Type<>(ParkourMod.prefix("broadcast_state_change"));
+			new CustomPacketPayload.Type<>(ParkourMod.prefix("broadcast_state_change_s2c"));
 
 	public static final StreamCodec<FriendlyByteBuf, BroadcastStateChangeS2CPayload>
 			STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT,

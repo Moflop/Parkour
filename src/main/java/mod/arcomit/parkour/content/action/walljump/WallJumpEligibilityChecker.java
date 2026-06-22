@@ -5,7 +5,9 @@ import mod.arcomit.parkour.content.behavior.base.DefaultState;
 import mod.arcomit.parkour.content.behavior.wallclimb.WallClimbState;
 import mod.arcomit.parkour.content.behavior.wallrun.WallRunState;
 import mod.arcomit.parkour.content.behavior.wallslide.WallSlideState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -32,15 +34,20 @@ public class WallJumpEligibilityChecker {
 	 * @return true表示允许蹬墙跳，false表示当前不满足条件
 	 */
 	public static boolean check(Player player, IParkourState currentState) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return false;
+		}
 		if (currentState instanceof WallRunState || currentState instanceof WallSlideState || currentState instanceof ArmhangState) {
-			return true; // TODO: 垂挂
-		} else if (currentState instanceof DefaultState) {
+			return true;
+		}
+		if (currentState instanceof DefaultState) {
 			if (!player.onGround() && player.getDeltaMovement().y() < 0) {
 				return true;
 			} else if (player.onClimbable()) {
 				return true;
 			}
-		} else if (currentState instanceof WallClimbState) {
+		}
+		if (currentState instanceof WallClimbState) {
 			if (!player.onGround()) {
 				return true;
 			}

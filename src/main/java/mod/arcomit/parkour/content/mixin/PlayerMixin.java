@@ -3,6 +3,7 @@ package mod.arcomit.parkour.content.mixin;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import mod.arcomit.parkour.content.behavior.crawl.CrawlState;
 import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +24,9 @@ public abstract class PlayerMixin {
 	@WrapWithCondition(method = "causeExtraKnockback(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/phys/Vec3;)V",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V"))
 	private boolean preventSprintInvalid(Player instance, boolean isSprinting) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(instance))) {
+			return isSprinting;
+		}
 		// 返回 false 阻止 setSprinting 运行，从而不打断疾跑
 		return false;
 	}

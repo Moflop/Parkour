@@ -53,4 +53,7 @@ public class ParkourProxies {
 	 * {@code ClientMinecraftProxyImpl}。
 	 */
 	public static IMinecraftProxy MINECRAFT_PROXY = new ServerDummyMinecraftProxy();
+
+	public static IGetClientConfigProxy GET_CLIENT_CONFIG_PROXY =
+			new ServerGetClientConfigProxy();
 }

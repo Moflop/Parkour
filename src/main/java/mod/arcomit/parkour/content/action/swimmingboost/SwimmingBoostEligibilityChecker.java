@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.action.swimmingboost;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.SwimMovementData;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +27,9 @@ public class SwimmingBoostEligibilityChecker {
 	 * @return true表示可执行加速，任一条件不满足返回false
 	 */
 	public static boolean check(Player player, SwimMovementData swimData) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return false;
+		}
 		return ParkourConfig.enableSwimmingBoost && swimData.getBoostCooldown() <= 0 && player.isSwimming() && ParkourChecks.canPerformAction(
 				player);
 	}

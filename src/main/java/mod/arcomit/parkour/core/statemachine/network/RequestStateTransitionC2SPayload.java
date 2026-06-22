@@ -30,7 +30,7 @@ public record RequestStateTransitionC2SPayload(Identifier targetStateId, int ani
 		implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<RequestStateTransitionC2SPayload> TYPE =
 			new CustomPacketPayload.Type<>(
-					ParkourMod.prefix("request_state_transition"));
+					ParkourMod.prefix("request_state_transition_c2s"));
 
 	public static final StreamCodec<FriendlyByteBuf, RequestStateTransitionC2SPayload>
 			STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC,

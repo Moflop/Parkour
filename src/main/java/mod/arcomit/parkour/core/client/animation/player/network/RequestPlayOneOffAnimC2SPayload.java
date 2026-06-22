@@ -24,7 +24,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record RequestPlayOneOffAnimC2SPayload(Identifier actionId, boolean interruptible,
                                               int fadeTicks) implements CustomPacketPayload {
 	public static final Type<RequestPlayOneOffAnimC2SPayload> TYPE =
-			new Type<>(ParkourMod.prefix("request_play_action"));
+			new Type<>(ParkourMod.prefix("request_play_one_off_anim_c2s"));
 
 	public static final StreamCodec<FriendlyByteBuf, RequestPlayOneOffAnimC2SPayload>
 			STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC,

@@ -19,7 +19,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  */
 public record UseSwimmingJumpC2SPayload() implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<UseSwimmingJumpC2SPayload> TYPE =
-			new CustomPacketPayload.Type<>(ParkourMod.prefix("freestyle_jump"));
+			new CustomPacketPayload.Type<>(ParkourMod.prefix("swimming_jump_c2s"));
 	public static final StreamCodec<ByteBuf, UseSwimmingJumpC2SPayload> STREAM_CODEC =
 			StreamCodec.unit(new UseSwimmingJumpC2SPayload());
 

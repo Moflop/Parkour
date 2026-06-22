@@ -1,6 +1,7 @@
 {
-  "key.category.parkour.default": "Parkour",
+  "key.categories.parkour": "Parkour",
   "key.parkour.roll_slide": "Roll/Slide",
+  "key.parkour.enable_parkour": "Toggle Parkour Mode",
   "parkour.configuration.online_settings": "Online Settings",
   "parkour.configuration.online_settings.tooltip": "Online settings let you change all options related to multiplayer.",
   "parkour.configuration.online_settings.remove_speed_limits": "Remove Speed Limits",
@@ -101,5 +102,7 @@
   "parkour.subtitle.landing_roll": "Landing roll sound",
   "parkour.subtitle.wall_jump": "Wall jump sound",
   "parkour.subtitle.armhang": "Armhang sound",
-  "parkour.subtitle.speed_vault": "Speed vault sound"
+  "parkour.subtitle.speed_vault": "Speed vault sound",
+  "message.parkour.enabled": "Parkour Mode: Enabled",
+  "message.parkour.disabled": "Parkour Mode: Disabled"
 }

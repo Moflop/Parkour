@@ -9,6 +9,7 @@ import mod.arcomit.parkour.content.behavior.crawl.CrawlState;
 import mod.arcomit.parkour.content.behavior.landingroll.LandingRollState;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
 import mod.arcomit.parkour.content.behavior.speedvault.SpeedVaultState;
+import mod.arcomit.parkour.content.behavior.vanilla.VanillaState;
 import mod.arcomit.parkour.content.behavior.wallclimb.WallClimbState;
 import mod.arcomit.parkour.content.behavior.wallrun.WallRunState;
 import mod.arcomit.parkour.content.behavior.wallslide.WallSlideState;
@@ -45,17 +46,14 @@ public class ParkourStates {
 	public static final DeferredHolder<IParkourState, DefaultState> DEFAULT =
 			PARKOUR_STATES.register("default", DefaultState::new);
 
-
+	public static final DeferredHolder<IParkourState, VanillaState> VANILLA =
+			PARKOUR_STATES.register("vanilla", VanillaState::new);
 
 	public static final DeferredHolder<IParkourState, CrawlState> CRAWL =
 			PARKOUR_STATES.register("crawl", CrawlState::new);
 
-
-
 	public static final DeferredHolder<IParkourState, SlideState> SLIDE =
 			PARKOUR_STATES.register("slide", SlideState::new);
-
-
 
 	public static final DeferredHolder<IParkourState, WallSlideState> WALL_SLIDE =
 			PARKOUR_STATES.register("wall_slide", WallSlideState::new);
