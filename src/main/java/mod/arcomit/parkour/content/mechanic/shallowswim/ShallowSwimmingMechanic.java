@@ -51,7 +51,7 @@ public class ShallowSwimmingMechanic {
 	}
 
 	private static boolean canShallowSwim(Player player, ParkourContext state) {
-		return ParkourConfig.enableShallowSwimming && player.isInWater() && ParkourChecks.canPerformAction(
+		return !ParkourChecks.isVanillaState(ParkourContext.get(player)) && ParkourConfig.enableShallowSwimming && player.isInWater() && ParkourChecks.canPerformAction(
 				player);
 	}
 }

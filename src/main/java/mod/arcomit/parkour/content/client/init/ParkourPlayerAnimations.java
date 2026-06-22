@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.content.init;
+package mod.arcomit.parkour.content.client.init;
 
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.core.client.animation.player.PlayerAnimation;

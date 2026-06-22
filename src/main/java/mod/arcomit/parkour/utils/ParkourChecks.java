@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.utils;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.behavior.vanilla.VanillaState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
@@ -42,5 +44,12 @@ public class ParkourChecks {
 	 */
 	public static boolean isFallUnsafe(Player player) {
 		return player.fallDistance > ParkourConfig.safeFallHeight;
+	}
+
+	/**
+	 * 判定玩家当前是否启用跑酷系统。
+	 */
+	public static boolean isVanillaState(ParkourContext context) {
+		return context.state().getState() instanceof VanillaState;
 	}
 }

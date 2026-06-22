@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.mechanic.freestyle;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -25,7 +26,7 @@ public class FreestyleMechanic {
 	}
 
 	public static boolean canFreestyle(Player player) {
-		if (!ParkourConfig.enableFreestyle || !player.isSwimming() || player.isUnderWater() || !ParkourChecks.canPerformAction(
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player)) || !ParkourConfig.enableFreestyle || !player.isSwimming() || player.isUnderWater() || !ParkourChecks.canPerformAction(
 				player)) {
 			return false;
 		}

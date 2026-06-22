@@ -9,6 +9,7 @@ import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -107,7 +108,7 @@ public class ParkourStateEngine {
 
 		if (player.level().isClientSide()) {
 			ParkourProxies.PLAYER_ANIM_PROXY.playStateAnimation(player);
-			if (FMLEnvironment.production) {
+			if (!FMLLoader.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"【Client】 Player {} transitioned to state: {} (Variant: {})",
 						player.getName().getString(),
@@ -117,7 +118,7 @@ public class ParkourStateEngine {
 		} else {
 			ParkourNetworkSynchronizer.broadcastStateChange(player, targetState,
 					animVariant);
-			if (FMLEnvironment.production) {
+			if (!FMLLoader.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"【Server】 Player {} transitioned to state: {} (Variant: {})",
 						player.getName().getString(),

@@ -1,6 +1,6 @@
 package mod.arcomit.parkour.content.behavior.speedvault.client;
 
-import mod.arcomit.parkour.content.init.ParkourPlayerAnimations;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.sounds.SoundSource;

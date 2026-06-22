@@ -2,7 +2,9 @@ package mod.arcomit.parkour.content.mechanic.stepheight;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.utils.AttributeHelper;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,7 +24,7 @@ public class StepHeightIncreaseMechanic {
 	private static final double VANILLA_STEP_HEIGHT = 0.6;
 
 	public static void handle(Player player) {
-		if (!ParkourConfig.enableStepHeightIncrease) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player)) || !ParkourConfig.enableStepHeightIncrease) {
 			AttributeHelper.removeModifier(player, Attributes.STEP_HEIGHT,
 					STEP_HEIGHT_MODIFIER_ID);
 			return;

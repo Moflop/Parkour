@@ -32,6 +32,7 @@ public class ParkourMod {
 
 	public ParkourMod(IEventBus modEventBus, ModContainer modContainer) {
 		modContainer.registerConfig(ModConfig.Type.SERVER, ParkourConfig.SPEC);
+		modContainer.registerConfig(ModConfig.Type.CLIENT, ClientParkourConfig.SPEC);
 		ParkourAttachmentTypes.register(modEventBus);
 		ParkourStates.register(modEventBus);
 		ParkourSounds.register(modEventBus);

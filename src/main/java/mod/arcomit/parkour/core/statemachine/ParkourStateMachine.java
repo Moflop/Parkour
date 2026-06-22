@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -310,7 +311,7 @@ public class ParkourStateMachine {
 	public static void resetToDefaultState(@NotNull Player player,
 			@NotNull ParkourContext context) {
 		if (shouldResetToDefault(context)) {
-			if (FMLEnvironment.production) {
+			if (!FMLLoader.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"Resetting player {} to DEFAULT state due to invalidation.",
 						player.getName().getString());
@@ -334,7 +335,7 @@ public class ParkourStateMachine {
 	public static void resetToDefaultStateAndSync(@NotNull ServerPlayer serverPlayer,
 			@NotNull ParkourContext context) {
 		if (shouldResetToDefault(context)) {
-			if (FMLEnvironment.production) {
+			if (!FMLLoader.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"Server resetting player {} to DEFAULT state and syncing.",
 						serverPlayer.getName().getString());

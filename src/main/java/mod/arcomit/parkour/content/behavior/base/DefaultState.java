@@ -28,6 +28,9 @@ public class DefaultState extends AbstractParkourState {
 
 	public DefaultState() {
 		registerTransitions(
+				// 原版最高优先级
+				IParkourStateTransition.onLocalTick(ParkourStates.VANILLA::get, this::isVanilla),
+
 				// 输入类转移
 				IParkourStateTransition.onInput(ParkourStates.CRAWL::get,
 						ParkourInputActions.SLIDE, this::canCrawl),
@@ -53,6 +56,13 @@ public class DefaultState extends AbstractParkourState {
 	// ==========================================
 	// 状态转移条件判断 (Predicates)
 	// ==========================================
+
+	/**
+	 *  玩家处于原版状态
+	 */
+	private boolean isVanilla(Player player, ParkourContext context) {
+		return !ParkourProxies.GET_CLIENT_CONFIG_PROXY.isEnableParkour(context);
+	}
 
 	/**
 	 * 爬行准入：玩家静止站立时按下滑铲键。

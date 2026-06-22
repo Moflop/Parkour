@@ -1,7 +1,9 @@
 package mod.arcomit.parkour.content.mechanic.swimimprovements;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -15,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 public class SwimmingImprovementsMechanic {
 
 	public static void handle(Player player) {
-		if (!ParkourConfig.enableStopSwimmingWhenIdle) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player)) || !ParkourConfig.enableStopSwimmingWhenIdle) {
 			return;
 		}
 

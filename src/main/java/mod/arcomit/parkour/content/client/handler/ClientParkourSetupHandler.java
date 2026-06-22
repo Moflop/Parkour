@@ -8,7 +8,7 @@ import mod.arcomit.parkour.content.behavior.speedvault.client.animation.player.S
 import mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player.WallClimbPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallrun.client.animation.player.WallRunPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallslide.client.animation.player.WallSlidePlayerAnimModifier;
-import mod.arcomit.parkour.content.init.ParkourPlayerAnimations;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.client.animation.camera.CameraAnimationRegistry;
 import mod.arcomit.parkour.core.client.animation.player.ClientAnimationRegistry;
@@ -36,7 +36,7 @@ import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
  * @since 2026-06-08
  */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
-public class ParkourClientSetupHandler {
+public class ClientParkourSetupHandler {
 
 	/**
 	 * 客户端启动时执行一次性初始化。
@@ -59,6 +59,7 @@ public class ParkourClientSetupHandler {
 		ParkourProxies.LOCAL_PLAYER_SERVICES_PROXY =
 				new ClientLocalPlayerServicesProxyImpl();
 		ParkourProxies.MINECRAFT_PROXY = new ClientMinecraftProxyImpl();
+		ParkourProxies.GET_CLIENT_CONFIG_PROXY = new ClientGetClientConfigProxyImpl();
 
 		event.enqueueWork(() -> {
 			ClientAnimationRegistry.registerStateAnimation(ParkourStates.SLIDE.getId(),

@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.action.swimmingjump;
 
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.mechanic.freestyle.FreestyleMechanic;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -22,6 +24,9 @@ public class SwimmingJumpEligibilityChecker {
 	 * @return true表示可执行游泳跳跃，任一条件不满足返回false
 	 */
 	public static boolean check(Player player) {
+		if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return false;
+		}
 		return player.jumping && FreestyleMechanic.canFreestyle(player);
 	}
 }

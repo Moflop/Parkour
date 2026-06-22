@@ -9,6 +9,7 @@ import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
+import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -29,7 +30,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -61,8 +61,10 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "onClimbable", at = @At("HEAD"), cancellable = true)
 	public void InjectOnClimbable(CallbackInfoReturnable<Boolean> cir) {
-		if (!ParkourConfig.canClimbMoreBlocks)
+		if (!ParkourConfig.canClimbMoreBlocks || ((Object) this instanceof Player player && ParkourChecks.isVanillaState(
+				ParkourContext.get(player)))) {
 			return;
+		}
 
 		LivingEntity entity = (LivingEntity) (Object) this;
 
@@ -136,6 +138,9 @@ public abstract class LivingEntityMixin extends Entity {
 		if (!((Object) this instanceof Player player) || !this.onClimbable()) {
 			return vanillaClimbSpeed;
 		}
+		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return vanillaClimbSpeed;
+		}
 		WallMovementData wallData = ParkourContext.get(player).wall();
 		wallData.setClimbingUpThisTick(true);
 
@@ -166,7 +171,9 @@ public abstract class LivingEntityMixin extends Entity {
 		if (!((Object) this instanceof Player player)) {
 			return original.call(currentYSpeed, vanillaDownSpeed);
 		}
-
+		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return original.call(currentYSpeed, vanillaDownSpeed);
+		}
 		if (ParkourConfig.enableDownClimbSpeedIncrease) {
 			double maxSpeedIncrease =
 					vanillaDownSpeed * ParkourConfig.downClimbSpeedMultiplier;
@@ -198,7 +205,9 @@ public abstract class LivingEntityMixin extends Entity {
 		if (!((Object) this instanceof Player player)) {
 			return;
 		}
-
+		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+			return;
+		}
 		WallMovementData wallData = ParkourContext.get(player).wall();
 		Vec3 movement = cir.getReturnValue();
 		// 如果在梯子上，且正在向下移动，且视角向下超过20度，增加下行计时器
@@ -229,6 +238,9 @@ public abstract class LivingEntityMixin extends Entity {
 		LivingEntity livingEntity = (LivingEntity) (Object) this;
 
 		if (this.level().isClientSide() && (livingEntity instanceof Player player)) {
+			if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
+				return original;
+			}
 			// 只有在有输入向量时才返回真实的碰撞状态
 			return original && ParkourProxies.INPUT_PROXY.getMoveVector(player).length() > 0;
 		}
@@ -243,7 +255,8 @@ public abstract class LivingEntityMixin extends Entity {
 	@WrapOperation(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(DDD)D"))
 	private double modifyHorizontalClimbSpeed(double speed, double vanillaSpeedMin, double vanillaSpeedMax, Operation<Double> original) {
-		if ((!this.onGround() && !this.jumping) || !ParkourConfig.climbableBlockNotSlowDown) {
+		if ((!this.onGround() && !this.jumping) || !ParkourConfig.climbableBlockNotSlowDown || ((Object) this instanceof Player player && ParkourChecks.isVanillaState(
+				ParkourContext.get(player)))) {
 			return original.call(speed, vanillaSpeedMin, vanillaSpeedMax);
 		} else {
 			return speed;
