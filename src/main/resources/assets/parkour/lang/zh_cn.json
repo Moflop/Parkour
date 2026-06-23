@@ -1,5 +1,5 @@
 {
-  "key.categories.parkour": "简单跑酷",
+  "key.category.parkour.default": "简单跑酷",
   "key.parkour.roll_slide": "翻滚/滑铲",
   "key.parkour.enable_parkour": "开启/关闭跑酷模式",
   "parkour.configuration.client_settings": "客户端设置",

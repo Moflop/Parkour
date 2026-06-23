@@ -161,6 +161,9 @@ public class DefaultState extends AbstractParkourState {
 			@Override
 			public boolean shouldTransitionOnJump(Player player, ParkourContext context,
 					LivingJumpCancellableEvent event) {
+				if (ParkourProxies.INPUT_PROXY.getMoveVector(player).length() == 0) {
+					return false;
+				}
 				event.setCanceled(true);
 				return true;
 			}

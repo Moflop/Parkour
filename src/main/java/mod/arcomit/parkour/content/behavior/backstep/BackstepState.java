@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.behavior.backstep;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.behavior.backstep.client.ClientBackstepAnimation;
 import mod.arcomit.parkour.content.behavior.backstep.client.ClientBackstepSound;
 import mod.arcomit.parkour.content.behavior.backstep.client.ClientBackstepVelocity;
 import mod.arcomit.parkour.content.context.GroundMovementData;
@@ -47,6 +48,7 @@ public class BackstepState extends AbstractParkourState {
 		ClientBackstepSound.playSound(player);
 		if (player.isLocalPlayer()) {
 			ClientBackstepVelocity.applyVelocityAndSendPosition(player);
+			ClientBackstepAnimation.playPlayerAnim(player);
 		}
 	}
 

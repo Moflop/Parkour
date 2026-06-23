@@ -88,7 +88,7 @@ public class ParkourStateEngine {
 
 		stateData.setState(targetState);
 		stateData.setTicksInState(0);
-		stateData.setAnimationVariant(animVariant);
+		stateData.setAnimVariant(animVariant);
 
 		targetState.onEnter(player, context);
 

@@ -30,6 +30,7 @@ public class StateData {
 	public static final StreamCodec<ByteBuf, StateData> STREAM_CODEC =
 			StreamCodec.composite(Identifier.STREAM_CODEC, StateData::getStateId,
 					ByteBufCodecs.VAR_INT, StateData::getTicksInState,
+					ByteBufCodecs.VAR_INT, StateData::getAnimVariant,
 					StateData::new);
 
 	/** 当前状态的注册键，-1 表示无状态 */
@@ -39,14 +40,14 @@ public class StateData {
 	@Getter
 	@Setter
 	private int ticksInState = 0;
+	/** 动画变体索引，同一状态可对应多种动画（如墙跑左右），0 为默认 */
+	@Getter
+	@Setter
+	private int animVariant = 0;
 	/** 记录状态暂时失效的连续 tick 数，用于网络容错 */
 	@Getter
 	@Setter
 	private int stateInvalidTicks = 0;
-	/** 动画变体索引，同一状态可对应多种动画（如墙跑左右），0 为默认 */
-	@Getter
-	@Setter
-	private int animationVariant = 0;
 	/** 是否开启跑酷 */
 	@Getter
 	@Setter
@@ -67,9 +68,10 @@ public class StateData {
 	 * @param stateId      状态的 Identifier 注册键，null 时回退到默认状态
 	 * @param ticksInState 已在该状态中的 tick 数，非负
 	 */
-	public StateData(Identifier stateId, int ticksInState) {
+	public StateData(Identifier stateId, int ticksInState, int animVariant) {
 		this.stateId = stateId != null ? stateId : ParkourStates.DEFAULT.getId();
 		this.ticksInState = ticksInState;
+		this.animVariant = animVariant;
 	}
 
 	/**

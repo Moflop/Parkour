@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.core.proxy.client;
 
 import mod.arcomit.parkour.core.client.animation.player.PlayerAnimationManager;
+//import mod.arcomit.parkour.core.client.animation.player.v2.ParkourAnimHelper;
+import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimHelper;
 import mod.arcomit.parkour.core.proxy.api.IPlayerAnimProxy;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.Identifier;
@@ -21,15 +23,18 @@ public class ClientPlayerAnimProxyImpl implements IPlayerAnimProxy {
 	@Override
 	public void playStateAnimation(Player player) {
 		if (player instanceof AbstractClientPlayer clientPlayer) {
-			PlayerAnimationManager.INSTANCE.playStateAnimation(clientPlayer);
+			mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimHelper.playStateAnim(clientPlayer);
+			//ParkourAnimHelper.playStateAnim(clientPlayer);
+			//PlayerAnimationManager.INSTANCE.playStateAnimation(clientPlayer);
 		}
 	}
 
 	@Override
 	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible) {
 		if (player instanceof AbstractClientPlayer clientPlayer) {
-			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
-					interruptible);
+//			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
+//					interruptible);
+			//ParkourAnimHelper.playActionAnim(clientPlayer, animId, 10);
 		}
 	}
 
@@ -37,8 +42,9 @@ public class ClientPlayerAnimProxyImpl implements IPlayerAnimProxy {
 	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible,
 			int fadeTicks) {
 		if (player instanceof AbstractClientPlayer clientPlayer) {
-			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
-					interruptible, fadeTicks);
+//			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
+//					interruptible, fadeTicks);
+			//ParkourAnimHelper.playActionAnim(clientPlayer, animId, 10);
 		}
 	}
 

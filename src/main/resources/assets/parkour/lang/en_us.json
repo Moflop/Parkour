@@ -1,5 +1,5 @@
 {
-  "key.categories.parkour": "Parkour",
+  "key.category.parkour.default": "Parkour",
   "key.parkour.roll_slide": "Roll/Slide",
   "key.parkour.enable_parkour": "Toggle Parkour Mode",
   "parkour.configuration.client_settings": "Client Settings",

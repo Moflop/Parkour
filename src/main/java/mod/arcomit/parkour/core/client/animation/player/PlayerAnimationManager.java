@@ -196,7 +196,7 @@ public class PlayerAnimationManager {
 
 		Identifier stateId = ParkourRegistries.PARKOUR_STATE_REGISTRY.getKey(currentState);
 		PlayerAnimation targetAnim = ClientAnimationRegistry.getAnimation(stateId,
-				stateData.getAnimationVariant());
+				stateData.getAnimVariant());
 
 		if (actionControllers.containsKey(uuid)) {
 			PlayerAnimationController actionController = actionControllers.get(uuid);
@@ -219,7 +219,7 @@ public class PlayerAnimationManager {
 					ClientAnimationRegistry.getModifierFactory(stateId);
 			if (factory != null) {
 				factory.apply(stateController, player, currentState,
-						stateData.getAnimationVariant());
+						stateData.getAnimVariant());
 			}
 
 			int offsetTicks = stateData.getTicksInState();

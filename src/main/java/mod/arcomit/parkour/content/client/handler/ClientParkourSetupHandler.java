@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.client.handler;
 
+import com.zigythebird.playeranim.api.PlayerAnimationFactory;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
@@ -12,6 +13,8 @@ import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.client.animation.camera.CameraAnimationRegistry;
 import mod.arcomit.parkour.core.client.animation.player.ClientAnimationRegistry;
+//import mod.arcomit.parkour.core.client.animation.player.v2.ParkourAnimController;
+import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimLayer;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.proxy.client.*;
 import net.minecraft.resources.Identifier;
@@ -38,6 +41,8 @@ import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
  */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public class ClientParkourSetupHandler {
+	public static final Identifier PARKOUR_ANIM_LAYER_ID = ParkourMod.prefix("parkour_anim_layer");
+	private static final int PARKOUR_ANIM_LAYER_PRIORITY = 2000;
 
 	/**
 	 * 客户端启动时执行一次性初始化。
@@ -63,6 +68,11 @@ public class ClientParkourSetupHandler {
 		ParkourProxies.GET_CLIENT_CONFIG_PROXY = new ClientGetClientConfigProxyImpl();
 
 		event.enqueueWork(() -> {
+			PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
+					PARKOUR_ANIM_LAYER_ID, PARKOUR_ANIM_LAYER_PRIORITY,
+					ParkourAnimLayer::new
+			);
+
 			ClientAnimationRegistry.registerStateAnimation(ParkourStates.SLIDE.getId(),
 					variant -> variant == 1 ?
 							ParkourPlayerAnimations.SLIDE_2 :
