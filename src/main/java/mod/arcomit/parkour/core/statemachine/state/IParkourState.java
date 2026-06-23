@@ -27,7 +27,7 @@ import java.util.List;
  */
 public interface IParkourState {
 
-	public static final int DEFAULT_ANIM_FADE_IN_TICKS = 5;
+	public static final int DEFAULT_ANIM_FADE_IN_TICKS = 3;
 
 	/**
 	 * 默认的动画变体 ID

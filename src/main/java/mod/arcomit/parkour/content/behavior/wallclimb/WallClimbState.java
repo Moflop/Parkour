@@ -1,8 +1,11 @@
 package mod.arcomit.parkour.content.behavior.wallclimb;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player.WallClimbPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallclimb.server.ServerWallClimbSound;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -13,9 +16,12 @@ import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 /**
  * 爬墙状态 —— 玩家面向墙壁按住跳跃键向上攀爬。
@@ -156,5 +162,15 @@ public class WallClimbState extends AbstractParkourState {
 		}
 		StateData stateData = context.state();
 		return stateData.getTicksInState() < ParkourConfig.wallClimbDuration;
+	}
+
+	@Override
+	public Identifier animId(Player player) {
+		return ParkourPlayerAnimations.WALL_CLIMB.id;
+	}
+
+	@Override
+	public List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
+		return List.of(new WallClimbPlayerAnimModifier(player));
 	}
 }

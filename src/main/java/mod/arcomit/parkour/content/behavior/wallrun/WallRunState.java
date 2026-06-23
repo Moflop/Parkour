@@ -1,8 +1,11 @@
 package mod.arcomit.parkour.content.behavior.wallrun;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.content.behavior.wallrun.client.animation.player.WallRunPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallrun.server.ServerWallRunSound;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -16,8 +19,11 @@ import mod.arcomit.parkour.utils.BlockCollisions;
 import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * 跑墙状态 —— 玩家在竖直墙面上水平跑动。
@@ -187,5 +193,17 @@ public class WallRunState extends AbstractParkourState {
 		WallMovementData wallMovementData = context.wall();
 		Direction movementDir = Direction.from3DDataValue(wallMovementData.getRunMoveRaw());
 		return Directions.isFacing(player, movementDir, FACING_ANGLE_TOLERANCE);
+	}
+
+	@Override
+	public Identifier animId(Player player) {
+		int variant = ParkourContext.get(player).state().getAnimVariant();
+		return variant == 0 ? ParkourPlayerAnimations.WALL_RUN_LEFT.id : ParkourPlayerAnimations.WALL_RUN_RIGHT.id;
+	}
+
+	@Override
+	public List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
+		boolean isWallOnLeft = (variant == 0);
+		return List.of(new WallRunPlayerAnimModifier(player, isWallOnLeft));
 	}
 }

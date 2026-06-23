@@ -73,7 +73,7 @@ public class ParkourAnimLayer extends ModifierLayer<IAnimation> {
 		// ACTION动画无法被停止，但是可以被playAnimation覆盖
 		if (this.currentType == ParkourAnimType.ACTION) return;
 
-		if (this.isActive()) {
+		if (this.isActive() && this.getAnimation() != null) {
 			this.removeModifierIf(modifier -> modifier instanceof AbstractFadeModifier);
 			AbstractFadeModifier fadeModifier = AbstractFadeModifier.standardFadeIn(fadeTicks, EasingType.LINEAR);
 			this.replaceAnimationWithFade(fadeModifier, null);

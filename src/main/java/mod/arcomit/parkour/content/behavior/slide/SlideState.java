@@ -1,9 +1,12 @@
 package mod.arcomit.parkour.content.behavior.slide;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.behavior.slide.client.ClientSlideLogic;
 import mod.arcomit.parkour.content.behavior.slide.client.ClientSlideSound;
+import mod.arcomit.parkour.content.behavior.slide.client.animation.player.SlidePlayerAnimModifier;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.GroundMovementData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -12,10 +15,12 @@ import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -107,5 +112,16 @@ public class SlideState extends AbstractParkourState {
 	public boolean isValid(Player player, ParkourContext context) {
 		StateData stateData = context.state();
 		return meetsBaseConditions(player) && stateData.getTicksInState() < SLIDE_DURATION;
+	}
+
+	@Override
+	public Identifier animId(Player player) {
+		int variant = ParkourContext.get(player).state().getAnimVariant();
+		return variant == 1 ? ParkourPlayerAnimations.SLIDE_2.id : ParkourPlayerAnimations.SLIDE_1.id;
+	}
+
+	@Override
+	public List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
+		return List.of(new SlidePlayerAnimModifier(player));
 	}
 }

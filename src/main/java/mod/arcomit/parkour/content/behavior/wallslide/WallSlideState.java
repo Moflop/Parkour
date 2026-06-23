@@ -1,6 +1,9 @@
 package mod.arcomit.parkour.content.behavior.wallslide;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.content.behavior.wallslide.client.animation.player.WallSlidePlayerAnimModifier;
+import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.init.ParkourStates;
@@ -8,8 +11,11 @@ import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * 墙滑状态 —— 玩家贴着墙壁减速下滑。
@@ -131,5 +137,15 @@ public class WallSlideState extends AbstractParkourState {
 	@Override
 	public boolean isValid(Player player, ParkourContext context) {
 		return meetsBaseConditions(player, context);
+	}
+
+	@Override
+	public Identifier animId(Player player) {
+		return ParkourPlayerAnimations.EMPTY_ANIM.id;
+	}
+
+	@Override
+	public List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
+		return List.of(new WallSlidePlayerAnimModifier(player));
 	}
 }
