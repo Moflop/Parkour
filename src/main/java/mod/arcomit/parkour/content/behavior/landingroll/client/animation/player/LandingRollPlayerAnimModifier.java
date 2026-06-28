@@ -113,6 +113,11 @@ public class LandingRollPlayerAnimModifier extends AbstractModifier {
 				bone.rotation.y = Mth.lerp(weight, bone.rotation.y, 0f);
 				bone.rotation.z = Mth.lerp(weight, bone.rotation.z, 0f);
 				break;
+			case "body":
+				bone.rotation.x = LandingRollAnimMath.rotLerpRadians(weight, bone.rotation.x, 0f);
+				bone.rotation.y = LandingRollAnimMath.rotLerpRadians(weight, bone.rotation.y, 0f);
+				bone.rotation.z = LandingRollAnimMath.rotLerpRadians(weight, bone.rotation.z, 0f);
+				break;
 		}
 
 

@@ -9,11 +9,8 @@ import mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player.Wa
 import mod.arcomit.parkour.content.behavior.wallrun.client.animation.player.WallRunPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallslide.client.animation.player.WallSlidePlayerAnimModifier;
 import mod.arcomit.parkour.content.init.ParkourAnimationIds;
-import mod.arcomit.parkour.core.client.animation.player.v3.PlayerAnimation;
+import mod.arcomit.parkour.core.client.animation.player.PlayerAnimation;
 import net.minecraft.resources.Identifier;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.HashMap;
 import java.util.List;

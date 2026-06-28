@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.core.client.animation.player.v3;
+package mod.arcomit.parkour.core.client.animation.player;
 
 import com.zigythebird.playeranim.animation.PlayerAnimationController;
 import com.zigythebird.playeranimcore.animation.RawAnimation;
@@ -10,8 +10,8 @@ import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
 import com.zigythebird.playeranimcore.bones.ToggleablePlayerAnimBone;
 import com.zigythebird.playeranimcore.easing.EasingType;
 import lombok.Getter;
-import mod.arcomit.parkour.core.client.animation.player.v3.modifier.FadeOutModifier;
-import mod.arcomit.parkour.core.client.animation.player.v3.modifier.ImmediateFadeOutModifier;
+import mod.arcomit.parkour.core.client.animation.player.modifier.FadeOutModifier;
+import mod.arcomit.parkour.core.client.animation.player.modifier.ImmediateFadeOutModifier;
 import net.minecraft.world.entity.Avatar;
 
 import java.util.HashMap;

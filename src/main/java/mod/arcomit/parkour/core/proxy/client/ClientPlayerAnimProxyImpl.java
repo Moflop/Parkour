@@ -1,6 +1,6 @@
 package mod.arcomit.parkour.core.proxy.client;
 
-import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimationHelper;
+import mod.arcomit.parkour.core.client.animation.player.ParkourAnimationHelper;
 import mod.arcomit.parkour.core.proxy.api.IPlayerAnimProxy;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.Identifier;

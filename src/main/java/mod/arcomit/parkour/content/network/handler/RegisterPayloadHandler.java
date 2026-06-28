@@ -8,6 +8,7 @@ import mod.arcomit.parkour.content.action.walljump.network.WallJumpC2SPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.BroadcastArmhangDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangDirC2SPayload;
 import mod.arcomit.parkour.content.behavior.landingroll.network.SetLandingRollWindowC2SPayload;
+import mod.arcomit.parkour.content.behavior.wallrun.network.BroadcastWallRunDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.wallslide.network.BroadcastWallSlideDirS2CPayload;
 import mod.arcomit.parkour.content.network.SyncParkourEnabledC2SPayload;
 import mod.arcomit.parkour.core.client.animation.player.network.BroadcastPlayActionAnimS2CPayload;
@@ -97,5 +98,10 @@ public class RegisterPayloadHandler {
 				SyncParkourEnabledC2SPayload.STREAM_CODEC,
 				(payload, context) -> SyncParkourEnabledC2SPayload.Server.handle(payload,
 						context));
+
+		registrar.playToClient(BroadcastWallRunDirS2CPayload.TYPE,
+				BroadcastWallRunDirS2CPayload.STREAM_CODEC,
+				(payload, context) -> BroadcastWallRunDirS2CPayload.Client.handle(
+						payload, context));
 	}
 }

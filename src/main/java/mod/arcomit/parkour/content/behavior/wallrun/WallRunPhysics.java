@@ -1,12 +1,15 @@
 package mod.arcomit.parkour.content.behavior.wallrun;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.content.behavior.armhang.network.BroadcastArmhangDirS2CPayload;
+import mod.arcomit.parkour.content.behavior.wallrun.network.BroadcastWallRunDirS2CPayload;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * 负责墙跑状态下的物理受力与运动控制逻辑。
@@ -29,6 +32,13 @@ public class WallRunPhysics {
 		wallMovementData.setRunCollision(wallCollisionDir);
 		Direction movementDir = player.getDirection();
 		wallMovementData.setRunMove(movementDir);
+
+		if (!player.level().isClientSide()) {
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+					new BroadcastWallRunDirS2CPayload(
+							player.getId(),
+							movementDir));
+		}
 	}
 
 	/**

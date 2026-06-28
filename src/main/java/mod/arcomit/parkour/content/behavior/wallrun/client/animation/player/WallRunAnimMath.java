@@ -34,7 +34,7 @@ public class WallRunAnimMath {
 		float currentVanillaBodyYaw =
 				Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		float targetYaw = Direction.from3DDataValue(wallMovementData.getRunMoveRaw())
+		float targetYaw = wallMovementData.getRunMove()
 				.toYRot();
 
 		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);

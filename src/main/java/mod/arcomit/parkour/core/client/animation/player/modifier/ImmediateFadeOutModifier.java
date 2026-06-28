@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.core.client.animation.player.v3.modifier;
+package mod.arcomit.parkour.core.client.animation.player.modifier;
 
 import com.zigythebird.playeranimcore.animation.AnimationData;
 import com.zigythebird.playeranimcore.animation.RawAnimation;
@@ -9,7 +9,7 @@ import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
 import com.zigythebird.playeranimcore.bones.ToggleablePlayerAnimBone;
 import com.zigythebird.playeranimcore.easing.EasingType;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimationController;
+import mod.arcomit.parkour.core.client.animation.player.ParkourAnimationController;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -42,6 +42,11 @@ public class ImmediateFadeOutModifier extends AbstractModifier {
 
 			PlayerAnimBone snapshotBone = new PlayerAnimBone(boneName);
 			snapshotController.get3DTransform(snapshotBone);
+
+			snapshotBone.rotation.x = wrapRadian(snapshotBone.rotation.x);
+			snapshotBone.rotation.y = wrapRadian(snapshotBone.rotation.y);
+			snapshotBone.rotation.z = wrapRadian(snapshotBone.rotation.z);
+
 			snapshots.put(boneName, new ToggleablePlayerAnimBone(snapshotBone));
 		}
 		this.snapshot = new AnimationSnapshot(snapshots);
@@ -82,5 +87,16 @@ public class ImmediateFadeOutModifier extends AbstractModifier {
 		this.snapshot.get3DTransform(snapshotBone);
 
 		bone.scale(this.currentProgress).add(snapshotBone.scale(1.0f - this.currentProgress));
+	}
+
+	/**
+	 * 将弧度限制在 [-π, π] 范围内
+	 */
+	private float wrapRadian(float radian) {
+		float pi2 = (float) (Math.PI * 2);
+		radian = radian % pi2;
+		if (radian >= Math.PI) radian -= pi2;
+		if (radian < -Math.PI) radian += pi2;
+		return radian;
 	}
 }

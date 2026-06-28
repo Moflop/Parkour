@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.core.client.animation.player.v3;
+package mod.arcomit.parkour.core.client.animation.player;
 
 public enum ParkourAnimType {
 	// 显式定义权重，数字越大优先级越高

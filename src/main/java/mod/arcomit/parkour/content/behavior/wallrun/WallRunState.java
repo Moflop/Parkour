@@ -2,6 +2,7 @@ package mod.arcomit.parkour.content.behavior.wallrun;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.content.behavior.armhang.network.BroadcastArmhangDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.wallrun.server.ServerWallRunSound;
 import mod.arcomit.parkour.content.client.init.ClientParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.JumpData;
@@ -21,6 +22,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * 跑墙状态 —— 玩家在竖直墙面上水平跑动。
@@ -78,23 +80,23 @@ public class WallRunState extends AbstractParkourState {
 	}
 
 	/**
-	 * 进入跑墙时初始化物理运动方向、锁定碰撞墙体方向，并重置平行跳跃记录 使玩家跑墙后可向运动方向再次跳跃。
-	 */
-	@Override
-	public void onEnter(Player player, ParkourContext context) {
-		super.onEnter(player, context);
-		WallMovementData wallMovementData = context.wall();
-		JumpData jumpData = context.jump();
-		WallRunPhysics.setupInitialMovement(player, wallMovementData);
-		jumpData.resetLastParallelJump();
-	}
-
-	/**
 	 * 客户端进入跑墙时向服务端同步当前坐标。
 	 */
 	@Override
 	public void onClientEnter(Player player, ParkourContext context) {
 		ParkourProxies.LOCAL_PLAYER_SERVICES_PROXY.sendPosition(player);
+	}
+
+	/**
+	 * 进入跑墙时初始化物理运动方向、锁定碰撞墙体方向，并重置平行跳跃记录 使玩家跑墙后可向运动方向再次跳跃。
+	 */
+	@Override
+	public void onSimulationEnter(Player player, ParkourContext context) {
+		super.onSimulationEnter(player, context);
+		WallMovementData wallMovementData = context.wall();
+		JumpData jumpData = context.jump();
+		WallRunPhysics.setupInitialMovement(player, wallMovementData);
+		jumpData.resetLastParallelJump();
 	}
 
 	/**

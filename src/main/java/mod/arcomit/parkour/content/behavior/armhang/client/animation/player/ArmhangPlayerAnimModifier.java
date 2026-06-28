@@ -6,6 +6,7 @@ import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +35,9 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 	/**
 	 * 在每一帧骨骼渲染开始前，一次性计算所有骨骼的插值偏移数据。 若当前不在悬挂状态（armhangDir 为 null），帧数据置空，后续骨骼变换将被跳过。
 	 */
+	/**
+	 * 在每一帧骨骼渲染开始前，一次性计算所有骨骼的插值偏移数据。 若当前不在悬挂状态（armhangDir 为 null），帧数据置空，后续骨骼变换将被跳过。
+	 */
 	@Override
 	public void setupAnim(AnimationData state) {
 		super.setupAnim(state);
@@ -42,10 +46,13 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 		Direction armhangDir = wallMovementData.getArmhang();
 
 		if (armhangDir != null) {
+			// === 新增逻辑：计算渲染插值后的平滑角度 ===
+			float smoothYaw = Mth.rotLerp(state.getPartialTick(), this.animState.armhangYawO, this.animState.armhangYaw);
+
 			this.currentFrameData =
 					ArmhangAnimMath.calculate(this.player, this.animState,
 							state.getPartialTick(),
-							armhangDir.toYRot());
+							smoothYaw); // 传入平滑角度，而非直接传 armhangDir.toYRot()
 		} else {
 			this.currentFrameData = null;
 		}

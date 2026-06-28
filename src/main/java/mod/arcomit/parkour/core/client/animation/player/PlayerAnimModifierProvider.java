@@ -1,4 +1,4 @@
-package mod.arcomit.parkour.core.client.animation.player.v3;
+package mod.arcomit.parkour.core.client.animation.player;
 
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import net.minecraft.world.entity.player.Player;

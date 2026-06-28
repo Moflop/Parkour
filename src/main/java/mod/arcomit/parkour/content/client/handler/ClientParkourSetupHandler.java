@@ -4,7 +4,7 @@ import com.zigythebird.playeranim.api.PlayerAnimationFactory;
 import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.core.client.animation.camera.CameraAnimationRegistry;
-import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimationController;
+import mod.arcomit.parkour.core.client.animation.player.ParkourAnimationController;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.proxy.client.*;
 import net.minecraft.resources.Identifier;

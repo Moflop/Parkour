@@ -1,20 +1,7 @@
 package mod.arcomit.parkour.content.init;
 
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.slide.client.animation.player.SlidePlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.speedvault.client.animation.player.SpeedVaultAnimModifier;
-import mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player.WallClimbPlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.wallrun.client.animation.player.WallRunPlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.wallslide.client.animation.player.WallSlidePlayerAnimModifier;
-import mod.arcomit.parkour.content.client.init.ClientParkourRegistries;
-import mod.arcomit.parkour.core.client.animation.player.v3.PlayerAnimation;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.List;
 
 /**
  * TODO：描述
