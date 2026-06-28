@@ -8,10 +8,11 @@ import mod.arcomit.parkour.content.action.walljump.network.WallJumpC2SPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.BroadcastArmhangDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangDirC2SPayload;
 import mod.arcomit.parkour.content.behavior.landingroll.network.SetLandingRollWindowC2SPayload;
+import mod.arcomit.parkour.content.behavior.wallrun.network.BroadcastWallRunDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.wallslide.network.BroadcastWallSlideDirS2CPayload;
 import mod.arcomit.parkour.content.network.SyncParkourEnabledC2SPayload;
-import mod.arcomit.parkour.core.client.animation.player.network.BroadcastPlayOneOffAnimS2CPayload;
-import mod.arcomit.parkour.core.client.animation.player.network.RequestPlayOneOffAnimC2SPayload;
+import mod.arcomit.parkour.core.client.animation.player.network.BroadcastPlayActionAnimS2CPayload;
+import mod.arcomit.parkour.core.client.animation.player.network.RequestPlayActionAnimC2SPayload;
 import mod.arcomit.parkour.core.statemachine.network.BroadcastStateChangeS2CPayload;
 import mod.arcomit.parkour.core.statemachine.network.ForceLocalPlayerStateS2CPayload;
 import mod.arcomit.parkour.core.statemachine.network.RequestStateTransitionC2SPayload;
@@ -74,13 +75,13 @@ public class RegisterPayloadHandler {
 				(payload, context) -> BroadcastStateChangeS2CPayload.Client.handle(
 						payload, context));
 
-		registrar.playToServer(RequestPlayOneOffAnimC2SPayload.TYPE,
-				RequestPlayOneOffAnimC2SPayload.STREAM_CODEC,
-				(payload, context) -> RequestPlayOneOffAnimC2SPayload.Server.handle(
+		registrar.playToServer(RequestPlayActionAnimC2SPayload.TYPE,
+				RequestPlayActionAnimC2SPayload.STREAM_CODEC,
+				(payload, context) -> RequestPlayActionAnimC2SPayload.Server.handle(
 						payload, context));
-		registrar.playToClient(BroadcastPlayOneOffAnimS2CPayload.TYPE,
-				BroadcastPlayOneOffAnimS2CPayload.STREAM_CODEC,
-				(payload, context) -> BroadcastPlayOneOffAnimS2CPayload.Client.handle(
+		registrar.playToClient(BroadcastPlayActionAnimS2CPayload.TYPE,
+				BroadcastPlayActionAnimS2CPayload.STREAM_CODEC,
+				(payload, context) -> BroadcastPlayActionAnimS2CPayload.Client.handle(
 						payload, context));
 
 		registrar.playToClient(BroadcastWallSlideDirS2CPayload.TYPE,
@@ -97,5 +98,10 @@ public class RegisterPayloadHandler {
 				SyncParkourEnabledC2SPayload.STREAM_CODEC,
 				(payload, context) -> SyncParkourEnabledC2SPayload.Server.handle(payload,
 						context));
+
+		registrar.playToClient(BroadcastWallRunDirS2CPayload.TYPE,
+				BroadcastWallRunDirS2CPayload.STREAM_CODEC,
+				(payload, context) -> BroadcastWallRunDirS2CPayload.Client.handle(
+						payload, context));
 	}
 }

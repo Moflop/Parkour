@@ -7,6 +7,7 @@ import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
@@ -16,6 +17,7 @@ import mod.arcomit.parkour.utils.BlockCollisions;
 import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
@@ -78,8 +80,8 @@ public class WallRunState extends AbstractParkourState {
 	 * 进入跑墙时初始化物理运动方向、锁定碰撞墙体方向，并重置平行跳跃记录 使玩家跑墙后可向运动方向再次跳跃。
 	 */
 	@Override
-	public void onEnter(Player player, ParkourContext context) {
-		super.onEnter(player, context);
+	public void onSimulationEnter(Player player, ParkourContext context) {
+		super.onSimulationEnter(player, context);
 		WallMovementData wallMovementData = context.wall();
 		JumpData jumpData = context.jump();
 		WallRunPhysics.setupInitialMovement(player, wallMovementData);
@@ -187,5 +189,11 @@ public class WallRunState extends AbstractParkourState {
 		WallMovementData wallMovementData = context.wall();
 		Direction movementDir = Direction.from3DDataValue(wallMovementData.getRunMoveRaw());
 		return Directions.isFacing(player, movementDir, FACING_ANGLE_TOLERANCE);
+	}
+
+	@Override
+	public ResourceLocation animId(Player player) {
+		int variant = ParkourContext.get(player).state().getAnimVariant();
+		return variant == 0 ? ParkourAnimationIds.WALL_RUN_LEFT : ParkourAnimationIds.WALL_RUN_RIGHT;
 	}
 }

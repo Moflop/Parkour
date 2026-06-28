@@ -8,7 +8,6 @@ import mod.arcomit.parkour.core.statemachine.network.ParkourNetworkSynchronizer;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +88,7 @@ public class ParkourStateEngine {
 
 		stateData.setState(targetState);
 		stateData.setTicksInState(0);
-		stateData.setAnimationVariant(animVariant);
+		stateData.setAnimVariant(animVariant);
 
 		targetState.onEnter(player, context);
 

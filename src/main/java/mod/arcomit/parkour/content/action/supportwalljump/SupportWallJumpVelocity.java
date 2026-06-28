@@ -16,7 +16,7 @@ public class SupportWallJumpVelocity {
 	/** 上跳的水平速度分量，较小以保证玩家不飞太远 */
 	private static final double SUPPORT_WALL_JUMP_UPWARD_HORIZONTAL_SPEED = 0.2;
 	/** 上跳的垂直速度分量，较大以提供窜升感 */
-	private static final double SUPPORT_WALL_JUMP_UPWARD_VERTICAL_SPEED = 0.6;
+	private static final double SUPPORT_WALL_JUMP_UPWARD_VERTICAL_SPEED = 0.55;
 
 	/** 前跳的水平速度分量 */
 	private static final double SUPPORT_WALL_JUMP_FORWARD_HORIZONTAL_SPEED = 0.7;

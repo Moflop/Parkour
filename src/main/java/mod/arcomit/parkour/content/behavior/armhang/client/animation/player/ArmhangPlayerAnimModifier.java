@@ -6,6 +6,7 @@ import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -45,10 +46,12 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 		Direction armhangDir = wallMovementData.getArmhang();
 
 		if (armhangDir != null) {
+			float smoothYaw = Mth.rotLerp(state.getPartialTick(), this.animState.armhangYawO, this.animState.armhangYaw);
+
 			this.currentFrameData =
 					ArmhangAnimMath.calculate(this.player, this.animState,
 							state.getPartialTick(),
-							armhangDir.toYRot());
+							smoothYaw);
 		} else {
 			this.currentFrameData = null;
 		}

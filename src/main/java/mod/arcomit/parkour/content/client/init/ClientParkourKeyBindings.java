@@ -25,7 +25,7 @@ import org.lwjgl.glfw.GLFW;
  */
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
-public class ParkourKeyBindings {
+public class ClientParkourKeyBindings {
 	private static final String CATEGORY = "key.categories." + ParkourMod.MODID;
 
 	/** 滑铲/翻滚键，默认 V，触发 {@link ParkourInputActions#SLIDE} */

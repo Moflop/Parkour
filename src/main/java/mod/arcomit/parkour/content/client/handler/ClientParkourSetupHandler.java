@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.client.handler;
 
+import com.zigythebird.playeranim.api.PlayerAnimationFactory;
+import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
@@ -8,12 +10,12 @@ import mod.arcomit.parkour.content.behavior.speedvault.client.animation.player.S
 import mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player.WallClimbPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallrun.client.animation.player.WallRunPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.wallslide.client.animation.player.WallSlidePlayerAnimModifier;
-import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.client.animation.camera.CameraAnimationRegistry;
-import mod.arcomit.parkour.core.client.animation.player.ClientAnimationRegistry;
+import mod.arcomit.parkour.core.client.animation.player.ParkourAnimationController;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.proxy.client.*;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -37,6 +39,8 @@ import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
  */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public class ClientParkourSetupHandler {
+	public static final ResourceLocation PARKOUR_ANIM_LAYER_ID = ParkourMod.prefix("parkour_anim_layer");
+	private static final int PARKOUR_ANIM_LAYER_PRIORITY = 2000;
 
 	/**
 	 * 客户端启动时执行一次性初始化。
@@ -62,81 +66,11 @@ public class ClientParkourSetupHandler {
 		ParkourProxies.GET_CLIENT_CONFIG_PROXY = new ClientGetClientConfigProxyImpl();
 
 		event.enqueueWork(() -> {
-			ClientAnimationRegistry.registerStateAnimation(ParkourStates.SLIDE.getId(),
-					variant -> variant == 1 ?
-							ParkourPlayerAnimations.SLIDE_2 :
-							ParkourPlayerAnimations.SLIDE_1);
-			ClientAnimationRegistry.registerModifierFactory(ParkourStates.SLIDE.getId(),
-					(controller, player, state, variant) -> {
-						controller.addModifierLast(
-								new SlidePlayerAnimModifier(
-										player));
-					});
-
-			ClientAnimationRegistry.registerStateAnimation(
-					ParkourStates.WALL_SLIDE.getId(),
-					variant -> ParkourPlayerAnimations.EMPTY_ANIM);
-			ClientAnimationRegistry.registerModifierFactory(
-					ParkourStates.WALL_SLIDE.getId(),
-					(controller, player, state, variant) -> {
-						controller.addModifierLast(
-								new WallSlidePlayerAnimModifier(
-										player));
-					});
-
-			// 根据 variant 返回不同的动画 JSON（0=左墙, 1=右墙）
-			ClientAnimationRegistry.registerStateAnimation(
-					ParkourStates.WALL_RUN.getId(), variant -> variant == 0 ?
-							ParkourPlayerAnimations.WALL_RUN_LEFT :
-							ParkourPlayerAnimations.WALL_RUN_RIGHT);
-
-			ClientAnimationRegistry.registerModifierFactory(
-					ParkourStates.WALL_RUN.getId(),
-					(controller, player, state, variant) -> {
-						boolean isWallOnLeft = (variant == 0);
-						controller.addModifierLast(
-								new WallRunPlayerAnimModifier(
-										player,
-										isWallOnLeft));
-					});
-
-			ClientAnimationRegistry.registerStateAnimation(
-					ParkourStates.WALL_CLIMB.getId(),
-					variant -> ParkourPlayerAnimations.WALL_CLIMB);
-			ClientAnimationRegistry.registerModifierFactory(
-					ParkourStates.WALL_CLIMB.getId(),
-					(controller, player, state, variant) -> {
-						controller.addModifierLast(
-								new WallClimbPlayerAnimModifier(
-										player));
-					});
-
-			// 落地翻滚（一次性动画，18tick总长，最后6tick过渡融合）
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.LANDING_ROLL.id, player -> {
-						return new LandingRollPlayerAnimModifier(player, 18,
-								6);
-					});
-
-			ClientAnimationRegistry.registerStateAnimation(
-					ParkourStates.ARMHANG.getId(),
-					variant -> ParkourPlayerAnimations.ARMHANG);
-			ClientAnimationRegistry.registerModifierFactory(
-					ParkourStates.ARMHANG.getId(),
-					(controller, player, state, variant) -> {
-						controller.addModifierLast(
-								new ArmhangPlayerAnimModifier(
-										player));
-					});
-
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.SPEED_VAULT_LEFT.id, player -> {
-						return new SpeedVaultAnimModifier(player, 10);
-					});
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.SPEED_VAULT_RIGHT.id, player -> {
-						return new SpeedVaultAnimModifier(player, 10);
-					});
+			PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
+					PARKOUR_ANIM_LAYER_ID, PARKOUR_ANIM_LAYER_PRIORITY,
+					(avatar) -> new ParkourAnimationController(avatar,
+							(ctrl, animData, animSetter) -> PlayState.CONTINUE)
+			);
 		});
 
 	}

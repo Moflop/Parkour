@@ -33,6 +33,14 @@ neoForge {
             programArguments.addAll '--username', 'Dev'
         }
 
+        client_2 {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
+            programArguments.addAll '--username', 'Mewkooo'
+            programArguments.addAll '--uuid', 'a369b7eb-15e5-4696-a085-82556f5f5452'
+        }
+
         server {
             server()
             programArgument '--nogui'

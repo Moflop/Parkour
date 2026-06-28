@@ -2,7 +2,7 @@ package mod.arcomit.parkour.content.client.handler;
 
 import mod.arcomit.parkour.ClientParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.client.init.ParkourKeyBindings;
+import mod.arcomit.parkour.content.client.init.ClientParkourKeyBindings;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.network.SyncParkourEnabledC2SPayload;
 import net.minecraft.client.Minecraft;
@@ -29,7 +29,7 @@ public class ClientSyncParkourEnabledHandler {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null) return;
 
-		while (ParkourKeyBindings.ENABLE_PARKOUR_KEY.consumeClick()) {
+		while (ClientParkourKeyBindings.ENABLE_PARKOUR_KEY.consumeClick()) {
 			boolean newState = ClientParkourConfig.toggleParkour();
 
 			ParkourContext.get(mc.player).state().setParkourEnabled(newState);

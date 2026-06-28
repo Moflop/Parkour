@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.core.proxy.api;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -28,18 +30,6 @@ public interface IPlayerAnimProxy {
 	 *
 	 * @param player        目标玩家，不可为null
 	 * @param animId        动画资源标识，需在玩家动画注册表中已注册，不可为null
-	 * @param interruptible 是否允许被后续动画中断；{@code true} 表示可中断
 	 */
-	void playOneOffAnimation(Player player, ResourceLocation animId, boolean interruptible);
-
-	/**
-	 * 播放一段一次性动作动画，并指定淡入淡出的过渡时长。
-	 *
-	 * @param player        目标玩家，不可为null
-	 * @param animId        动画资源标识，需在玩家动画注册表中已注册，不可为null
-	 * @param interruptible 是否允许被后续动画中断
-	 * @param fadeTicks     淡入淡出过渡的持续时长（tick），非负值；0表示立即切换无过渡
-	 */
-	void playOneOffAnimation(Player player, ResourceLocation animId, boolean interruptible,
-			int fadeTicks);
+	void playActionAnimation(Player player, ResourceLocation animId);
 }

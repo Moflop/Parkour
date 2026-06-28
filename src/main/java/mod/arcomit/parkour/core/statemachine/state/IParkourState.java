@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.state;
 
 import mod.arcomit.parkour.content.context.ParkourContext;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
@@ -229,6 +230,11 @@ public interface IParkourState {
 	default EntityDimensions getCustomDimensions(Player player) {
 		return null;
 	}
+	
+	default ResourceLocation animId(Player player) {
+		return null;
+	}
+
 
 	/**
 	 * 当状态机决定进入此状态时调用，用于生成并分配一个变体 ID。

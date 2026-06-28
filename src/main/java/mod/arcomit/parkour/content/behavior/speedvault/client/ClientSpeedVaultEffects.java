@@ -1,6 +1,6 @@
 package mod.arcomit.parkour.content.behavior.speedvault.client;
 
-import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.sounds.SoundSource;
@@ -27,11 +27,11 @@ public class ClientSpeedVaultEffects {
 				player.getRandom().nextLong());
 
 		if (player.isLocalPlayer()) {
-			ParkourProxies.PLAYER_ANIM_PROXY.playOneOffAnimation(player,
+			ParkourProxies.PLAYER_ANIM_PROXY.playActionAnimation(player,
 					Math.random() < 0.5 ?
-							ParkourPlayerAnimations.SPEED_VAULT_LEFT.id :
-							ParkourPlayerAnimations.SPEED_VAULT_RIGHT.id,
-					false, 2);
+							ParkourAnimationIds.SPEED_VAULT_LEFT :
+							ParkourAnimationIds.SPEED_VAULT_RIGHT
+			);
 		}
 	}
 }

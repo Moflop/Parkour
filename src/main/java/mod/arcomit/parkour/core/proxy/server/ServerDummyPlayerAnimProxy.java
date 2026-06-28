@@ -20,12 +20,6 @@ public class ServerDummyPlayerAnimProxy implements IPlayerAnimProxy {
 	}
 
 	@Override
-	public void playOneOffAnimation(Player player, ResourceLocation animId,
-			boolean interruptible) {
-	}
-
-	@Override
-	public void playOneOffAnimation(Player player, ResourceLocation animId,
-			boolean interruptible, int fadeTicks) {
+	public void playActionAnimation(Player player, ResourceLocation animId) {
 	}
 }

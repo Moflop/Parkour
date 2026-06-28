@@ -7,11 +7,13 @@ import mod.arcomit.parkour.content.behavior.slide.client.ClientSlideSound;
 import mod.arcomit.parkour.content.context.GroundMovementData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -106,5 +108,11 @@ public class SlideState extends AbstractParkourState {
 	public boolean isValid(Player player, ParkourContext context) {
 		StateData stateData = context.state();
 		return meetsBaseConditions(player) && stateData.getTicksInState() < SLIDE_DURATION;
+	}
+
+	@Override
+	public ResourceLocation animId(Player player) {
+		int variant = ParkourContext.get(player).state().getAnimVariant();
+		return variant == 1 ? ParkourAnimationIds.SLIDE_2 : ParkourAnimationIds.SLIDE_1;
 	}
 }

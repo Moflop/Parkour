@@ -8,9 +8,6 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * 负责维护与更新垂挂动画的独立状态机（如移动振幅、转身权重等）。
- *
- * @author Mitok
- * @since 2026-06-08
  */
 public class ArmhangAnimState {
 	/** 前一帧的移动相位 */
@@ -29,34 +26,48 @@ public class ArmhangAnimState {
 	/** 侧身方向符号：1.0 向右看，-1.0 向左看，锁定后不会在阈值附近来回翻转 */
 	public float currentLookAwaySign = 1.0f;
 
-	/**
-	 * 更新一 tick 的动画状态。
-	 * <p>
-	 * 将当前值保存为前一帧值（用于渲染插值），然后根据玩家视角偏离墙面的角度 计算侧身权重，根据玩家水平移动速度计算摆动相位和幅度。
-	 *
-	 * @param player 目标玩家，不可为 null
-	 */
+	// === 新增字段：用于平滑悬挂角度过渡 ===
+	public float armhangYawO = 0f;
+	public float armhangYaw = 0f;
+	private boolean firstTick = true;
+
 	public void tick(Player player) {
 		this.animPhaseO = this.animPhase;
 		this.amplitudeO = this.amplitude;
 		this.lookAwayWeightO = this.lookAwayWeight;
+		this.armhangYawO = this.armhangYaw;
 
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
 		Direction armhangDir = wallMovementData.getArmhang();
 
 		if (armhangDir != null) {
+			// 1. 获取绝对的目标墙面角度
 			float targetYaw = armhangDir.toYRot();
 			float cameraYaw = player.getYRot();
-			float relLook = Mth.wrapDegrees(cameraYaw - targetYaw);
 
-			// 当偏离角度大于75度时，触发侧身状态
-			if (Math.abs(relLook) > 75.0f) {
+			float targetRelLook = Mth.wrapDegrees(cameraYaw - targetYaw);
+
+			// 侧身判定 (曲线：0.2f Lerp)
+			if (Math.abs(targetRelLook) > 75.0f) {
 				this.lookAwayWeight = Mth.lerp(0.2f, this.lookAwayWeight, 1.0f);
-				// 记录是向左看还是向右看，防止在转身过程中抽搐
-				this.currentLookAwaySign = relLook > 0 ? 1.0f : -1.0f;
+				this.currentLookAwaySign = targetRelLook > 0 ? 1.0f : -1.0f;
 			} else {
 				this.lookAwayWeight = Mth.lerp(0.2f, this.lookAwayWeight, 0f);
 			}
+
+			// 2. 躯干整体朝向
+			if (this.firstTick) {
+				this.armhangYaw = targetYaw;
+				this.armhangYawO = targetYaw;
+				this.firstTick = false;
+			} else {
+				// === 关键修复：弃用 approachDegrees，使用与 lookAwayWeight 完全相同的 0.2f 插值权重 ===
+				// Mth.rotLerp 可以处理角度环绕问题，确保它与侧身补偿完美相互抵消
+				this.armhangYaw = Mth.rotLerp(0.2f, this.armhangYaw, targetYaw);
+			}
+
+		} else {
+			this.firstTick = true;
 		}
 
 		// 处理移动动画（仅在面向墙面时产生有效移动）

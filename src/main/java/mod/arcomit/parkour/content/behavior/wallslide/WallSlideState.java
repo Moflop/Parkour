@@ -3,11 +3,13 @@ package mod.arcomit.parkour.content.behavior.wallslide;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
@@ -131,5 +133,10 @@ public class WallSlideState extends AbstractParkourState {
 	@Override
 	public boolean isValid(Player player, ParkourContext context) {
 		return meetsBaseConditions(player, context);
+	}
+
+	@Override
+	public ResourceLocation animId(Player player) {
+		return ParkourAnimationIds.EMPTY;
 	}
 }

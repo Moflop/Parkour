@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.behavior.landingroll.client;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +34,6 @@ public class ClientLandingRollAnimation {
 
 		// 播放玩家翻滚动画
 		ResourceLocation playerAnimId = ParkourMod.prefix("landing_roll");
-		ParkourProxies.PLAYER_ANIM_PROXY.playOneOffAnimation(player, playerAnimId, false);
+		ParkourProxies.PLAYER_ANIM_PROXY.playActionAnimation(player, ParkourAnimationIds.LANDING_ROLL);
 	}
 }

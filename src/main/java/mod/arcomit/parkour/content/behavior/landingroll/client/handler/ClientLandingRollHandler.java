@@ -4,7 +4,7 @@ import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.landingroll.network.SetLandingRollWindowC2SPayload;
 import mod.arcomit.parkour.content.client.event.InputJustPressedEvent;
-import mod.arcomit.parkour.content.client.init.ParkourKeyBindings;
+import mod.arcomit.parkour.content.client.init.ClientParkourKeyBindings;
 import mod.arcomit.parkour.content.client.input.ParkourKeyMapping;
 import mod.arcomit.parkour.content.context.GroundMovementData;
 import mod.arcomit.parkour.content.context.ParkourContext;
@@ -35,7 +35,7 @@ public class ClientLandingRollHandler {
 	@SubscribeEvent
 	public static void trySetLandingRollWindowOnInput(InputJustPressedEvent event) {
 		ParkourKeyMapping key = event.getKeyMapping();
-		if (key != ParkourKeyBindings.SLIDE_KEY) {
+		if (key != ClientParkourKeyBindings.SLIDE_KEY) {
 			return;
 		}
 

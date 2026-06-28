@@ -76,7 +76,7 @@ public record RequestStateTransitionC2SPayload(ResourceLocation targetStateId, i
 						ResourceLocation currentStateId =
 								ParkourRegistries.PARKOUR_STATE_REGISTRY.getKey(
 										currentState);
-						int variant = stateData.getAnimationVariant();
+						int variant = stateData.getAnimVariant();
 
 						if (currentStateId != null) {
 							PacketDistributor.sendToPlayer(player,
