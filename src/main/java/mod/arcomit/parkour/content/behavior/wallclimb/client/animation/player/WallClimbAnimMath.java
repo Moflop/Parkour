@@ -29,7 +29,9 @@ public class WallClimbAnimMath {
 
 		float targetYaw = player.getDirection().toYRot();
 
-		data.bodyYawDiff = (targetYaw - currentVanillaBodyYaw) * Mth.DEG_TO_RAD;
+		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);
+
+		data.bodyYawDiff = yawDiff * Mth.DEG_TO_RAD;
 
 		return data;
 	}

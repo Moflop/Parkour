@@ -92,7 +92,7 @@ public class ParkourStateEngine {
 
 		targetState.onEnter(player, context);
 
-		stateData.setLastState(currentState);
+		stateData.setLastState(targetState);
 		player.setForcedPose(targetState.getLinkedPose());
 		player.updatePlayerPose();
 
@@ -107,7 +107,7 @@ public class ParkourStateEngine {
 
 		if (player.level().isClientSide()) {
 			ParkourProxies.PLAYER_ANIM_PROXY.playStateAnimation(player);
-			if (FMLEnvironment.isProduction()) {
+			if (!FMLEnvironment.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"【Client】 Player {} transitioned to state: {} (Variant: {})",
 						player.getName().getString(),
@@ -117,7 +117,7 @@ public class ParkourStateEngine {
 		} else {
 			ParkourNetworkSynchronizer.broadcastStateChange(player, targetState,
 					animVariant);
-			if (FMLEnvironment.isProduction()) {
+			if (!FMLEnvironment.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"【Server】 Player {} transitioned to state: {} (Variant: {})",
 						player.getName().getString(),

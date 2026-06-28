@@ -5,6 +5,8 @@ import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
+
 /**
  * TODO：描述
  *
@@ -22,7 +24,6 @@ public class ClientBackstepAnimation {
 			return;
 
 		// 播放玩家后撤步动画
-		Identifier playerAnimId = ParkourMod.prefix("backstep_back");
-		ParkourProxies.PLAYER_ANIM_PROXY.playOneOffAnimation(player, playerAnimId, false, 0);
+		ParkourProxies.PLAYER_ANIM_PROXY.playActionAnimation(player, ParkourMod.prefix("backstep_back"));
 	}
 }

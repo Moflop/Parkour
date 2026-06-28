@@ -1,8 +1,6 @@
 package mod.arcomit.parkour.core.proxy.client;
 
-import mod.arcomit.parkour.core.client.animation.player.PlayerAnimationManager;
-//import mod.arcomit.parkour.core.client.animation.player.v2.ParkourAnimHelper;
-import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimHelper;
+import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimationHelper;
 import mod.arcomit.parkour.core.proxy.api.IPlayerAnimProxy;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.Identifier;
@@ -11,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * {@link IPlayerAnimProxy} 的客户端实现。
  * <p>
- * 将 {@code Player} 向下转型为 {@code AbstractClientPlayer}， 然后委托给 {@link PlayerAnimationManager}
+ * 将 {@code Player} 向下转型为 {@code AbstractClientPlayer}， 然后委托给 {@link ParkourAnimationHelper}
  * 单例执行实际的动画播放。 若传入的不是客户端玩家实例则所有方法静默跳过。 仅客户端类加载器访问。
  * </p>
  *
@@ -23,29 +21,14 @@ public class ClientPlayerAnimProxyImpl implements IPlayerAnimProxy {
 	@Override
 	public void playStateAnimation(Player player) {
 		if (player instanceof AbstractClientPlayer clientPlayer) {
-			mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimHelper.playStateAnim(clientPlayer);
-			//ParkourAnimHelper.playStateAnim(clientPlayer);
-			//PlayerAnimationManager.INSTANCE.playStateAnimation(clientPlayer);
+			ParkourAnimationHelper.playStateAnim(clientPlayer);
 		}
 	}
 
 	@Override
-	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible) {
+	public void playActionAnimation(Player player, Identifier animId) {
 		if (player instanceof AbstractClientPlayer clientPlayer) {
-//			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
-//					interruptible);
-			//ParkourAnimHelper.playActionAnim(clientPlayer, animId, 10);
+			ParkourAnimationHelper.playActionAnim(clientPlayer, animId);
 		}
 	}
-
-	@Override
-	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible,
-			int fadeTicks) {
-		if (player instanceof AbstractClientPlayer clientPlayer) {
-//			PlayerAnimationManager.INSTANCE.playOneOffAnimation(clientPlayer, animId,
-//					interruptible, fadeTicks);
-			//ParkourAnimHelper.playActionAnim(clientPlayer, animId, 10);
-		}
-	}
-
 }

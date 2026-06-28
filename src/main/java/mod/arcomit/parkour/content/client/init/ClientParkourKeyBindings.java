@@ -23,7 +23,7 @@ import org.lwjgl.glfw.GLFW;
  * @since 2026-06-08
  */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
-public class ParkourKeyBindings {
+public class ClientParkourKeyBindings {
 	private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(ParkourMod.prefix("default"));
 
 	/** 滑铲/翻滚键，默认 V，触发 {@link ParkourInputActions#SLIDE} */

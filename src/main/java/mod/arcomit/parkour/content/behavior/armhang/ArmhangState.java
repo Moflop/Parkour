@@ -1,14 +1,13 @@
 package mod.arcomit.parkour.content.behavior.armhang;
 
-import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement;
-import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
@@ -19,8 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.List;
 
 /**
  * 手臂悬挂状态。
@@ -219,11 +216,7 @@ public class ArmhangState extends AbstractParkourState {
 
 	@Override
 	public Identifier animId(Player player) {
-		return ParkourStates.ARMHANG.getId();
+		return ParkourAnimationIds.ARMHANG;
 	}
 
-	@Override
-	public List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
-		return List.of(new ArmhangPlayerAnimModifier(player));
-	}
 }

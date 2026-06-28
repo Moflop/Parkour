@@ -1,6 +1,5 @@
 package mod.arcomit.parkour.core.statemachine.state;
 
-import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,8 +25,6 @@ import java.util.List;
  * @since 2026-06-08
  */
 public interface IParkourState {
-
-	public static final int DEFAULT_ANIM_FADE_IN_TICKS = 3;
 
 	/**
 	 * 默认的动画变体 ID
@@ -249,14 +246,6 @@ public interface IParkourState {
 	 */
 	default int generateVariant(Player player) {
 		return DEFAULT_ANIM_VARIANT;
-	}
-
-	default int fadeInTicks(Player player) {
-		return DEFAULT_ANIM_FADE_IN_TICKS;
-	}
-
-	default List<AbstractModifier> getAnimationModifiers(Player player, int variant) {
-		return List.of();
 	}
 
 	/**

@@ -1,13 +1,10 @@
 package mod.arcomit.parkour.content.client.handler;
 
 import com.zigythebird.playeranim.api.PlayerAnimationFactory;
+import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
-import mod.arcomit.parkour.content.behavior.speedvault.client.animation.player.SpeedVaultAnimModifier;
-import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
 import mod.arcomit.parkour.core.client.animation.camera.CameraAnimationRegistry;
-import mod.arcomit.parkour.core.client.animation.player.ClientAnimationRegistry;
-import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimLayer;
+import mod.arcomit.parkour.core.client.animation.player.v3.ParkourAnimationController;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.proxy.client.*;
 import net.minecraft.resources.Identifier;
@@ -60,24 +57,9 @@ public class ClientParkourSetupHandler {
 		event.enqueueWork(() -> {
 			PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
 					PARKOUR_ANIM_LAYER_ID, PARKOUR_ANIM_LAYER_PRIORITY,
-					ParkourAnimLayer::new
+					(avatar) -> new ParkourAnimationController(avatar,
+							(_, _, _) -> PlayState.CONTINUE)
 			);
-
-			// 落地翻滚（一次性动画，18tick总长，最后6tick过渡融合）
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.LANDING_ROLL.id, player -> {
-						return new LandingRollPlayerAnimModifier(player, 18,
-								6);
-					});
-
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.SPEED_VAULT_LEFT.id, player -> {
-						return new SpeedVaultAnimModifier(player, 10);
-					});
-			ClientAnimationRegistry.registerActionModifier(
-					ParkourPlayerAnimations.SPEED_VAULT_RIGHT.id, player -> {
-						return new SpeedVaultAnimModifier(player, 10);
-					});
 		});
 
 	}

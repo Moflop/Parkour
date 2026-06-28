@@ -1,9 +1,12 @@
 package mod.arcomit.parkour.content.behavior.landingroll.client;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * 客户端落地翻滚动画入口 —— 同时触发摄像机翻滚动画和玩家骨骼动画。
@@ -32,7 +35,6 @@ public class ClientLandingRollAnimation {
 		ParkourProxies.CAMERA_PROXY.playAnimation(cameraAnimId);
 
 		// 播放玩家翻滚动画
-		Identifier playerAnimId = ParkourMod.prefix("landing_roll");
-		ParkourProxies.PLAYER_ANIM_PROXY.playOneOffAnimation(player, playerAnimId, false);
+		ParkourProxies.PLAYER_ANIM_PROXY.playActionAnimation(player, ParkourMod.prefix("landing_roll"));
 	}
 }

@@ -5,7 +5,7 @@ import mod.arcomit.parkour.content.action.swimmingboost.SwimmingBoostAction;
 import mod.arcomit.parkour.content.action.swimmingboost.client.ClientSwimmingBoostSound;
 import mod.arcomit.parkour.content.action.swimmingboost.network.UseSwimmingBoostC2SPayload;
 import mod.arcomit.parkour.content.client.event.InputJustPressedEvent;
-import mod.arcomit.parkour.content.client.init.ParkourKeyBindings;
+import mod.arcomit.parkour.content.client.init.ClientParkourKeyBindings;
 import mod.arcomit.parkour.content.client.input.ParkourKeyMapping;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.SwimMovementData;
@@ -40,7 +40,7 @@ public class ClientSwimmingBoostHandler {
 	@SubscribeEvent
 	public static void trySwimmingBoostOnInput(InputJustPressedEvent event) {
 		ParkourKeyMapping key = event.getKeyMapping();
-		if (key != ParkourKeyBindings.SLIDE_KEY) {
+		if (key != ClientParkourKeyBindings.SLIDE_KEY) {
 			return;
 		}
 

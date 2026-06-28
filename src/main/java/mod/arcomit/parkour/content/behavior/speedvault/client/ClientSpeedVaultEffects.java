@@ -1,10 +1,14 @@
 package mod.arcomit.parkour.content.behavior.speedvault.client;
 
-import mod.arcomit.parkour.content.client.init.ParkourPlayerAnimations;
+import mod.arcomit.parkour.content.behavior.speedvault.client.animation.player.SpeedVaultAnimModifier;
+import mod.arcomit.parkour.content.client.init.ClientParkourPlayerAnimations;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * 负责处理客户端 Speed Vault 状态下的表现逻辑（音效与动画）。
@@ -27,11 +31,11 @@ public class ClientSpeedVaultEffects {
 				player.getRandom().nextLong());
 
 		if (player.isLocalPlayer()) {
-			ParkourProxies.PLAYER_ANIM_PROXY.playOneOffAnimation(player,
+			ParkourProxies.PLAYER_ANIM_PROXY.playActionAnimation(player,
 					Math.random() < 0.5 ?
-							ParkourPlayerAnimations.SPEED_VAULT_LEFT.id :
-							ParkourPlayerAnimations.SPEED_VAULT_RIGHT.id,
-					false, 2);
+							ParkourAnimationIds.SPEED_VAULT_LEFT :
+							ParkourAnimationIds.SPEED_VAULT_RIGHT
+					);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.core.proxy.server;
 
+import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import mod.arcomit.parkour.core.proxy.api.IPlayerAnimProxy;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -20,11 +21,6 @@ public class ServerDummyPlayerAnimProxy implements IPlayerAnimProxy {
 	}
 
 	@Override
-	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible) {
-	}
-
-	@Override
-	public void playOneOffAnimation(Player player, Identifier animId, boolean interruptible,
-			int fadeTicks) {
+	public void playActionAnimation(Player player, Identifier animId) {
 	}
 }

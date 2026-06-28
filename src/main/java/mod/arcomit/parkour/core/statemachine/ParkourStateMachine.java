@@ -310,7 +310,7 @@ public class ParkourStateMachine {
 	public static void resetToDefaultState(@NotNull Player player,
 			@NotNull ParkourContext context) {
 		if (shouldResetToDefault(context)) {
-			if (FMLEnvironment.isProduction()) {
+			if (!FMLEnvironment.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"Resetting player {} to DEFAULT state due to invalidation.",
 						player.getName().getString());
@@ -334,7 +334,7 @@ public class ParkourStateMachine {
 	public static void resetToDefaultStateAndSync(@NotNull ServerPlayer serverPlayer,
 			@NotNull ParkourContext context) {
 		if (shouldResetToDefault(context)) {
-			if (FMLEnvironment.isProduction()) {
+			if (!FMLEnvironment.isProduction()) {
 				ParkourMod.LOGGER.debug(
 						"Server resetting player {} to DEFAULT state and syncing.",
 						serverPlayer.getName().getString());
