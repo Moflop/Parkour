@@ -36,13 +36,11 @@ public record ParkourContext(GroundMovementData ground, WallMovementData wall, J
 									.forGetter(ParkourContext::jump),
 							SwimMovementData.CODEC.optionalFieldOf("swim",
 											new SwimMovementData())
-									.forGetter(ParkourContext::swim),
-							InputData.CODEC.optionalFieldOf("input", new InputData())
-									.forGetter(ParkourContext::input))
+									.forGetter(ParkourContext::swim))
 					.apply(instance,
-							(ground, wall, jump, swim, input) -> new ParkourContext(
+							(ground, wall, jump, swim) -> new ParkourContext(
 									ground, wall, jump, swim,
-									input, new StateData())));
+									new InputData(), new StateData())));
 
 	public static final StreamCodec<ByteBuf, ParkourContext> STREAM_CODEC =
 			StreamCodec.composite(GroundMovementData.STREAM_CODEC,

@@ -161,9 +161,10 @@ public class DefaultState extends AbstractParkourState {
 			@Override
 			public boolean shouldTransitionOnJump(Player player, ParkourContext context,
 					LivingJumpCancellableEvent event) {
-				if (ParkourProxies.INPUT_PROXY.getMoveVector(player).length() == 0) {
+				if (player.isLocalPlayer() && ParkourProxies.INPUT_PROXY.getMoveVector(player).length() == 0) {
 					return false;
 				}
+				// todo:优化此处，服务端和客户端不一致
 				event.setCanceled(true);
 				return true;
 			}

@@ -24,15 +24,13 @@ import net.minecraft.network.codec.StreamCodec;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InputData {
-	public static final Codec<InputData> CODEC = RecordCodecBuilder.create(
-			instance -> instance.group(Codec.FLOAT.optionalFieldOf("leftImpulse", 0f)
-							.forGetter(InputData::getLeftImpulse))
-					.apply(instance, InputData::new));
 	public static final StreamCodec<ByteBuf, InputData> STREAM_CODEC =
-			StreamCodec.composite(ByteBufCodecs.FLOAT, InputData::getLeftImpulse,
-					InputData::new);
+			StreamCodec.composite(ByteBufCodecs.BOOL, InputData::isForward,
+					(forward) -> new InputData(0f, forward));
 
 	private float leftImpulse = 0f;
+
+	private boolean forward = false;
 
 	public void copyFrom(InputData other) {
 		this.leftImpulse = other.leftImpulse;
