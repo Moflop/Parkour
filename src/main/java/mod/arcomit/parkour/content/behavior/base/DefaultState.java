@@ -12,6 +12,7 @@ import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 
 /**
@@ -161,7 +162,7 @@ public class DefaultState extends AbstractParkourState {
 			@Override
 			public boolean shouldTransitionOnJump(Player player, ParkourContext context,
 					LivingJumpCancellableEvent event) {
-				if (ParkourProxies.INPUT_PROXY.getMoveVector(player).length() == 0) {
+				if (!ParkourProxies.INPUT_PROXY.hasForwardImpulse(player)) {
 					return false;
 				}
 				event.setCanceled(true);

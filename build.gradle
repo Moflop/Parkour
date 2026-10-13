@@ -116,8 +116,15 @@ dependencies {
 //    //runtimeOnly "curse.maven:reflex-antilag-1197629:6306767"
 //    // Replay
 //    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
-//    // 方便在游戏中修改配置文件
-//    runtimeOnly "curse.maven:configured-457570:7276577"
+    // 方便在游戏中修改配置文件
+    runtimeOnly "curse.maven:configured-457570:7276577"
+
+    // 机械动力
+    implementation "curse.maven:create-328085:7963363"
+    // Sable
+    implementation "curse.maven:sable-1312371:9043865"
+    // 航空学
+    implementation "curse.maven:create-aeronautics-676721:8763471"
 
     // 玩家动画库
     implementation(jarJar("com.zigythebird.playeranim:PlayerAnimationLibNeo:$pal_version")) {

@@ -166,7 +166,7 @@ public class ParkourTransitionEvaluator {
 		evaluateEventTransitionIf(player, context,
 				transition -> transition.shouldTransitionOnJump(player, context,
 						event),
-				(p, targetState) -> ParkourStateMachine.transitionTo(p, context,
+				(p, targetState) -> ParkourStateMachine.localTransitionTo(p, context,
 						targetState));
 	}
 }

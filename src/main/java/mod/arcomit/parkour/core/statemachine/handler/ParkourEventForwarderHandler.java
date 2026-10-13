@@ -61,7 +61,7 @@ public class ParkourEventForwarderHandler {
 	 * 玩家跳跃时触发，转发给状态机评估跳跃转换规则。
 	 *
 	 * <p>匹配的转换规则可能取消原版跳跃行为（如替换为自定义跳跃动作）。
-	 * 双端均会触发。
+	 * 仅客户端会触发。
 	 *
 	 * @param event 可取消的跳跃事件，可能被匹配的转换规则取消，不为 null
 	 */
@@ -69,6 +69,10 @@ public class ParkourEventForwarderHandler {
 	public static void onPlayerJump(LivingJumpCancellableEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
+
+		if (!player.isLocalPlayer()) {
+			return;
+		}
 		ParkourContext context = ParkourContext.get(player);
 		ParkourStateMachine.tryJumpTransition(player, context, event);
 	}
