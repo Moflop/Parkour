@@ -34,6 +34,7 @@ public class ClientJumpStateHandler {
 	public static void onJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntity() instanceof LocalPlayer player) {
 			JumpData jumpData = ParkourContext.get(player).jump();
+			jumpData.setSpeedVaultJumpWindow(0);// 普通起跳后不再保留速过接跳机会
 			jumpData.setTicksSinceLastJump(0);// 设置距离上一次跳跃的Tick
 			jumpData.setJumped(true);// 设置已起跳过（用于armhang）
 		}

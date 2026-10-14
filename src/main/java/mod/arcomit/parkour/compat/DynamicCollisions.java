@@ -7,6 +7,7 @@ import mod.arcomit.parkour.compat.sable.SableMovementCompat;
 import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.utils.FilteredBlockCollisions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -130,6 +131,59 @@ public final class DynamicCollisions {
 	public static DynamicBlockHit findSensorCollision(Level level, Entity entity, AABB box,
 			@Nullable TagKey<Block> skipTag) {
 		return findSensorCollision(level, entity, box, skipTag, source -> true);
+	}
+
+	/**
+	 * Sensor lookup with a small forward-only tolerance for tilted dynamic surfaces.
+	 * The caller must keep the ordinary block query separate so vanilla collision
+	 * behavior remains exact; this overload only enumerates optional structures.
+	 */
+	@Nullable
+	public static DynamicBlockHit findRelaxedSensorCollision(Level level, Entity entity, AABB box,
+			Direction direction, double tolerance, @Nullable TagKey<Block> skipTag) {
+		return findRelaxedSensorCollision(level, entity, box, direction, tolerance, skipTag,
+				source -> true, hit -> true);
+	}
+
+	/**
+	 * Preserve exact contacts before considering extra reach on an opted-in source.
+	 */
+	@Nullable
+	public static DynamicBlockHit findRelaxedSensorCollision(Level level, Entity entity, AABB box,
+			Direction direction, double tolerance, @Nullable TagKey<Block> skipTag,
+			Predicate<DynamicCollisionSource> acceptsSource, Predicate<DynamicBlockHit> acceptsHit) {
+		DynamicBlockHit exact = findSensorCollision(level, entity, box, skipTag, acceptsSource, acceptsHit);
+		if (exact != null || direction == null || direction.getAxis() == Direction.Axis.Y || tolerance <= 0) return exact;
+		AABB searchBox = sensorSearchBounds(entity, box.expandTowards(direction.getStepX() * tolerance,
+				0, direction.getStepZ() * tolerance));
+		for (DynamicCollisionProvider provider : Providers.ALL) {
+			for (DynamicCollisionSource source : provider.sources(level, searchBox)) {
+				if (!source.isValid() || !acceptsSource.test(source)) continue;
+				double reach = source.wallSensorTolerance(entity, direction, tolerance);
+				if (!Double.isFinite(reach) || reach <= 0) continue;
+				reach = Math.min(tolerance, reach);
+				AABB relaxed = box.expandTowards(direction.getStepX() * reach, 0, direction.getStepZ() * reach);
+				DynamicBlockHit hit = source.findCollision(relaxed, source.sensorTransform(entity), entity, skipTag,
+						candidate -> acceptsHit.test(candidate) && isReachableWallSide(entity, direction, candidate));
+				if (hit != null) return hit;
+			}
+		}
+		return null;
+	}
+
+	/** Extra reach cannot turn a sloping floor or ceiling into a wall at the player's feet. */
+	private static boolean isReachableWallSide(Entity entity, Direction direction, DynamicBlockHit hit) {
+		DynamicCollisionSource source = hit.source();
+		var transform = source.sensorTransform(entity);
+		Vec3 pivot = entity.position(), local = source.toLocal(pivot);
+		Vec3 toward = transform.apply(pivot.add(Vec3.atLowerCornerOf(direction.getNormal())))
+				.subtract(transform.apply(pivot));
+		Vec3 localToward = source.toLocal(pivot.add(toward)).subtract(local);
+		Direction face = Direction.getNearest(localToward.x, localToward.y, localToward.z);
+		if (face.getAxis() == Direction.Axis.Y || CollisionGeometry.faceDistance(local, hit.localBox(), face) < 0) return false;
+		AABB body = CollisionGeometry.transformBounds(entity.getBoundingBox(), point -> source.toLocal(transform.apply(point)));
+		return body.minY < hit.localBox().maxY - ParkourConstants.AABB_DEFLATE_EPSILON
+				&& body.maxY > hit.localBox().minY + ParkourConstants.AABB_DEFLATE_EPSILON;
 	}
 
 	/** Filter sources before taking a hit, so an unrelated structure cannot hide a valid one. */

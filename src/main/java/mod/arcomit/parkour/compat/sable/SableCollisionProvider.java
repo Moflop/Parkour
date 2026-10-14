@@ -110,6 +110,26 @@ public final class SableCollisionProvider implements DynamicCollisionProvider {
 		}
 
 		@Override
+		public double wallSensorTolerance(Entity entity, Direction direction, double maximum) {
+			Vec3 pivot = entity.position();
+			var transform = sensorTransform(entity);
+			Vec3 toward = transform.apply(pivot.add(Vec3.atLowerCornerOf(direction.getNormal())))
+					.subtract(transform.apply(pivot));
+			Vec3 local = toLocal(pivot);
+			Vec3 localToward = toLocal(pivot.add(toward)).subtract(local);
+			Direction face = Direction.getNearest(localToward.x, localToward.y, localToward.z);
+			// Only local block sides are walls. Tilting a floor cannot give it extra reach.
+			if (face.getAxis() == Direction.Axis.Y) return 0;
+			Vec3 normal = toWorld(local.add(Vec3.atLowerCornerOf(face.getNormal()))).subtract(toWorld(local));
+			double horizontal = normal.horizontalDistance();
+			if (horizontal < 1.0E-8 || Math.abs(normal.y) < 1.0E-8) return 0;
+			// A standing body stays upright while the wall recedes with height. Cover
+			// that horizontal separation, bounded so a distant wall is never grabbed.
+			double reach = entity.getBbHeight() * Math.abs(normal.y) / horizontal;
+			return Double.isFinite(reach) ? Math.min(maximum, reach) : 0;
+		}
+
+		@Override
 		public Vec3 jumpMotion(Player player, Vec3 worldPoint) {
 			Vec3 additionalMotion = removeNativeMotion(player, worldPoint, pointMotion(worldPoint));
 			// Sable adds this separate inertia to client movement only while untracked.

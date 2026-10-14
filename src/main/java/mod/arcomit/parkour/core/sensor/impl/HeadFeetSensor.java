@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.sensor.impl;
 
 import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.sensor.CollisionCache;
 import mod.arcomit.parkour.core.sensor.SensorData;
@@ -34,7 +35,7 @@ public class HeadFeetSensor {
 	private static final double FEET_BOX_MAX_HEIGHT_RATIO = 0.3;
 	private static final double HEAD_BOX_MIN_HEIGHT_RATIO = 0.85;
 	private static final double HEAD_BOX_MAX_HEIGHT_RATIO = 1.0;
-	private static final double COLLISION_CHECK_DISTANCE = 0.45;
+	private static final double COLLISION_CHECK_DISTANCE = 0.15;
 	private static final TagKey<Block> IGNORED_BLOCKS_TAG =
 			ParkourTags.Blocks.COMMON_IGNORED_BLOCKS;
 
@@ -105,7 +106,7 @@ public class HeadFeetSensor {
 		List<AABB> boxes = collisionCache.getCollisionBoxes();
 		for (AABB box : boxes) {
 			if (!BlockCollisions.hasSensorCollision(player, box,
-					IGNORED_BLOCKS_TAG)) {
+					IGNORED_BLOCKS_TAG, direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE)) {
 				collisionCache.setCollided(false);
 				return;
 			}

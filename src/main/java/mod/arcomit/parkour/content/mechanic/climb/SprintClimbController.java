@@ -65,10 +65,11 @@ public final class SprintClimbController {
 		if (brake) return withY(vanilla, 0.0);
 
 		double y = vanilla.y;
-		if (sprint && ParkourConfig.enableDownClimbSpeedIncrease && incoming.y < 0.0
+		if (sprint && ParkourConfig.enableDownClimbSpeedIncrease && ParkourConfig.downClimbSpeedMultiplier > 1.0
+				&& incoming.y < 0.0
 				&& !ParkourProxies.INPUT_PROXY.getJumping(player)) {
 			double limit = targetSpeed(VANILLA_DOWN_SPEED, ParkourConfig.downClimbSpeedMultiplier,
-					ParkourConfig.downClimbAccelerationMultiplier, downTicks, MAX_DOWN_SPEED);
+					downTicks, MAX_DOWN_SPEED);
 			y = Math.max(incoming.y, -limit);
 		}
 		if (carryingUpBoost && y > 0.0) {
@@ -76,8 +77,9 @@ public final class SprintClimbController {
 			boolean hasClimbInput = ParkourProxies.INPUT_PROXY.getJumping(player)
 					|| ParkourProxies.INPUT_PROXY.getMoveVector(player).lengthSquared() > EPSILON;
 			double target = targetSpeed(VANILLA_UP_SPEED, ParkourConfig.upClimbSpeedMultiplier,
-					ParkourConfig.upClimbAccelerationMultiplier, upTicks, MAX_UP_SPEED);
+					upTicks, MAX_UP_SPEED);
 			double extra = sprint && hasClimbInput && ParkourConfig.enableUpClimbSpeedIncrease
+					&& ParkourConfig.upClimbSpeedMultiplier > 1.0
 					? (target - VANILLA_UP_SPEED) * ClimbableEdge.upwardBoostFactor(player) : 0.0;
 			y = Math.min(y, VANILLA_UP_SPEED + extra);
 		}
@@ -89,10 +91,12 @@ public final class SprintClimbController {
 		if (!active || !onLadder(player)) return vanilla;
 		climbedUp = true;
 		if (brake) return 0.0;
-		if (!sprint || !ParkourConfig.enableUpClimbSpeedIncrease) return vanilla;
+		if (!sprint || !ParkourConfig.enableUpClimbSpeedIncrease || ParkourConfig.upClimbSpeedMultiplier <= 1.0) {
+			return vanilla;
+		}
 
 		double target = targetSpeed(vanilla, ParkourConfig.upClimbSpeedMultiplier,
-				ParkourConfig.upClimbAccelerationMultiplier, upTicks, MAX_UP_SPEED);
+				upTicks, MAX_UP_SPEED);
 		appliedUpSpeed = vanilla + (target - vanilla) * ClimbableEdge.upwardBoostFactor(player);
 		boostedUp = appliedUpSpeed > vanilla + EPSILON;
 		return appliedUpSpeed;
@@ -110,11 +114,11 @@ public final class SprintClimbController {
 		if (carryingUpBoost && !climbedUp) {
 			movement = limitUp(movement, VANILLA_UP_SPEED);
 		}
-		if (sprint && climbedUp && ParkourConfig.enableUpClimbSpeedIncrease) {
+		if (sprint && climbedUp && ParkourConfig.enableUpClimbSpeedIncrease && ParkourConfig.upClimbSpeedMultiplier > 1.0) {
 			upTicks = Math.min(upTicks + 1, RAMP_TICKS);
 			downTicks = 0;
 		} else if (sprint && !climbedUp && movement.y < 0.0 && !player.onGround()
-				&& ParkourConfig.enableDownClimbSpeedIncrease) {
+				&& ParkourConfig.enableDownClimbSpeedIncrease && ParkourConfig.downClimbSpeedMultiplier > 1.0) {
 			downTicks = Math.min(downTicks + 1, RAMP_TICKS);
 			upTicks = 0;
 		} else {
@@ -151,11 +155,11 @@ public final class SprintClimbController {
 		return player.onClimbable() && !player.getInBlockState().isScaffolding(player);
 	}
 
-	private static double targetSpeed(double vanilla, double multiplier, double acceleration,
-			int ticks, double maximum) {
-		double target = vanilla * multiplier;
-		if (!ParkourConfig.enableClimbAccelerationOverTime) return Math.min(target, maximum);
-		target = Math.min(target * acceleration, maximum);
+	private static double targetSpeed(double vanilla, double multiplier, int ticks, double maximum) {
+		// One setting owns each direction's target. Smoothing must not add another multiplier.
+		if (multiplier <= 1.0) return vanilla;
+		double target = Math.min(vanilla * multiplier, maximum);
+		if (!ParkourConfig.enableClimbAccelerationOverTime) return target;
 		double progress = Mth.clamp((ticks + 1.0) / RAMP_TICKS, 0.0, 1.0);
 		progress = progress * progress * (3.0 - 2.0 * progress);
 		return Mth.lerp(progress, vanilla, target);

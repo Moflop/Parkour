@@ -120,8 +120,11 @@ public final class DynamicSurfaceFacing {
 			return new Candidate(direction, Vec3.atLowerCornerOf(direction.getNormal()),
 					false, dx * dx + dz * dz);
 		}
-		DynamicBlockHit hit = DynamicCollisions.findSensorCollision(player.level(), player, box, skip,
-				source -> true, candidate -> !hanging || facesPlayer(player, direction, candidate));
+		DynamicBlockHit hit = hanging
+				? DynamicCollisions.findSensorCollision(player.level(), player, box, skip,
+						source -> true, candidate -> facesPlayer(player, direction, candidate))
+				: DynamicCollisions.findRelaxedSensorCollision(player.level(), player, box,
+						direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE, skip);
 		if (hit == null) return null;
 		DynamicCollisionSource source = hit.source();
 		Vec3 pivot = player.position(), local = source.toLocal(pivot);

@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.behavior.armhang.network;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -48,6 +49,9 @@ public record SyncArmhangDirC2SPayload(Direction direction) implements CustomPac
 				if (context.player() instanceof ServerPlayer player) {
 					ParkourContext state = ParkourContext.get(player);
 					state.wall().setArmhang(packet.direction);
+					// The corner's position packet arrives first. Refresh its material contact
+					// now, before the next pre-tick can restore the previous face's normal.
+					DynamicSurfaceMotion.capture(player);
 
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
 							new BroadcastArmhangDirS2CPayload(

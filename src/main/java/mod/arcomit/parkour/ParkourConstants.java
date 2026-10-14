@@ -19,6 +19,8 @@ public final class ParkourConstants {
 	public static final float CROUCH_EYE_HEIGHT = 0.4F;
 	/** 墙面吸附力，每tick沿墙面法线方向将玩家推向墙体，防止浮点漂移导致飘离 */
 	public static final double WALL_ADHESION_FORCE = 0.1;
+	/** Maximum tilt compensation along wall probes; only opted-in physics sources use it. */
+	public static final double DYNAMIC_WALL_SENSOR_TOLERANCE = 0.30;
 	/** 悬挂抓握高度比例（基于玩家身高），用于确定碰撞检测盒和音效定位的垂直偏移量 */
 	public static final double ARMHANG_GRIP_HEIGHT_RATIO = 0.34;
 	/** 悬挂传感器水平检测偏移距离（单位：格） */

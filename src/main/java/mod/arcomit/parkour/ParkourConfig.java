@@ -57,8 +57,6 @@ public class ParkourConfig {
 	public static ModConfigSpec.BooleanValue ENABLE_UP_CLIMB_SPEED_INCREASE;
 	public static ModConfigSpec.DoubleValue UP_CLIMB_SPEED_MULTIPLIER;
 	public static ModConfigSpec.BooleanValue ENABLE_CLIMB_ACCELERATION_OVER_TIME;
-	public static ModConfigSpec.DoubleValue UP_CLIMB_ACCELERATION_MULTIPLIER;
-	public static ModConfigSpec.DoubleValue DOWN_CLIMB_ACCELERATION_MULTIPLIER;
 	public static ModConfigSpec.BooleanValue ENABLE_DOWN_CLIMB_SPEED_INCREASE;
 	public static ModConfigSpec.DoubleValue DOWN_CLIMB_SPEED_MULTIPLIER;
 	public static ModConfigSpec.BooleanValue CLIMBABLE_BLOCK_NOT_SLOW_DOWN;
@@ -71,6 +69,7 @@ public class ParkourConfig {
 	public static ModConfigSpec.BooleanValue ARMHANG_RESET_WALL_CLIMB;
 	public static ModConfigSpec.BooleanValue ENABLE_SUPPORT_WALL_JUMP;
 	public static ModConfigSpec.BooleanValue ENABLE_SPEED_VAULT;
+	public static ModConfigSpec.BooleanValue ENABLE_SPEED_VAULT_JUMP;
 	public static ModConfigSpec.BooleanValue ENABLE_WALL_CLIMB;
 	public static ModConfigSpec.IntValue WALL_CLIMB_DURATION;
 	public static ModConfigSpec.DoubleValue WALL_CLIMB_SPEED;
@@ -101,8 +100,6 @@ public class ParkourConfig {
 	public static boolean enableUpClimbSpeedIncrease;
 	public static double upClimbSpeedMultiplier;
 	public static boolean enableClimbAccelerationOverTime;
-	public static double upClimbAccelerationMultiplier;
-	public static double downClimbAccelerationMultiplier;
 	public static boolean enableDownClimbSpeedIncrease;
 	public static double downClimbSpeedMultiplier;
 	public static boolean climbableBlockNotSlowDown;
@@ -115,6 +112,7 @@ public class ParkourConfig {
 	public static double armhangMoveSpeed;
 	public static boolean enableSupportWallJump;
 	public static boolean enableSpeedVault;
+	public static boolean enableSpeedVaultJump;
 	public static boolean enableWallClimb;
 	public static int wallClimbDuration;
 	public static double wallClimbSpeed;
@@ -267,40 +265,28 @@ public class ParkourConfig {
 				builder.comment("Enable sprint-key upward climb acceleration; disabling this removes all upward climb boosts (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_up_climb_speed_increase")
 						.define("enableUpClimbSpeedIncrease", true);
-		// 疾跑上爬相对于原版速度的基础系数，受安全速度上限约束
+		// 疾跑上爬的唯一目标速度系数；1 不增加速度，受安全速度上限约束
 		UP_CLIMB_SPEED_MULTIPLIER =
-				builder.comment("Base upward climb speed multiplier while the sprint key is active, subject to a safe speed limit (default: 1.25)")
+				builder.comment("The sole target speed multiplier for sprint-key upward climbing; 1 adds no climb speed, subject to a safe speed limit (default: 1.25)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.up_climb_speed_multiplier")
-						.defineInRange("upClimbSpeedMultiplier", 1.25, 1.0,
+						.defineInRange("upClimbSpeedMultiplier", 2.0, 1.0,
 								5.0);
 		// 疾跑键控制下滑加速，不依赖视角；关闭后禁用所有额外下滑增速
 		ENABLE_DOWN_CLIMB_SPEED_INCREASE =
 				builder.comment("Enable sprint-key downward climb acceleration regardless of look direction; disabling this removes all downward climb boosts (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_climb_down_speed_increase")
 						.define("enableClimbDownSpeedIncrease", true);
-		// 疾跑下滑相对于原版速度的基础系数，受安全速度上限约束
+		// 疾跑下滑的唯一目标速度系数；1 不增加速度，受安全速度上限约束
 		DOWN_CLIMB_SPEED_MULTIPLIER =
-				builder.comment("Base downward climb speed multiplier while the sprint key is active, subject to a safe speed limit (default: 2.0)")
+				builder.comment("The sole target speed multiplier for sprint-key downward climbing; 1 adds no climb speed, subject to a safe speed limit (default: 2.0)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.down_climb_speed_multiplier")
 						.defineInRange("downClimbSpeedMultiplier", 2.0, 1.0,
 								5.0);
-		// 以 8 tick（约 0.4 秒）平滑缓入并应用最大额外增速系数；关闭则立即使用基础速度系数
+		// 以 8 tick（约 0.4 秒）平滑缓入；关闭则立即达到同一目标速度，不改变最终目标
 		ENABLE_CLIMB_ACCELERATION_OVER_TIME =
-				builder.comment("Smoothly accelerate over 8 ticks (about 0.4 seconds) and apply the maximum extra speed multiplier; when disabled, apply only the base speed multiplier immediately (default: true)")
+				builder.comment("Ease into the target speed over 8 ticks (about 0.4 seconds); when disabled, reach the same target immediately. This setting does not change the final target speed (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_climb_acceleration_over_time")
 						.define("enableClimbAccelerationOverTime", true);
-		// 平滑加速开启时，上爬在基础速度系数上叠乘的最大额外系数，受安全速度上限约束
-		UP_CLIMB_ACCELERATION_MULTIPLIER =
-				builder.comment("Maximum extra upward speed multiplier applied to the base multiplier when smooth acceleration is enabled, subject to a safe speed limit (default: 2.0)")
-						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.up_climb_acceleration_multiplier")
-						.defineInRange("upClimbAccelerationMultiplier", 2.0,
-								1.0, 5.0);
-		// 平滑加速开启时，下滑在基础速度系数上叠乘的最大额外系数，受安全速度上限约束
-		DOWN_CLIMB_ACCELERATION_MULTIPLIER =
-				builder.comment("Maximum extra downward speed multiplier applied to the base multiplier when smooth acceleration is enabled, subject to a safe speed limit (default: 1.5)")
-						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.down_climb_acceleration_multiplier")
-						.defineInRange("downClimbAccelerationMultiplier",
-								1.5, 1.0, 5.0);
 		// 穿过可攀爬的方块时不会减速
 		CLIMBABLE_BLOCK_NOT_SLOW_DOWN =
 				builder.comment("Climbable blocks do not slow down movement (default: true)")
@@ -344,6 +330,10 @@ public class ParkourConfig {
 		ENABLE_SPEED_VAULT = builder.comment("Enable speed vault (default: true)")
 				.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_speed_vault")
 				.define("enableSpeedVault", true);
+		// 启用速过接跳
+		ENABLE_SPEED_VAULT_JUMP = builder.comment("Enable jumping during or shortly after a speed vault (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_speed_vault_jump")
+				.define("enableSpeedVaultJump", true);
 		// 启用爬墙
 		ENABLE_WALL_CLIMB = builder.comment("Enable wall climb (default: true)")
 				.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_wall_climb")
@@ -404,8 +394,6 @@ public class ParkourConfig {
 		enableUpClimbSpeedIncrease = ENABLE_UP_CLIMB_SPEED_INCREASE.get();
 		upClimbSpeedMultiplier = UP_CLIMB_SPEED_MULTIPLIER.get();
 		enableClimbAccelerationOverTime = ENABLE_CLIMB_ACCELERATION_OVER_TIME.get();
-		upClimbAccelerationMultiplier = UP_CLIMB_ACCELERATION_MULTIPLIER.get();
-		downClimbAccelerationMultiplier = DOWN_CLIMB_ACCELERATION_MULTIPLIER.get();
 		enableDownClimbSpeedIncrease = ENABLE_DOWN_CLIMB_SPEED_INCREASE.get();
 		downClimbSpeedMultiplier = DOWN_CLIMB_SPEED_MULTIPLIER.get();
 		climbableBlockNotSlowDown = CLIMBABLE_BLOCK_NOT_SLOW_DOWN.get();
@@ -418,6 +406,7 @@ public class ParkourConfig {
 		enableSupportWallJump = ENABLE_SUPPORT_WALL_JUMP.get();
 		armhangResetWallClimb = ARMHANG_RESET_WALL_CLIMB.get();
 		enableSpeedVault = ENABLE_SPEED_VAULT.get();
+		enableSpeedVaultJump = ENABLE_SPEED_VAULT_JUMP.get();
 		enableWallClimb = ENABLE_WALL_CLIMB.get();
 		wallClimbDuration = WALL_CLIMB_DURATION.get();
 		wallClimbSpeed = WALL_CLIMB_SPEED.get();

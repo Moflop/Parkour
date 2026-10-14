@@ -111,6 +111,20 @@ public class BlockCollisions {
 		return DynamicCollisions.findSensorCollision(entity.level(), entity, box, skipTag) != null;
 	}
 
+	/**
+	 * Wall-action sensor query with tolerance applied only to dynamic structures.
+	 * Static block shapes still use the exact original probe and therefore retain
+	 * vanilla parkour behavior.
+	 */
+	public static boolean hasSensorCollision(Entity entity, AABB box,
+			@Nullable TagKey<Block> skipTag, Direction dynamicDirection, double dynamicTolerance) {
+		for (VoxelShape shape : filterBlocks(entity.level(), entity, box, skipTag)) {
+			if (!shape.isEmpty()) return true;
+		}
+		return DynamicCollisions.findRelaxedSensorCollision(entity.level(), entity, box,
+				dynamicDirection, dynamicTolerance, skipTag) != null;
+	}
+
 	public static boolean noSensorCollision(Entity entity, AABB box) {
 		return entity.level().noCollision(entity, box)
 				&& DynamicCollisions.findSensorCollision(entity.level(), entity, box, null) == null;

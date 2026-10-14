@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.handler;
 
+import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.base.DefaultState;
 import mod.arcomit.parkour.content.context.*;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,7 +12,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /**
  * 每Tick推进所有跑酷冷却计时器和窗口倒计时。
  * <p>
- * 统一管理：滑铲冷却、落地翻滚允许窗口、水中推进冷却、垂挂冷却，
+ * 统一管理：滑铲冷却、落地翻滚允许窗口、水中推进冷却、垂挂冷却、速过接跳窗口，
  * 以及距上一次跳跃的tick计数（上限{@value #MAX_JUMP_TICK_RECORD}tick=5秒）。冷却值大于0时逐tick递减。
  *
  * @author Mitok
@@ -43,9 +45,17 @@ public class TimerHandler {
 		if (swimmingBoostCooldown > 0)
 			swimData.setBoostCooldown(swimmingBoostCooldown - 1);
 
+		// 翻越后落到障碍物顶部仍可接跳，窗口到期、关闭功能或进入其他状态才清除。
+		JumpData jumpData = context.jump();
+		int speedVaultJumpWindow = jumpData.getSpeedVaultJumpWindow();
+		if (speedVaultJumpWindow > 0) {
+			boolean canContinue = ParkourConfig.enableSpeedVaultJump
+					&& context.state().getState() instanceof DefaultState;
+			jumpData.setSpeedVaultJumpWindow(canContinue ? speedVaultJumpWindow - 1 : 0);
+		}
+
 		// 距离上一次跳跃的Tick
 		if (player.isLocalPlayer()) {
-			JumpData jumpData = ParkourContext.get(player).jump();
 			int ticksSinceLastJump = jumpData.getTicksSinceLastJump();
 			if (ticksSinceLastJump < MAX_JUMP_TICK_RECORD) {
 				jumpData.setTicksSinceLastJump(ticksSinceLastJump + 1);

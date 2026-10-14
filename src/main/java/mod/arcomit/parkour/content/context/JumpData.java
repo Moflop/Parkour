@@ -76,6 +76,9 @@ public class JumpData {
 	private int ticksSinceLastJump = 100;
 	private int jumpReleaseGraceTicks = 0;
 
+	/** 速过自然结束后的接跳窗口，双端各自计时，不参与存档或网络快照 */
+	private transient int speedVaultJumpWindow = 0;
+
 	// ---- Direction 缓存（惰性加载，仅对外有引用的三种类型） ----
 	private transient Direction lastViewJump;
 	private transient Direction lastUpJump;

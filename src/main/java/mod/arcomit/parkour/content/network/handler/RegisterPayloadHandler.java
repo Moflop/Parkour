@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.network.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.action.speedvaultjump.network.SpeedVaultJumpC2SPayload;
 import mod.arcomit.parkour.content.action.supportwalljump.network.SupportWallJumpC2SPayload;
 import mod.arcomit.parkour.content.action.swimmingboost.network.UseSwimmingBoostC2SPayload;
 import mod.arcomit.parkour.content.action.swimmingjump.network.UseSwimmingJumpC2SPayload;
@@ -50,6 +51,10 @@ public class RegisterPayloadHandler {
 		registrar.playToServer(SupportWallJumpC2SPayload.TYPE,
 				SupportWallJumpC2SPayload.STREAM_CODEC,
 				(payload, context) -> SupportWallJumpC2SPayload.Server.handle(
+						payload, context));
+		registrar.playToServer(SpeedVaultJumpC2SPayload.TYPE,
+				SpeedVaultJumpC2SPayload.STREAM_CODEC,
+				(payload, context) -> SpeedVaultJumpC2SPayload.Server.handle(
 						payload, context));
 		registrar.playToServer(UseSwimmingJumpC2SPayload.TYPE,
 				UseSwimmingJumpC2SPayload.STREAM_CODEC,

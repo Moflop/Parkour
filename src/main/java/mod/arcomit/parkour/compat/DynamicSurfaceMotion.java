@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.compat;
 
+import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.behavior.speedvault.SpeedVaultState;
 import mod.arcomit.parkour.content.behavior.wallclimb.WallClimbState;
@@ -186,6 +187,11 @@ public final class DynamicSurfaceMotion {
 		// A static wall in the same sensor has priority over a passing structure behind it.
 		if (new FilteredBlockCollisions<>(player.level(), player, box, false, skip,
 				(pos, shape) -> shape).hasNext()) return null;
+		if (state instanceof WallRunState || state instanceof WallClimbState
+				|| state instanceof WallSlideState) {
+			return DynamicCollisions.findRelaxedSensorCollision(player.level(), player, box,
+					direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE, skip);
+		}
 		return DynamicCollisions.findSensorCollision(player.level(), player, box, skip);
 	}
 
@@ -243,8 +249,13 @@ public final class DynamicSurfaceMotion {
 			AABB box = BlockCollisions.buildBox(player, fallback, 0, 1, 0.2);
 			if (!new FilteredBlockCollisions<>(player.level(), player, box, false,
 					ParkourTags.Blocks.COMMON_IGNORED_BLOCKS, (pos, shape) -> shape).hasNext()) {
-				DynamicBlockHit hit = DynamicCollisions.findSensorCollision(player.level(), player,
-						box, ParkourTags.Blocks.COMMON_IGNORED_BLOCKS);
+				IParkourState state = ParkourContext.get(player).state().getState();
+				DynamicBlockHit hit = (state instanceof ArmhangState)
+						? DynamicCollisions.findSensorCollision(player.level(), player, box,
+								ParkourTags.Blocks.COMMON_IGNORED_BLOCKS)
+						: DynamicCollisions.findRelaxedSensorCollision(player.level(), player, box,
+								fallback, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE,
+								ParkourTags.Blocks.COMMON_IGNORED_BLOCKS);
 				if (hit != null) {
 					Vec3 normal = transformDirection(hit.source(), hit.source().toLocal(player.position()),
 							localWallNormal(player, hit.source(), fallback));
@@ -319,12 +330,23 @@ public final class DynamicSurfaceMotion {
 	}
 
 	public static Vec3 jumpMotion(Player player, Direction direction) {
+		return jumpMotion(player, direction, false);
+	}
+
+	/** Wall jumps must inherit from the same tilted surface accepted by their foot probe. */
+	public static Vec3 wallJumpVelocity(Player player, Direction wall, Vec3 relativeVelocity) {
+		return relativeVelocity.add(jumpMotion(player, wall, true));
+	}
+
+	private static Vec3 jumpMotion(Player player, Direction direction, boolean wallJump) {
 		if (!DynamicCollisions.isEnabled()) return Vec3.ZERO;
 		AABB box = BlockCollisions.buildBox(player, direction, 0, 1, 0.2);
 		if (new FilteredBlockCollisions<>(player.level(), player, box, false,
 				ParkourTags.Blocks.COMMON_IGNORED_BLOCKS, (pos, shape) -> shape).hasNext()) return Vec3.ZERO;
-		DynamicBlockHit hit = DynamicCollisions.findSensorCollision(player.level(), player,
-				box, ParkourTags.Blocks.COMMON_IGNORED_BLOCKS);
+		DynamicBlockHit hit = wallJump
+				? DynamicCollisions.findRelaxedSensorCollision(player.level(), player, box, direction,
+						ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE, ParkourTags.Blocks.COMMON_IGNORED_BLOCKS)
+				: DynamicCollisions.findSensorCollision(player.level(), player, box, ParkourTags.Blocks.COMMON_IGNORED_BLOCKS);
 		Vec3 motion = hit == null ? Vec3.ZERO : hit.source().jumpMotion(player, player.position());
 		return finite(motion) && motion.lengthSqr() <= 256 ? motion : Vec3.ZERO;
 	}

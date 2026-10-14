@@ -2,6 +2,7 @@ package mod.arcomit.parkour.content.behavior.speedvault;
 
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -30,11 +31,9 @@ public class SpeedVaultPhysics {
 	 * @param wallData 墙体运动数据，包含已探测的障碍物高度，不能为 null
 	 */
 	public static void applyVaultMovement(Player player, WallMovementData wallData) {
-		double obstacleHeight = wallData.getObstaclesHeight();
 		Vec3 moveDir = getInputMoveDirection(player);
 
-		double verticalVel =
-				((obstacleHeight + OBSTACLE_CLEARANCE) / MAX_VAULT_TICK) / (player.getBbHeight() / PLAYER_STANDARD_HEIGHT);
+		double verticalVel = getVaultVerticalVelocity(player, wallData);
 		Vec3 horizontalVel = moveDir.scale(VAULT_HORIZONTAL_SPEED);
 
 		player.setDeltaMovement(horizontalVel.x, verticalVel, horizontalVel.z);
@@ -50,6 +49,39 @@ public class SpeedVaultPhysics {
 		// 让重力接管垂直速度
 		player.setDeltaMovement(moveDir.x * FORWARD_VELOCITY, 0,
 				moveDir.z * FORWARD_VELOCITY);
+	}
+
+	/**
+	 * 计算速过接跳速度，保留更快的水平动量和已有上升速度。
+	 *
+	 * <p>翻越尚未完成时保留抬升力度，避免过早接跳撞上障碍物；自然结束后使用玩家的跳跃属性和跳跃提升效果。
+	 * 这里只计算速度，由动作在退出速过状态后施加，避免退出逻辑将起跳速度清零。
+	 *
+	 * @param player   目标玩家，不能为 null
+	 * @param wallData 当前翻越的障碍物数据，不能为 null
+	 * @param vaulting 是否仍处于翻越过程
+	 * @return 接跳的速度向量
+	 */
+	public static Vec3 computeJumpVelocity(Player player, WallMovementData wallData,
+			boolean vaulting) {
+		Vec3 currentVelocity = player.getDeltaMovement();
+		Vec3 horizontalVelocity = getInputMoveDirection(player).scale(FORWARD_VELOCITY);
+		if (currentVelocity.horizontalDistanceSqr() > horizontalVelocity.lengthSqr()) {
+			horizontalVelocity = new Vec3(currentVelocity.x, 0, currentVelocity.z);
+		}
+
+		double verticalVelocity = Math.max(currentVelocity.y,
+				player.getAttributeValue(Attributes.JUMP_STRENGTH) + player.getJumpBoostPower());
+		if (vaulting) {
+			verticalVelocity = Math.max(verticalVelocity,
+					getVaultVerticalVelocity(player, wallData));
+		}
+		return new Vec3(horizontalVelocity.x, verticalVelocity, horizontalVelocity.z);
+	}
+
+	private static double getVaultVerticalVelocity(Player player, WallMovementData wallData) {
+		return ((wallData.getObstaclesHeight() + OBSTACLE_CLEARANCE) / MAX_VAULT_TICK)
+				/ (player.getBbHeight() / PLAYER_STANDARD_HEIGHT);
 	}
 
 	/**

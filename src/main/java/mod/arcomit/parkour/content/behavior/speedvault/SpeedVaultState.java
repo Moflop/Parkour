@@ -20,7 +20,8 @@ import net.minecraft.world.entity.player.Player;
  * Speed Vault 状态 —— 玩家用手撑住障碍物快速翻越。
  *
  * <p>进入条件：玩家面向的障碍物高度在 1.1~1.6 格之间，且上方有足够空间。
- * 进入后持续 2 tick 即自动退出，退出时给予短暂的速度提升效果。 按住潜行键可提前退回到默认状态。
+ * 进入后持续 2 tick 即自动退出，退出时给予短暂的速度提升效果。
+ * 再次按下跳跃键可立即接跳，自然结束后保留短暂的接跳窗口。按住潜行键可提前退回到默认状态。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -28,6 +29,10 @@ import net.minecraft.world.entity.player.Player;
 public class SpeedVaultState extends AbstractParkourState {
 	/** 进入速过状态的最大允许下落速度（单位：方/秒），超过此值不允许进入 */
 	private static final double MAX_ENTER_FALL_SPEED = -0.1;
+	/** 自然结束后允许接跳的宽限时间（6 tick = 0.3 秒） */
+	private static final int JUMP_GRACE_TICKS = 6;
+	/** 服务端额外等待输入包的时间，避免窗口末帧接跳因传输和 tick 相位差被拒绝 */
+	private static final int SERVER_JUMP_GRACE_TICKS = 2;
 
 	/**
 	 * 构造并注册状态转换：每客户端 tick 检测潜行键，按下即切回默认状态。
@@ -53,6 +58,14 @@ public class SpeedVaultState extends AbstractParkourState {
 	}
 
 	/**
+	 * 进入速过时清除上一次翻越遗留的接跳窗口。
+	 */
+	@Override
+	public void onSimulationEnter(Player player, ParkourContext context) {
+		context.jump().setSpeedVaultJumpWindow(0);
+	}
+
+	/**
 	 * 客户端进入速过状态时触发：播放翻越音效并随机选择左手/右手动画， 同时将当前坐标发送给服务端以校准位置。
 	 */
 	@Override
@@ -75,6 +88,12 @@ public class SpeedVaultState extends AbstractParkourState {
 	@Override
 	public void onSimulationExit(Player player, ParkourContext context) {
 		SpeedVaultPhysics.applyExitVelocity(player);
+		// 服务端可能提前一帧同步自然结束，不能依赖本地 tick 数判断是否授予接跳窗口。
+		// 潜行或环境失效不授予宽限；主动接跳会在退出后自行消耗窗口。
+		boolean canJump = ParkourConfig.enableSpeedVaultJump && meetsBaseConditions(player)
+				&& !ParkourProxies.INPUT_PROXY.getShiftKeyDown(player);
+		int graceTicks = JUMP_GRACE_TICKS + (player.level().isClientSide() ? 0 : SERVER_JUMP_GRACE_TICKS);
+		context.jump().setSpeedVaultJumpWindow(canJump ? graceTicks : 0);
 	}
 
 	/**

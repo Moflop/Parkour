@@ -49,7 +49,7 @@ public class WallJumpAction {
 		if (WallJumpSameWallGuard.isSameWallAsLastJump(jumpData, wallJumpType, wallDir))
 			return false;
 
-		Vec3 velocity = DynamicSurfaceMotion.jumpVelocity(player, wallDir,
+		Vec3 velocity = DynamicSurfaceMotion.wallJumpVelocity(player, wallDir,
 				WallJumpVelocity.computeJumpVelocity(player, wallJumpType));
 
 		// 更新最近跳跃方向（只挨着一面墙时记录，如果挨着多面前可以无限次跳跃所以无需记录。）

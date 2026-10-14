@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.compat;
 
+import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -42,6 +43,11 @@ public interface DynamicCollisionSource {
 	/** Rotates parkour sensors to match this engine's player hitbox; clearance queries stay in world space. */
 	default UnaryOperator<Vec3> sensorTransform(Entity entity) {
 		return UnaryOperator.identity();
+	}
+
+	/** Forward reach compensating for a wall's tilt; engines opt in independently. */
+	default double wallSensorTolerance(Entity entity, Direction direction, double maximum) {
+		return 0;
 	}
 
 	@Nullable
