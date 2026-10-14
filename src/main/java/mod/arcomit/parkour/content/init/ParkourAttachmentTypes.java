@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.init;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.sensor.SensorDataManager;
 import net.neoforged.bus.api.IEventBus;
@@ -43,4 +44,9 @@ public class ParkourAttachmentTypes {
 	public static void register(IEventBus bus) {
 		ATTACHMENT_TYPES.register(bus);
 	}
+
+	/** Dynamic structure contact is local runtime state, discarded on respawn/dimension changes. */
+	public static final Supplier<AttachmentType<DynamicSurfaceMotion.Contact>> DYNAMIC_SURFACE_CONTACT =
+			ATTACHMENT_TYPES.register("dynamic_surface_contact",
+					() -> AttachmentType.builder(DynamicSurfaceMotion.Contact::new).build());
 }

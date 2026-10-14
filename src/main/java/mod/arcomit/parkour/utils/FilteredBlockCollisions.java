@@ -126,7 +126,7 @@ public class FilteredBlockCollisions<T> extends AbstractIterator<T> {
 			this.mutablePos.set(x, y, z);
 			BlockState state = chunk.getBlockState(this.mutablePos);
 
-			if (state.is(this.skipTag)) {
+			if (this.skipTag != null && state.is(this.skipTag)) {
 				continue;
 			}
 

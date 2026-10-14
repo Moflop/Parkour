@@ -24,6 +24,8 @@ Parkour, a simpler and more accessible emerging parkour mod.
 config = "${mod_id}.mixins.json"
 [[mixins]]
 config = "${mod_id}.player_animation_library.mixins.json"
+[[mixins]]
+config = "${mod_id}.sable.mixins.json"
 
 # [[accessTransformers]] 区块允许你声明 AT（访问转换器）文件的位置。
 # 如果省略了这个区块，系统会尝试作为备用方案，从 META-INF/accesstransformer.cfg 路径下加载 AT 文件。
@@ -67,6 +69,20 @@ Player Animation Library is a library mod that provides player animation support
 versionRange = "[1.1.4,)"
 ordering = "AFTER"
 side = "CLIENT"
+
+[[dependencies."${mod_id}"]]
+modId = "create"
+type = "optional"
+versionRange = "[6.0.10,6.1)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "sable"
+type = "optional"
+versionRange = "[2.0.6,2.1)"
+ordering = "AFTER"
+side = "BOTH"
 
 # 特性 (Features) 是指游戏环境的具体属性，你可能需要在此声明你的模组需要它们。这个示例声明了：
 # 你的模组需要 OpenGL 3.2 或更高版本。未来还会添加其他特性支持。它们是区分物理端的，所以在这里声明

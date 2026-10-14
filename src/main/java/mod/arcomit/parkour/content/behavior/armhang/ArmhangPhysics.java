@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.behavior.armhang;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
@@ -28,21 +30,30 @@ public class ArmhangPhysics {
 			WallMovementData wallMovementData) {
 		Direction wallCollisionDirection = wallMovementData.getArmhang();
 		if (wallCollisionDirection != null) {
+			DynamicCollisions.clearSurfaceInertia(player);
 			// 悬空
 			player.setDeltaMovement(Vec3.ZERO);
 
 			// 墙面吸附
-			Vec3 wallNormal = new Vec3(wallCollisionDirection.getStepX(), 0,
-					wallCollisionDirection.getStepZ());
-			Vec3 adhesionForce = wallNormal.scale(ParkourConstants.WALL_ADHESION_FORCE);
-			boolean wasOnGround = player.onGround();
-			player.move(MoverType.PLAYER, adhesionForce);
-			if (wasOnGround) {
-				// 恢复 onGround 状态，防止由于水平贴墙导致的意外状态结束
-				player.setOnGround(true);
-			}
+			tryAdhesion(player, wallCollisionDirection);
 
 			player.resetFallDistance();
 		}
+	}
+
+	/** A tilted wall's collision response must not push an already valid grip off the ledge. */
+	public static boolean tryAdhesion(Player player, Direction direction) {
+		if (!ArmhangCollision.hasValidHangPoint(player, direction)) return false;
+		ArmhangMoveSnapshot before = ArmhangMoveSnapshot.capture(player);
+		Vec3 normal = DynamicSurfaceMotion.wallNormal(player, direction);
+		DynamicCollisions.move(player, MoverType.PLAYER,
+				normal.scale(ParkourConstants.WALL_ADHESION_FORCE));
+		if (!ArmhangCollision.hasValidHangPoint(player, direction)) {
+			// Server positions remain owned by the normal client movement packets.
+			if (player.isLocalPlayer()) before.restore(player);
+			return false;
+		}
+		if (before.onGround()) player.setOnGround(true);
+		return true;
 	}
 }

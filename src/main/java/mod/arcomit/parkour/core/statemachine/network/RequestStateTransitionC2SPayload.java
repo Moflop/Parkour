@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.network;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.init.ParkourRegistries;
@@ -64,6 +65,13 @@ public record RequestStateTransitionC2SPayload(ResourceLocation targetStateId, i
 					IParkourState targetState =
 							ParkourRegistries.PARKOUR_STATE_REGISTRY.get(
 									stateId);
+
+					if (targetState instanceof ArmhangState) {
+						// Movement packets restore the synchronized position after server travel,
+						// but can leave the short pose chosen at that temporary position. Refresh
+						// through vanilla/Sable clearance before querying height-dependent grips.
+						player.updatePlayerPose();
+					}
 
 					if (targetState != null && targetState.canEnter(player,
 							pkContext)) {

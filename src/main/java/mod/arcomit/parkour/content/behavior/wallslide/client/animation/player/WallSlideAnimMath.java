@@ -1,11 +1,13 @@
 package mod.arcomit.parkour.content.behavior.wallslide.client.animation.player;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.core.client.animation.player.SurfaceAnimationMath;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * 负责墙壁滑行骨骼旋转与位置的数学计算。
@@ -29,12 +31,12 @@ public class WallSlideAnimMath {
 	public static FrameData calculate(Player player, WallSlideAnimState state,
 			float partialTick) {
 		FrameData data = new FrameData();
-		float bodyYaw = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
+		float bodyYaw = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
 
 		// 头部通用运算
 		float pitch = Mth.lerp(partialTick, player.xRotO, player.getXRot());
-		float headYaw = Mth.lerp(partialTick, player.yHeadRotO, player.getYHeadRot());
-		float netYaw = Mth.wrapDegrees(headYaw - bodyYaw);
+		float netYaw = SurfaceAnimationMath.relativeYaw(player.yHeadRotO,
+				player.getYHeadRot(), bodyYaw, partialTick);
 
 		data.headRotX = pitch * Mth.DEG_TO_RAD;
 		data.headRotY = netYaw * Mth.DEG_TO_RAD;
@@ -52,9 +54,8 @@ public class WallSlideAnimMath {
 		data.hasWallPose = true;
 
 		// 计算手臂和身体数据
-		Vec3 intoWallVec = new Vec3(-wallDir.getStepX(), 0, -wallDir.getStepZ());
-		float targetWorldYaw = (float) Math.toDegrees(
-				Math.atan2(-intoWallVec.x, intoWallVec.z)) + 180f;
+		float targetWorldYaw = Directions.horizontalYaw(
+				DynamicSurfaceMotion.renderWallNormal(player, wallDir, partialTick));
 		float yawToWall = Mth.wrapDegrees(targetWorldYaw - bodyYaw);
 
 		boolean isWallOnRight = yawToWall > 0;

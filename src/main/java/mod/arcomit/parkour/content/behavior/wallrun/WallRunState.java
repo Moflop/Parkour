@@ -2,6 +2,9 @@ package mod.arcomit.parkour.content.behavior.wallrun;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.behavior.wallrun.server.ServerWallRunSound;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
@@ -13,13 +16,13 @@ import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
-import mod.arcomit.parkour.utils.BlockCollisions;
 import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 跑墙状态 —— 玩家在竖直墙面上水平跑动。
@@ -54,14 +57,13 @@ public class WallRunState extends AbstractParkourState {
 	 */
 	public static boolean meetsBaseConditions(Player player) {
 		// 快速失败：基础状态不满足墙跑条件
-		if (!ParkourConfig.enableWallRun || !player.isSprinting() || player.onGround() || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
+		if (!ParkourConfig.enableWallRun || !player.isSprinting() || DynamicCollisions.isOnGround(player) || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
 				player)) {
 			return false;
 		}
 
 		// 确保正前方没有撞墙
-		if (BlockCollisions.isBlockedTowards(player, player.getDirection(),
-				ParkourTags.Blocks.COMMON_IGNORED_BLOCKS)) {
+		if (DynamicSurfaceFacing.blockedAhead(player, ParkourTags.Blocks.COMMON_IGNORED_BLOCKS)) {
 			return false;
 		}
 		return true;
@@ -123,8 +125,7 @@ public class WallRunState extends AbstractParkourState {
 	public int generateVariant(Player player) {
 		Direction wallDir = WallRunCollision.findFirstWallCollisionDirection(player);
 		if (wallDir != null) {
-			Direction facing = player.getDirection();
-			return wallDir == facing.getCounterClockWise() ? 0 : 1;
+			return DynamicSurfaceFacing.wallOnLeft(player, wallDir) ? 0 : 1;
 		}
 		return 0;
 	}
@@ -188,7 +189,9 @@ public class WallRunState extends AbstractParkourState {
 		}
 		WallMovementData wallMovementData = context.wall();
 		Direction movementDir = Direction.from3DDataValue(wallMovementData.getRunMoveRaw());
-		return Directions.isFacing(player, movementDir, FACING_ANGLE_TOLERANCE);
+		Vec3 movement = DynamicSurfaceMotion.wallTangent(player, wallMovementData.getRunCollision(),
+				Vec3.atLowerCornerOf(movementDir.getNormal()));
+		return Directions.isFacing(player, movement, FACING_ANGLE_TOLERANCE);
 	}
 
 	@Override

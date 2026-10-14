@@ -2,6 +2,11 @@ package mod.arcomit.parkour.content.behavior.wallclimb;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -27,16 +32,21 @@ public class WallClimbPhysics {
 	 * @param player 目标玩家，不能为 null，速度直接被覆写，位置通过 move 偏移
 	 */
 	public static void applyClimbAndAdhesion(Player player) {
+		DynamicCollisions.clearSurfaceInertia(player);
 		// 垂直向上爬升
 		player.setDeltaMovement(0, ParkourConfig.wallClimbSpeed, 0);
 
 		// 墙面吸附
-		Direction facing = player.getDirection();
-		Vec3 facingVec = Vec3.atLowerCornerOf(facing.getNormal());
+		WallMovementData wall = ParkourContext.get(player).wall();
+		Direction facing = DynamicSurfaceFacing.climbDirection(player);
+		if (facing != null) wall.setClimb(facing);
+		else facing = wall.getClimb();
+		if (facing == null) facing = player.getDirection();
+		Vec3 facingVec = DynamicSurfaceMotion.wallNormal(player, facing);
 		Vec3 adhesionForce = facingVec.scale(ParkourConstants.WALL_ADHESION_FORCE);
 
 		boolean wasOnGround = player.onGround();
-		player.move(MoverType.PLAYER, adhesionForce);
+		DynamicCollisions.move(player, MoverType.PLAYER, adhesionForce);
 		if (wasOnGround) {
 			// 恢复 onGround 状态，防止由于水平贴墙导致的意外状态结束
 			player.setOnGround(true);

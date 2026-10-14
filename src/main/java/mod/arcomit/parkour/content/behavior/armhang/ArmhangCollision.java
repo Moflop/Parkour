@@ -2,9 +2,16 @@ package mod.arcomit.parkour.content.behavior.armhang;
 
 import mod.arcomit.parkour.core.sensor.impl.ArmhangEyeSensor;
 import mod.arcomit.parkour.core.sensor.impl.ArmhangTopSensor;
+import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.CollisionGeometry;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.utils.FilteredBlockCollisions;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.function.UnaryOperator;
 
 /**
  * 手臂悬挂的碰撞检测工具。
@@ -22,20 +29,42 @@ public class ArmhangCollision {
 	 * 悬挂时头部以上 1.02 格有碰撞，栅栏高度 1.5，1.5 - 1.02 = 0.48， 因此玩家站在地面上时不会被误判为可悬挂。
 	 */
 	private static final double GROUND_CLEARANCE = 0.48;
+	/** Match the 0.002-block wall-seam correction without treating its tiny lip as a floor. */
+	private static final double GROUND_SEAM_TOLERANCE = 0.002;
 
 	/**
 	 * 判断玩家脚底是否过于接近地面。
 	 * <p>
-	 * 以脚底向下 {@value #GROUND_CLEARANCE} 格的范围做碰撞检测。若该区域与方块碰撞，说明离地过近。
+	 * 以脚底向下 {@value #GROUND_CLEARANCE} 格的范围查找朝上的支撑面，排除墙侧和微小接缝台肩。
 	 *
 	 * @param player 目标玩家，不可为 null
 	 * @return true 表示离地过近不应悬挂
 	 */
 	public static boolean isTooCloseToGround(Player player) {
-		AABB feetBox = player.getBoundingBox();
-		AABB checkBox = new AABB(feetBox.minX, feetBox.minY - GROUND_CLEARANCE,
-				feetBox.minZ, feetBox.maxX, feetBox.minY, feetBox.maxZ);
-		return !player.level().noCollision(player, checkBox);
+		AABB checkBox = groundProbe(player.getBoundingBox());
+		Iterable<VoxelShape> blocks = () -> new FilteredBlockCollisions<>(player.level(),
+				player, checkBox, false, null, (pos, shape) -> shape);
+		return hasGroundSupport(checkBox, blocks)
+				|| hasGroundSupport(checkBox, player.level().getEntityCollisions(player, checkBox))
+				|| DynamicCollisions.hasSensorSupport(player.level(), player, checkBox, null);
+	}
+
+	static AABB groundProbe(AABB feetBox) {
+		double skin = ParkourConstants.AABB_DEFLATE_EPSILON;
+		double horizontalSkin = skin + GROUND_SEAM_TOLERANCE;
+		return new AABB(feetBox.minX + horizontalSkin, feetBox.minY - GROUND_CLEARANCE,
+				feetBox.minZ + horizontalSkin, feetBox.maxX - horizontalSkin,
+				feetBox.minY + skin, feetBox.maxZ - horizontalSkin);
+	}
+
+	static boolean hasGroundSupport(AABB footProbe, Iterable<VoxelShape> collisions) {
+		for (VoxelShape shape : collisions) {
+			for (AABB box : shape.toAabbs()) {
+				if (CollisionGeometry.hasSupport(footProbe, UnaryOperator.identity(), box,
+						UnaryOperator.identity())) return true;
+			}
+		}
+		return false;
 	}
 
 	/**

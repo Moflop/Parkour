@@ -11,12 +11,14 @@ import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.core.statemachine.state.AbstractParkourState;
+import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import mod.arcomit.parkour.core.statemachine.state.IParkourStateTransition;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,7 +38,30 @@ public class SlideState extends AbstractParkourState {
 
 	public SlideState() {
 		registerTransitions(IParkourStateTransition.onLocalTick(ParkourStates.DEFAULT::get,
-				(player, context) -> ParkourProxies.INPUT_PROXY.getDown(player)));
+				(player, context) -> ParkourProxies.INPUT_PROXY.getDown(player)),
+				buildLandingRollTransition());
+	}
+
+	/**
+	 * 构建落地翻滚的事件转移。
+	 * <p>
+	 * 副作用：取消原版坠落伤害事件并将伤害倍率置0，由翻滚状态自行处理减伤。
+	 */
+	private IParkourStateTransition buildLandingRollTransition() {
+		return new IParkourStateTransition() {
+			@Override
+			public IParkourState getTargetState() {
+				return ParkourStates.LANDING_ROLL.get();
+			}
+
+			@Override
+			public boolean shouldTransitionOnFall(Player player, ParkourContext context,
+					LivingFallEvent event) {
+				event.setDamageMultiplier(0);
+				event.setCanceled(true);
+				return true;
+			}
+		};
 	}
 
 	/**

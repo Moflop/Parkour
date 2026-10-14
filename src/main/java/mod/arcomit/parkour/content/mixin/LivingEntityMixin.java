@@ -1,27 +1,26 @@
 package mod.arcomit.parkour.content.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangTravelGuard;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
-import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.utils.ParkourChecks;
+import mod.arcomit.parkour.utils.ClimbablePoles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EndRodBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,8 +29,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Optional;
 
 /**
  * 攀爬机制优化Mixin。
@@ -51,6 +53,8 @@ public abstract class LivingEntityMixin extends Entity {
 	private static final int CLIMB_ACCELERATION_FINISH_TICK = 60;
 	@Shadow
 	public boolean jumping;
+	@Shadow
+	private Optional<BlockPos> lastClimbablePos;
 
 	public LivingEntityMixin(EntityType<?> entityType, Level level) {
 		super(entityType, level);
@@ -58,6 +62,29 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Shadow
 	public abstract boolean onClimbable();
+
+	/** Includes Sable's travel-return transport before deciding whether a ledge step was safe. */
+	@WrapMethod(method = "travel(Lnet/minecraft/world/phys/Vec3;)V")
+	private void parkour$guardArmhangTravel(Vec3 input, Operation<Void> original) {
+		Player player = (Object) this instanceof Player value ? value : null;
+		ArmhangTravelGuard.Snapshot before = player == null ? null : ArmhangTravelGuard.begin(player);
+		try {
+			original.call(input);
+		} finally {
+			if (player != null) ArmhangTravelGuard.finish(player, before);
+		}
+	}
+
+	/** Hanging movement already checks the ledge and rolls back unsafe side steps. */
+	@ModifyVariable(method = "travel(Lnet/minecraft/world/phys/Vec3;)V", at = @At("HEAD"),
+			argsOnly = true, ordinal = 0)
+	private Vec3 parkour$armhangTravelInput(Vec3 input) {
+		if ((Object) this instanceof Player player
+				&& ParkourContext.get(player).state().getState() instanceof ArmhangState) {
+			return Vec3.ZERO;
+		}
+		return input;
+	}
 
 	@Inject(method = "onClimbable", at = @At("HEAD"), cancellable = true)
 	public void InjectOnClimbable(CallbackInfoReturnable<Boolean> cir) {
@@ -69,62 +96,16 @@ public abstract class LivingEntityMixin extends Entity {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
 		BlockPos pos = entity.blockPosition();
-		if (isClimbablePole(entity.level(), pos)) {
+		if (ClimbablePoles.isClimbable(entity.level(), pos)) {
+			cir.setReturnValue(true);
+			return;
+		}
+		BlockPos dynamicPos = DynamicCollisions.findClimbablePole(entity);
+		if (dynamicPos != null) {
+			// Native Sable ladders also retain their plot position for fall tracking.
+			lastClimbablePos = Optional.of(dynamicPos);
 			cir.setReturnValue(true);
 		}
-	}
-
-	/**
-	 * 判断方块是否可攀爬
-	 */
-	@Unique
-	private boolean isClimbablePole(Level world, BlockPos blockPos) {
-		BlockState blockState = world.getBlockState(blockPos);
-		if (!blockState.is(ParkourTags.Blocks.CLIMBABLE)) {
-			return false;
-		}
-		Block block = blockState.getBlock();
-		BlockPos aboveBlockPos = blockPos.above();
-		BlockPos belowBlockPos = blockPos.below();
-		boolean isAboveStacked =
-				isSameBlockType(world, aboveBlockPos, block) && isVerticalPlace(
-						world, aboveBlockPos);
-		boolean isBelowStacked =
-				isSameBlockType(world, belowBlockPos, block) && isVerticalPlace(
-						world, belowBlockPos);
-		boolean isStackedVerticalPlace =
-				isVerticalPlace(blockState) && (isAboveStacked || isBelowStacked);
-		if (!isStackedVerticalPlace) {
-			return false;
-		}
-		return true;
-	}
-
-	@Unique
-	private boolean isVerticalPlace(Level world, BlockPos pos) {
-		BlockState state = world.getBlockState(pos);
-		return isVerticalPlace(state);
-	}
-
-	@Unique
-	private boolean isVerticalPlace(BlockState state) {
-		Block checkBlock = state.getBlock();
-		if (checkBlock instanceof RotatedPillarBlock) {
-			return state.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y;
-		}
-		if (checkBlock instanceof EndRodBlock) {
-			Direction facing = state.getValue(EndRodBlock.FACING);
-			return facing == Direction.UP || facing == Direction.DOWN;
-		}
-		return true;
-	}
-
-	/**
-	 * 判断方块是否与目标方块类型相同
-	 */
-	@Unique
-	private boolean isSameBlockType(Level world, BlockPos pos, Block targetBlock) {
-		return world.isLoaded(pos) && world.getBlockState(pos).getBlock() == targetBlock;
 	}
 
 	/**

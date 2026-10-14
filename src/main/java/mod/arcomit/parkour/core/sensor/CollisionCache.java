@@ -2,6 +2,8 @@ package mod.arcomit.parkour.core.sensor;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -10,9 +12,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 碰撞检测结果缓存，以 tick 和玩家位置为双维度判断缓存有效性。
+ * 碰撞检测结果缓存，区分每 tick 的碰撞结果与玩家位置、姿态和尺寸决定的检测盒。
  * <p>
- * 当 tick 或位置任一过期时，传感器实现会重新计算碰撞箱并覆盖写入缓存。 对外暴露的碰撞箱列表为不可变视图，防止外部误改。
+ * 位置、姿态或尺寸变化时重建检测盒，每 tick 重新查询碰撞；动态结构启用时不复用同 tick 的碰撞结果。
+ * 对外暴露的碰撞箱列表为不可变视图，防止外部误改。
  * </p>
  *
  * @author Mitok
@@ -28,6 +31,9 @@ public class CollisionCache {
 	@Getter
 	@Setter
 	private Vec3 position;
+	private AABB entityBounds;
+	private Pose pose;
+	private float eyeHeight;
 	private List<AABB> collisionBoxes;
 	@Getter
 	@Setter
@@ -72,5 +78,20 @@ public class CollisionCache {
 			return false;
 		}
 		return this.position.equals(currentPosition);
+	}
+
+	/** 检测盒还依赖姿态、身体尺寸和眼睛高度，原地蹲下或起身也必须重建。 */
+	public boolean isValidGeometry(Player player) {
+		return collisionBoxes != null && isValidPosition(player.position())
+				&& entityBounds != null && entityBounds.equals(player.getBoundingBox())
+				&& pose == player.getPose() && Float.compare(eyeHeight, player.getEyeHeight()) == 0;
+	}
+
+	/** 在重建检测盒时记录其所依据的完整玩家几何状态。 */
+	public void updateGeometry(Player player) {
+		position = player.position();
+		entityBounds = player.getBoundingBox();
+		pose = player.getPose();
+		eyeHeight = player.getEyeHeight();
 	}
 }

@@ -1,14 +1,18 @@
 package mod.arcomit.parkour.utils;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
 
 /**
  * 方块碰撞检测与碰撞盒构建。
@@ -75,8 +79,9 @@ public class BlockCollisions {
 		double ox = direction.getStepX() * range;
 		double oy = direction.getStepY() * range;
 		double oz = direction.getStepZ() * range;
-		AABB expanded = entity.getBoundingBox().expandTowards(ox, oy, oz);
-		return hasBlockCollision(entity.level(), expanded, skipTag);
+		AABB expanded = entity.getBoundingBox().deflate(ParkourConstants.AABB_DEFLATE_EPSILON)
+				.expandTowards(ox, oy, oz);
+		return hasSensorCollision(entity, expanded, skipTag);
 	}
 
 	/**
@@ -88,20 +93,52 @@ public class BlockCollisions {
 	 * @return true 表示存在碰撞方块
 	 */
 	public static boolean hasBlockCollision(Level level, AABB box, TagKey<Block> skipTag) {
-		for (VoxelShape shape : filterBlocks(level, box, skipTag)) {
+		return hasBlockCollision(level, null, box, skipTag);
+	}
+
+	/** 使用实体碰撞上下文检测原版方块及动态结构。 */
+	public static boolean hasBlockCollision(Entity entity, AABB box,
+			@Nullable TagKey<Block> skipTag) {
+		return hasBlockCollision(entity.level(), entity, box, skipTag);
+	}
+
+	/** Player-relative sensors use Sable's oriented player box for dynamic structures. */
+	public static boolean hasSensorCollision(Entity entity, AABB box,
+			@Nullable TagKey<Block> skipTag) {
+		for (VoxelShape shape : filterBlocks(entity.level(), entity, box, skipTag)) {
+			if (!shape.isEmpty()) return true;
+		}
+		return DynamicCollisions.findSensorCollision(entity.level(), entity, box, skipTag) != null;
+	}
+
+	public static boolean noSensorCollision(Entity entity, AABB box) {
+		return entity.level().noCollision(entity, box)
+				&& DynamicCollisions.findSensorCollision(entity.level(), entity, box, null) == null;
+	}
+
+	public static boolean hasBlockCollision(Level level, @Nullable Entity entity, AABB box,
+			@Nullable TagKey<Block> skipTag) {
+		for (VoxelShape shape : filterBlocks(level, entity, box, skipTag)) {
 			if (!shape.isEmpty()) {
 				return true;
 			}
 		}
-		return false;
+		return DynamicCollisions.hasBlockCollision(level, entity, box, skipTag);
+	}
+
+	/** 保留原版实体、边界和方块检查，并补充移动结构中的方块碰撞。 */
+	public static boolean noCollision(Entity entity, AABB box) {
+		Level level = entity.level();
+		return level.noCollision(entity, box)
+				&& !DynamicCollisions.hasBlockCollision(level, entity, box, null);
 	}
 
 	/**
 	 * 创建带标签过滤的方块碰撞形状迭代器，排除 skipTag 标记的方块。
 	 */
-	private static Iterable<VoxelShape> filterBlocks(Level level, AABB box,
+	private static Iterable<VoxelShape> filterBlocks(Level level, @Nullable Entity entity, AABB box,
 			TagKey<Block> skipTag) {
-		return () -> new FilteredBlockCollisions<>(level, null, box, false, skipTag,
+		return () -> new FilteredBlockCollisions<>(level, entity, box, false, skipTag,
 				(pos, shape) -> shape);
 	}
 }

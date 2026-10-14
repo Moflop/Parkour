@@ -1,10 +1,14 @@
 package mod.arcomit.parkour.content.behavior.wallrun.client.animation.player;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.core.client.animation.player.SurfaceAnimationMath;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 墙跑运动的数学计算，独立处理四肢、头部补偿等插值算法。
@@ -31,19 +35,23 @@ public class WallRunAnimMath {
 		FrameData data = new FrameData();
 
 		// 提前获取墙跑的目标偏航角 (targetYaw) 和香草身体偏航角
-		float currentVanillaBodyYaw =
-				Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		float targetYaw = wallMovementData.getRunMove()
-				.toYRot();
-
-		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);
-		data.bodyRotY = yawDiff * Mth.DEG_TO_RAD; // 为 body 保存补偿角
+		Direction movement = wallMovementData.getRunMove();
+		if (movement == null) movement = player.getDirection();
+		Direction wall = wallMovementData.getRunCollision();
+		Vec3 targetDirection = Vec3.atLowerCornerOf(movement.getNormal());
+		if (wall != null) {
+			targetDirection = DynamicSurfaceMotion.renderWallTangent(player, wall,
+					targetDirection, partialTick);
+		}
+		float targetYaw = Directions.horizontalYaw(targetDirection);
+		data.bodyRotY = SurfaceAnimationMath.bodyYawRadians(targetYaw,
+				player.yBodyRotO, player.yBodyRot, partialTick);
 
 		// 头部计算
 		float pitch = Mth.rotLerp(partialTick, player.xRotO, player.getXRot());
-		float headYaw = Mth.rotLerp(partialTick, player.yHeadRotO, player.getYHeadRot());
-		float netYaw = Mth.wrapDegrees(headYaw - targetYaw); // 抵消身体的强制旋转
+		float netYaw = SurfaceAnimationMath.relativeYaw(player.yHeadRotO,
+				player.getYHeadRot(), targetYaw, partialTick); // 抵消身体的强制旋转
 
 		data.headRotX = pitch * Mth.DEG_TO_RAD;
 		data.headRotY = netYaw * Mth.DEG_TO_RAD;

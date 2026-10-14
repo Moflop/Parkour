@@ -3,7 +3,6 @@ package mod.arcomit.parkour.utils;
 import mod.arcomit.parkour.ParkourConstants;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,7 +30,6 @@ public class Obstacles {
 	 */
 	public static double findHeight(Player player, Direction direction) {
 		Vec3 pos = player.position();
-		Level level = player.level();
 
 		double halfWidth = player.getBbWidth() / 2;
 		double minX = pos.x - halfWidth;
@@ -57,7 +55,7 @@ public class Obstacles {
 			AABB checkBox = sliceBox.expandTowards(facing.x * SCAN_REACH, 0,
 					facing.z * SCAN_REACH);
 
-			if (!level.noCollision(player, checkBox)) {
+			if (!BlockCollisions.noCollision(player, checkBox)) {
 				return y;
 			}
 		}
@@ -76,7 +74,6 @@ public class Obstacles {
 	 */
 	public static boolean hasSpaceAbove(Player player, Direction direction, double baseHeight) {
 		Vec3 pos = player.position();
-		Level level = player.level();
 
 		double halfWidth = player.getBbWidth() / 2;
 		double height = player.getBbHeight();
@@ -86,7 +83,7 @@ public class Obstacles {
 		AABB checkBox = baseBox.expandTowards(direction.getStepX() * SCAN_REACH,
 				direction.getStepY() * SCAN_REACH,
 				direction.getStepZ() * SCAN_REACH);
-		if (level.noCollision(player, checkBox)) {
+		if (BlockCollisions.noCollision(player, checkBox)) {
 			return true;
 		}
 

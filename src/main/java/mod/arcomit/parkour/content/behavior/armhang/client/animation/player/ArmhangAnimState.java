@@ -1,7 +1,9 @@
 package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +28,7 @@ public class ArmhangAnimState {
 	/** 侧身方向符号：1.0 向右看，-1.0 向左看，锁定后不会在阈值附近来回翻转 */
 	public float currentLookAwaySign = 1.0f;
 
-	// === 新增字段：用于平滑悬挂角度过渡 ===
+	/** 静态墙转角的平滑朝向；动态结构渲染时直接使用当前表面角度。 */
 	public float armhangYawO = 0f;
 	public float armhangYaw = 0f;
 	private boolean firstTick = true;
@@ -42,7 +44,8 @@ public class ArmhangAnimState {
 
 		if (armhangDir != null) {
 			// 1. 获取绝对的目标墙面角度
-			float targetYaw = armhangDir.toYRot();
+			float targetYaw = Directions.horizontalYaw(
+					DynamicSurfaceMotion.renderWallNormal(player, armhangDir, 1.0f));
 			float cameraYaw = player.getYRot();
 
 			float targetRelLook = Mth.wrapDegrees(cameraYaw - targetYaw);
@@ -55,17 +58,13 @@ public class ArmhangAnimState {
 				this.lookAwayWeight = Mth.lerp(0.2f, this.lookAwayWeight, 0f);
 			}
 
-			// 2. 躯干整体朝向
-			if (this.firstTick) {
+			if (this.firstTick || DynamicSurfaceMotion.hasRenderSurface(player, armhangDir)) {
 				this.armhangYaw = targetYaw;
 				this.armhangYawO = targetYaw;
 				this.firstTick = false;
 			} else {
-				// === 关键修复：弃用 approachDegrees，使用与 lookAwayWeight 完全相同的 0.2f 插值权重 ===
-				// Mth.rotLerp 可以处理角度环绕问题，确保它与侧身补偿完美相互抵消
 				this.armhangYaw = Mth.rotLerp(0.2f, this.armhangYaw, targetYaw);
 			}
-
 		} else {
 			this.firstTick = true;
 		}

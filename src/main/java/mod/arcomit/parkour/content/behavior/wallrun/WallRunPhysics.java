@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.behavior.wallrun;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
@@ -51,15 +53,16 @@ public class WallRunPhysics {
 				Direction.from3DDataValue(wallMovementData.getRunCollisionRaw());
 
 		if (wallCollisionDirection != null) {
+			DynamicCollisions.clearSurfaceInertia(player);
+			runDirection = DynamicSurfaceMotion.wallTangent(player, wallCollisionDirection, runDirection);
 			// 向固定的运动方向移动
 			player.setDeltaMovement(runDirection.scale(targetSpeed));
 
 			// 墙面吸附
-			Vec3 wallNormal = new Vec3(wallCollisionDirection.getStepX(), 0,
-					wallCollisionDirection.getStepZ());
+			Vec3 wallNormal = DynamicSurfaceMotion.wallNormal(player, wallCollisionDirection);
 			Vec3 adhesionForce = wallNormal.scale(ParkourConstants.WALL_ADHESION_FORCE);
 			boolean wasOnGround = player.onGround();
-			player.move(MoverType.PLAYER, adhesionForce);
+			DynamicCollisions.move(player, MoverType.PLAYER, adhesionForce);
 			if (wasOnGround) {
 				// 恢复 onGround 状态，防止由于水平贴墙导致的意外状态结束
 				player.setOnGround(true);

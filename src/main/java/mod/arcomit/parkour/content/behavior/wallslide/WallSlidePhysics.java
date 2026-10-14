@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.behavior.wallslide;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
@@ -32,6 +34,7 @@ public class WallSlidePhysics {
 		Direction wallCollisionDirection = wallMovementData.getSlide();
 
 		if (wallCollisionDirection != null) {
+			DynamicCollisions.clearSurfaceInertia(player);
 			Vec3 motion = player.getDeltaMovement();
 
 			// 修改降落速度
@@ -40,12 +43,11 @@ public class WallSlidePhysics {
 			player.setDeltaMovement(slowedMotion);
 
 			// 墙面吸附
-			Vec3 wallNormal = new Vec3(wallCollisionDirection.getStepX(), 0,
-					wallCollisionDirection.getStepZ());
+			Vec3 wallNormal = DynamicSurfaceMotion.wallNormal(player, wallCollisionDirection);
 			Vec3 adhesionForce = wallNormal.scale(ParkourConstants.WALL_ADHESION_FORCE);
 			boolean wasOnGround = player.onGround();
 
-			player.move(MoverType.PLAYER, adhesionForce);
+			DynamicCollisions.move(player, MoverType.PLAYER, adhesionForce);
 
 			if (wasOnGround) {
 				// Move方法在水平移动时会让onGround改为false，为了防止落地也无法结束滑墙需要恢复 onGround 状态

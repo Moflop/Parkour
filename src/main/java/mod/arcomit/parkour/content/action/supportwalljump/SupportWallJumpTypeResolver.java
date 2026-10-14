@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.action.supportwalljump;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,8 @@ public class SupportWallJumpTypeResolver {
 			return SupportWallJumpType.NONE;
 		}
 
-		if (Directions.isFacing(player, armhangDir, UP_ANGLE_THRESHOLD)) {
+		if (Directions.isFacing(player, DynamicSurfaceMotion.wallNormal(player, armhangDir),
+				UP_ANGLE_THRESHOLD)) {
 			return SupportWallJumpType.UP;
 		}
 

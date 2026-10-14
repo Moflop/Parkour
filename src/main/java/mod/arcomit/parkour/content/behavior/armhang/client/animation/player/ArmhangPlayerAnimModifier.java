@@ -3,8 +3,10 @@ package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 import com.zigythebird.playeranimcore.animation.AnimationData;
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -46,12 +48,18 @@ public class ArmhangPlayerAnimModifier extends AbstractModifier {
 		Direction armhangDir = wallMovementData.getArmhang();
 
 		if (armhangDir != null) {
-			float smoothYaw = Mth.rotLerp(state.getPartialTick(), this.animState.armhangYawO, this.animState.armhangYaw);
+			// The structure already supplies its interpolated render pose. Smoothing the
+			// absolute world yaw again makes the hands lag behind a rotating ledge.
+			float surfaceYaw = DynamicSurfaceMotion.hasRenderSurface(this.player, armhangDir)
+					? Directions.horizontalYaw(DynamicSurfaceMotion.renderWallNormal(
+							this.player, armhangDir, state.getPartialTick()))
+					: Mth.rotLerp(state.getPartialTick(), this.animState.armhangYawO,
+							this.animState.armhangYaw);
 
 			this.currentFrameData =
 					ArmhangAnimMath.calculate(this.player, this.animState,
 							state.getPartialTick(),
-							smoothYaw);
+							surfaceYaw);
 		} else {
 			this.currentFrameData = null;
 		}

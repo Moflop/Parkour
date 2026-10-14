@@ -1,6 +1,10 @@
 package mod.arcomit.parkour.content.behavior.wallclimb.client.animation.player;
 
-import net.minecraft.util.Mth;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.content.context.ParkourContext;
+import mod.arcomit.parkour.core.client.animation.player.SurfaceAnimationMath;
+import mod.arcomit.parkour.utils.Directions;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -24,14 +28,12 @@ public class WallClimbAnimMath {
 	public static FrameData calculate(Player player, float partialTick) {
 		FrameData data = new FrameData();
 
-		float currentVanillaBodyYaw =
-				Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-
-		float targetYaw = player.getDirection().toYRot();
-
-		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);
-
-		data.bodyYawDiff = yawDiff * Mth.DEG_TO_RAD;
+		Direction wall = ParkourContext.get(player).wall().getClimb();
+		if (wall == null) wall = player.getDirection();
+		float targetYaw = Directions.horizontalYaw(
+				DynamicSurfaceMotion.renderWallNormal(player, wall, partialTick));
+		data.bodyYawDiff = SurfaceAnimationMath.bodyYawRadians(targetYaw,
+				player.yBodyRotO, player.yBodyRot, partialTick);
 
 		return data;
 	}

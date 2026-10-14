@@ -2,6 +2,8 @@ package mod.arcomit.parkour.content.behavior.wallclimb;
 
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import mod.arcomit.parkour.content.behavior.wallclimb.server.ServerWallClimbSound;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
@@ -53,7 +55,7 @@ public class WallClimbState extends AbstractParkourState {
 	 */
 	public static boolean meetsBaseConditions(Player player) {
 		// 快速失败：基础状态不满足墙跑条件
-		if (!ParkourConfig.enableWallClimb || !player.isSprinting() || player.onGround() || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
+		if (!ParkourConfig.enableWallClimb || !player.isSprinting() || DynamicCollisions.isOnGround(player) || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
 				player)) {
 			return false;
 		}
@@ -73,7 +75,8 @@ public class WallClimbState extends AbstractParkourState {
 		WallMovementData wallMovementData = context.wall();
 		JumpData jumpData = context.jump();
 
-		wallMovementData.setClimb(player.getDirection());
+		Direction direction = DynamicSurfaceFacing.climbDirection(player);
+		wallMovementData.setClimb(direction == null ? player.getDirection() : direction);
 		jumpData.resetLastUpJump();
 	}
 
@@ -133,9 +136,9 @@ public class WallClimbState extends AbstractParkourState {
 		if (!meetsBaseConditions(player)) {
 			return false;
 		}
-		Direction availableWallDir = player.getDirection();
+		Direction availableWallDir = DynamicSurfaceFacing.climbDirection(player);
 		WallMovementData wallMovementData = context.wall();
-		if (availableWallDir == wallMovementData.getClimb()) {
+		if (availableWallDir == null || availableWallDir == wallMovementData.getClimb()) {
 			return false;
 		}
 		return !ParkourChecks.isFallUnsafe(player);

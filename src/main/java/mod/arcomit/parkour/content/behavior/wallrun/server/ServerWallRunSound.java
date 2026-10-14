@@ -1,7 +1,10 @@
 package mod.arcomit.parkour.content.behavior.wallrun.server;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicSurfaceSounds;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourTags;
+import mod.arcomit.parkour.core.sensor.impl.HeadFeetSensor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -64,6 +67,9 @@ public class ServerWallRunSound {
 		BlockState blockState = level.getBlockState(wallPos);
 
 		if (blockState.isAir()) {
+			DynamicSurfaceSounds.playStepSound(player,
+					HeadFeetSensor.getBoxes(player, wallDirection).get(1),
+					ParkourTags.Blocks.COMMON_IGNORED_BLOCKS, SOUND_VOLUME_MULTIPLIER);
 			return;
 		}
 

@@ -52,8 +52,14 @@ public class Directions {
 	 * @return true 表示玩家正对该方向（偏角不超过 maxAngle）
 	 */
 	public static boolean isFacing(Player player, Direction dir, float maxAngle) {
+		return isFacing(player, Vec3.atLowerCornerOf(dir.getNormal()), maxAngle);
+	}
+
+	/** Tests the actual world-space wall direction, including rotating structures. */
+	public static boolean isFacing(Player player, Vec3 direction, float maxAngle) {
+		if (direction.horizontalDistanceSqr() < 1.0E-12) return false;
 		float yaw = player.getYRot();
-		float targetYaw = dir.toYRot();
+		float targetYaw = horizontalYaw(direction);
 
 		float diff = Math.abs(yaw - targetYaw) % 360.0f;
 		if (diff > 180.0f) {
@@ -61,5 +67,9 @@ public class Directions {
 		}
 
 		return diff <= maxAngle;
+	}
+
+	public static float horizontalYaw(Vec3 direction) {
+		return (float) Math.toDegrees(Math.atan2(-direction.x, direction.z));
 	}
 }

@@ -1,7 +1,6 @@
 package mod.arcomit.parkour.content.behavior.wallclimb;
 
-import mod.arcomit.parkour.core.sensor.impl.HeadFeetSensor;
-import net.minecraft.core.Direction;
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -22,7 +21,6 @@ public class WallClimbCollision {
 	 * @return 头部和脚部均接触面朝方向的墙体时返回 true
 	 */
 	public static boolean hasValidClimbPoint(Player player) {
-		Direction facing = player.getDirection();
-		return HeadFeetSensor.isValidCollision(player, facing);
+		return DynamicSurfaceFacing.climbDirection(player) != null;
 	}
 }

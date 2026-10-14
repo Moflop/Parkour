@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.behavior.armhang;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement;
 import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
 import mod.arcomit.parkour.content.context.InputData;
@@ -64,9 +65,12 @@ public class ArmhangState extends AbstractParkourState {
 	 */
 	@Override
 	public void onEnter(Player player, ParkourContext context) {
-		super.onEnter(player, context);
 		WallMovementData wallMovementData = context.wall();
-		wallMovementData.setArmhang(player.getDirection());
+		Direction direction = DynamicSurfaceFacing.hangDirection(player);
+		wallMovementData.setArmhang(direction == null ? player.getDirection() : direction);
+		context.state().setStateInvalidTicks(0);
+		// Simulation entry needs the direction immediately to stop the incoming fall.
+		super.onEnter(player, context);
 	}
 
 	/**
@@ -160,7 +164,7 @@ public class ArmhangState extends AbstractParkourState {
 				player)) {
 			return false;
 		}
-		if (!ArmhangCollision.hasValidHangPoint(player, player.getDirection())) {
+		if (DynamicSurfaceFacing.hangDirection(player) == null) {
 			return false;
 		}
 		return true;

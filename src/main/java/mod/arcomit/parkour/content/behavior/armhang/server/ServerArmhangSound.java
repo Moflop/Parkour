@@ -1,7 +1,10 @@
 package mod.arcomit.parkour.content.behavior.armhang.server;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.compat.DynamicSurfaceSounds;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.sensor.impl.ArmhangEyeSensor;
 import mod.arcomit.parkour.core.sensor.impl.ArmhangTopSensor;
 import net.minecraft.core.BlockPos;
@@ -11,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -41,10 +45,7 @@ public class ServerArmhangSound {
 
 		// 1. 获取当前坐标并计算真实的 tick 间距差
 		Vec3 currentPos = player.position();
-		double dx = currentPos.x - lastPos.x;
-		double dy = currentPos.y - lastPos.y;
-		double dz = currentPos.z - lastPos.z;
-		float distanceMovedThisTick = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+		float distanceMovedThisTick = (float) DynamicSurfaceMotion.movementDistance(player, lastPos);
 
 		// 刷新上一帧坐标供下个 tick 使用
 		wallMovementData.setArmhangLastPos(currentPos);
@@ -67,13 +68,16 @@ public class ServerArmhangSound {
 		// 3. 寻找方块并广播音效
 		BlockPos playerPos = BlockPos.containing(player.getX(),
 				player.getY() + player.getEyeHeight(), player.getZ());
+		AABB contactBox = null;
 
 		if (ArmhangEyeSensor.isValidCollision(player, wallDirection)) {
+			contactBox = ArmhangEyeSensor.getBoxes(player, wallDirection).getFirst();
 			double height = player.getBbHeight();
 			playerPos = BlockPos.containing(player.getX(),
 					player.getY() + player.getEyeHeight() - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO),
 					player.getZ());
 		} else if (ArmhangTopSensor.isValidCollision(player, wallDirection)) {
+			contactBox = ArmhangTopSensor.getBoxes(player, wallDirection).getFirst();
 			double height = player.getBbHeight();
 			playerPos = BlockPos.containing(player.getX(),
 					player.getY() + height - (height * ParkourConstants.ARMHANG_GRIP_HEIGHT_RATIO),
@@ -84,6 +88,8 @@ public class ServerArmhangSound {
 		BlockState blockState = level.getBlockState(wallPos);
 
 		if (blockState.isAir()) {
+			DynamicSurfaceSounds.playStepSound(player, contactBox,
+					ParkourTags.Blocks.SCAFFOLDING_BLOCKS, SOUND_VOLUME_MULTIPLIER);
 			return;
 		}
 

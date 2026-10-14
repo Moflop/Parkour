@@ -1,7 +1,10 @@
 package mod.arcomit.parkour.content.behavior.armhang.client;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangCollision;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMoveSnapshot;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.utils.Directions;
@@ -34,15 +37,17 @@ public class ClientArmhangMovement {
 			WallMovementData wallMovementData) {
 		float leftImpulse = inputData.getLeftImpulse();
 		Direction armhangDir = wallMovementData.getArmhang();
+		if (armhangDir == null) return;
 
 		// 玩家必须面向悬挂方向且有横向输入
-		if (!Directions.isFacing(player, armhangDir, 75.0f) || leftImpulse == 0.0f) {
+		if (!Directions.isFacing(player, DynamicSurfaceMotion.wallNormal(player, armhangDir), 75.0f)
+				|| leftImpulse == 0.0f) {
 			return;
 		}
 
-		Vec3 horizontalMovement = computeHorizontalMovement(leftImpulse, armhangDir);
-		Vec3 beforeMovePos = player.position();
-		player.move(MoverType.PLAYER, horizontalMovement);
+		Vec3 horizontalMovement = computeHorizontalMovement(player, leftImpulse, armhangDir);
+		ArmhangMoveSnapshot beforeMove = ArmhangMoveSnapshot.capture(player);
+		DynamicCollisions.move(player, MoverType.PLAYER, horizontalMovement);
 
 		// 移动后仍能保持悬挂，正常结束
 		if (ArmhangCollision.hasValidHangPoint(player, armhangDir)) {
@@ -51,7 +56,7 @@ public class ClientArmhangMovement {
 
 		// 否则尝试外角旋转，将处理权委派给边界处理类
 		ClientArmhangRotation.tryOutsideCornerRotation(player, leftImpulse, armhangDir,
-				wallMovementData, beforeMovePos);
+				wallMovementData, beforeMove);
 	}
 
 	/**
@@ -61,8 +66,9 @@ public class ClientArmhangMovement {
 	 * @param armhangDir  当前悬挂方向，不可为 null
 	 * @return 水平移动向量，速度固定由配置决定
 	 */
-	private static Vec3 computeHorizontalMovement(float leftImpulse, Direction armhangDir) {
-		Vec3 rightDirection = new Vec3(armhangDir.getStepZ(), 0, -armhangDir.getStepX());
+	private static Vec3 computeHorizontalMovement(Player player, float leftImpulse, Direction armhangDir) {
+		Vec3 normal = DynamicSurfaceMotion.wallNormal(player, armhangDir);
+		Vec3 rightDirection = new Vec3(normal.z, 0, -normal.x);
 		float sign = Math.signum(leftImpulse);
 		return rightDirection.scale(sign * ParkourConfig.armhangMoveSpeed);
 	}

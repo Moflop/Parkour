@@ -1,6 +1,10 @@
 package mod.arcomit.parkour.content.behavior.armhang.client;
 
+import mod.arcomit.parkour.compat.DynamicCollisions;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangCollision;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMoveSnapshot;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangPhysics;
 import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangDirC2SPayload;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
@@ -29,16 +33,16 @@ public class ClientArmhangRotation {
 	 * @param leftImpulse      横向输入值，正数为顺时针旋转，负数为逆时针
 	 * @param armhangDir       当前悬挂方向，不可为 null
 	 * @param wallMovementData 墙面移动数据，切换成功时其悬挂方向会被更新，不可为 null
-	 * @param beforeMovePos    水平移动前的位置，用于失败时回退，不可为 null
+	 * @param beforeMove       水平移动前的状态，用于失败时回退，不可为 null
 	 */
 	public static void tryOutsideCornerRotation(Player player, float leftImpulse,
 			Direction armhangDir, WallMovementData wallMovementData,
-			Vec3 beforeMovePos) {
+			ArmhangMoveSnapshot beforeMove) {
 
 		// 沿原悬挂方向微推，使玩家能够接触到侧面
-		Vec3 pushOffset = new Vec3(armhangDir.getStepX(), 0, armhangDir.getStepZ()).scale(
+		Vec3 pushOffset = DynamicSurfaceMotion.wallNormal(player, armhangDir).scale(
 				CORNER_PUSH_DISTANCE);
-		player.move(MoverType.PLAYER, pushOffset);
+		DynamicCollisions.move(player, MoverType.PLAYER, pushOffset);
 
 		// 根据输入方向确定新的悬挂方向
 		Direction newDirection =
@@ -47,11 +51,15 @@ public class ClientArmhangRotation {
 
 		if (ArmhangCollision.hasValidHangPoint(player, newDirection)) {
 			wallMovementData.setArmhang(newDirection);
-			// 向服务端同步坐标，避免新垂挂方向被判定为无效导致退出垂挂
-			ParkourProxies.LOCAL_PLAYER_SERVICES_PROXY.sendPosition(player);
-			PacketDistributor.sendToServer(new SyncArmhangDirC2SPayload(newDirection));
-		} else {
-			player.setPos(beforeMovePos.x, beforeMovePos.y, beforeMovePos.z);
+			if (ArmhangPhysics.tryAdhesion(player, newDirection)) {
+				// 向服务端同步坐标，避免新垂挂方向被判定为无效导致退出垂挂
+				ParkourProxies.LOCAL_PLAYER_SERVICES_PROXY.sendPosition(player);
+				PacketDistributor.sendToServer(new SyncArmhangDirC2SPayload(newDirection));
+				return;
+			}
 		}
+		beforeMove.restore(player);
+		wallMovementData.setArmhang(armhangDir);
+		DynamicSurfaceMotion.capture(player);
 	}
 }

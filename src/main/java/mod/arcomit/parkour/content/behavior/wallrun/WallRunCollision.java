@@ -1,11 +1,10 @@
 package mod.arcomit.parkour.content.behavior.wallrun;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.sensor.impl.HeadFeetSensor;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * 负责墙跑状态下的碰撞检测与环境合法性校验。
@@ -25,22 +24,7 @@ public class WallRunCollision {
 	 * @return 碰撞墙体所在的方向，两侧均无碰撞时返回 null
 	 */
 	public static Direction findFirstWallCollisionDirection(Player player) {
-		Direction facing = player.getDirection();
-		Direction right = facing.getClockWise();
-		Direction left = facing.getCounterClockWise();
-
-		boolean hitRight = checkWallCollision(player, right);
-		boolean hitLeft = checkWallCollision(player, left);
-
-		if (hitRight && hitLeft) {
-			// 内联距离比较：取距离玩家更近的那一侧墙壁
-			return getCloserDirection(player, right, left);
-		} else if (hitRight) {
-			return right;
-		} else if (hitLeft) {
-			return left;
-		}
-		return null;
+		return DynamicSurfaceFacing.runDirection(player);
 	}
 
 	/**
@@ -56,30 +40,6 @@ public class WallRunCollision {
 			return false;
 		}
 		return checkWallCollision(player, wallDir);
-	}
-
-	/**
-	 * 在两个水平方向中返回与玩家水平距离更近的那个。
-	 *
-	 * @param player 目标玩家，不能为 null
-	 * @param dirA   候选方向 A，不能为 null
-	 * @param dirB   候选方向 B，不能为 null
-	 * @return 水平距离更近的方向
-	 */
-	private static Direction getCloserDirection(Player player, Direction dirA, Direction dirB) {
-		BlockPos playerPos = player.blockPosition();
-		Vec3 playerVec = player.position();
-
-		double distSqA = horizontalDistanceSq(playerVec, playerPos.relative(dirA));
-		double distSqB = horizontalDistanceSq(playerVec, playerPos.relative(dirB));
-
-		return distSqA < distSqB ? dirA : dirB;
-	}
-
-	private static double horizontalDistanceSq(Vec3 playerVec, BlockPos blockPos) {
-		double dx = playerVec.x - blockPos.getCenter().x;
-		double dz = playerVec.z - blockPos.getCenter().z;
-		return dx * dx + dz * dz;
 	}
 
 	/**

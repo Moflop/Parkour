@@ -79,8 +79,15 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// Pure geometry tests need the mapped Minecraft math classes, without launching a mod loader.
+sourceSets.test {
+    compileClasspath += sourceSets.main.compileClasspath
+    runtimeClasspath += sourceSets.main.compileClasspath
+}
+
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    compatibilityCompileArchives
 }
 
 repositories {
@@ -126,6 +133,14 @@ dependencies {
     // 航空学
     implementation "curse.maven:create-aeronautics-676721:8763471"
 
+    // These API types live in the mods' jar-in-jar libraries. Compile against the
+    // exact bundled versions; the owning mods supply them at runtime.
+    compatibilityCompileArchives "curse.maven:create-328085:7963363"
+    compatibilityCompileArchives "curse.maven:sable-1312371:9043865"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.3"
+
     // 玩家动画库
     implementation(jarJar("com.zigythebird.playeranim:PlayerAnimationLibNeo:$pal_version")) {
         exclude group: "com.google.code.gson", module: "gson"
@@ -140,6 +155,26 @@ dependencies {
     // lombok
     compileOnly "org.projectlombok:lombok:1.18.38"
     annotationProcessor "org.projectlombok:lombok:1.18.38"
+}
+
+def compatibilityApiDirectory = layout.buildDirectory.dir('compatibility-api')
+def extractCompatibilityApis = tasks.register('extractCompatibilityApis', Sync) {
+    from({ configurations.compatibilityCompileArchives.collect { zipTree(it) } }) {
+        include 'META-INF/jarjar/ponder-neoforge-*.jar'
+        include 'META-INF/jarjar/sable-companion-common-*.jar'
+        eachFile { path = name }
+        includeEmptyDirs = false
+    }
+    into compatibilityApiDirectory
+}
+
+dependencies {
+    compileOnly files(fileTree(compatibilityApiDirectory) { include '*.jar' })
+            .builtBy(extractCompatibilityApis)
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

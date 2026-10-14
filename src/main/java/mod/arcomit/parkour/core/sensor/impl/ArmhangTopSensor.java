@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.sensor.impl;
 
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.core.sensor.CollisionCache;
 import mod.arcomit.parkour.core.sensor.SensorData;
@@ -64,7 +65,7 @@ public class ArmhangTopSensor {
 	}
 
 	/**
-	 * 按 tick+位置双维度检查缓存有效性，失效时重新计算碰撞并回写。
+	 * 根据 tick 和玩家几何状态更新缓存；动态结构启用时每次重新检测碰撞。
 	 * <p>副作用：修改 cache 的 tick、position、collisionBoxes 和 collided 字段。</p>
 	 *
 	 * @param collisionCache 该方向对应的碰撞缓存，不能为 null
@@ -74,37 +75,25 @@ public class ArmhangTopSensor {
 	public static void updateCacheIfNeeded(CollisionCache collisionCache, Player player,
 			Direction direction) {
 		long currentTick = player.tickCount;
-		Vec3 currentPos = player.position();
 
 		boolean tickInvalid = !collisionCache.isValidTick(currentTick);
-		boolean positionInvalid = !collisionCache.isValidPosition(currentPos);
+		boolean geometryInvalid = !collisionCache.isValidGeometry(player);
 
-		if (!tickInvalid && !positionInvalid) {
+		if (!tickInvalid && !geometryInvalid && !DynamicCollisions.isEnabled()) {
 			return; // 缓存有效，无需重算
 		}
 		collisionCache.setTick(currentTick);
 
-		if (positionInvalid) {
-			collisionCache.setPosition(currentPos);
+		if (geometryInvalid) {
+			collisionCache.updateGeometry(player);
 
 			List<AABB> boxes =
 					buildOffsetBoxes(player, direction, player.getBbHeight());
 			collisionCache.setCollisionBoxes(boxes);
-
-			if (!meetsArmhangCondition(player, boxes)) {
-				collisionCache.setCollided(false);
-				return;
-			}
-			collisionCache.setCollided(true);
-			return;
 		}
 
 		List<AABB> boxes = collisionCache.getCollisionBoxes();
-		if (!meetsArmhangCondition(player, boxes)) {
-			collisionCache.setCollided(false);
-			return;
-		}
-		collisionCache.setCollided(true);
+		collisionCache.setCollided(meetsArmhangCondition(player, boxes));
 	}
 
 	/**
@@ -118,9 +107,9 @@ public class ArmhangTopSensor {
 		AABB bottomBox = boxes.get(0);
 		AABB topBox = boxes.get(1);
 		boolean bottomHasSupport =
-				BlockCollisions.hasBlockCollision(player.level(), bottomBox,
+				BlockCollisions.hasSensorCollision(player, bottomBox,
 						IGNORED_BLOCKS_TAG);
-		boolean topIsClear = !BlockCollisions.hasBlockCollision(player.level(), topBox,
+		boolean topIsClear = !BlockCollisions.hasSensorCollision(player, topBox,
 				IGNORED_BLOCKS_TAG);
 		if (bottomHasSupport && topIsClear) {
 			return true;

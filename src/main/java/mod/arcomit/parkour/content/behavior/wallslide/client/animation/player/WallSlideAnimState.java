@@ -1,11 +1,12 @@
 package mod.arcomit.parkour.content.behavior.wallslide.client.animation.player;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * 负责维护墙壁滑行的高级状态机（如起步判定、背对姿态权重等）。
@@ -36,10 +37,8 @@ public class WallSlideAnimState {
 		if (dirIndex >= 0 && dirIndex <= 5) {
 			Direction wallDir = Direction.from3DDataValue(dirIndex);
 			if (wallDir != null) {
-				Vec3 intoWallVec = new Vec3(-wallDir.getStepX(), 0,
-						-wallDir.getStepZ());
-				float targetWorldYaw = (float) Math.toDegrees(
-						Math.atan2(-intoWallVec.x, intoWallVec.z)) + 180f;
+				float targetWorldYaw = Directions.horizontalYaw(
+						DynamicSurfaceMotion.renderWallNormal(player, wallDir, 1.0f));
 				float yawToWall = Mth.wrapDegrees(targetWorldYaw - player.yBodyRot);
 				float absYaw = Math.abs(yawToWall);
 

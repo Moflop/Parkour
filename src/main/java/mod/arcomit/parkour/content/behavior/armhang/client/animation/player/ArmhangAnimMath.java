@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 
+import mod.arcomit.parkour.core.client.animation.player.SurfaceAnimationMath;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -40,16 +41,14 @@ public class ArmhangAnimMath {
 
 		// 头部独立修正
 		float pitch = Mth.lerp(partialTick, player.xRotO, player.getXRot());
-		float cameraYaw = Mth.lerp(partialTick, player.yRotO, player.getYRot());
-		float netYaw = Mth.wrapDegrees(cameraYaw - targetYaw);
+		float netYaw = SurfaceAnimationMath.relativeYaw(player.yRotO,
+				player.getYRot(), targetYaw, partialTick);
 		data.headRotX = pitch * Mth.DEG_TO_RAD;
 		data.headRotY = netYaw * Mth.DEG_TO_RAD - bodyTurnAngle;
 
 		// 身体旋转逻辑
-		float currentVanillaBodyYaw =
-				Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot);
-		float yawDiff = Mth.wrapDegrees(targetYaw - currentVanillaBodyYaw);
-		data.bodyRotY = yawDiff * Mth.DEG_TO_RAD + bodyTurnAngle;
+		data.bodyRotY = SurfaceAnimationMath.bodyYawRadians(targetYaw,
+				player.yBodyRotO, player.yBodyRot, partialTick) + bodyTurnAngle;
 
 		// 手部及身体弹跳逻辑
 		float moveWeight = 1.0f - smoothLookAway;

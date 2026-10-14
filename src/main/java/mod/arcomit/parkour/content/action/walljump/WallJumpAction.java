@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.action.walljump;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.statemachine.ParkourStateMachine;
@@ -48,8 +49,8 @@ public class WallJumpAction {
 		if (WallJumpSameWallGuard.isSameWallAsLastJump(jumpData, wallJumpType, wallDir))
 			return false;
 
-		Vec3 velocity = WallJumpVelocity.computeJumpVelocity(player, wallJumpType);
-		player.setDeltaMovement(velocity);
+		Vec3 velocity = DynamicSurfaceMotion.jumpVelocity(player, wallDir,
+				WallJumpVelocity.computeJumpVelocity(player, wallJumpType));
 
 		// 更新最近跳跃方向（只挨着一面墙时记录，如果挨着多面前可以无限次跳跃所以无需记录。）
 		if (WallJumpSameWallGuard.isAgainstSingleWall(player)) {
@@ -59,6 +60,8 @@ public class WallJumpAction {
 		jumpData.setJumped(true);
 		jumpData.setTicksSinceLastJump(0);
 		ParkourStateMachine.resetToDefaultState(player, context);
+		// Apply after exit callbacks (wall climb clears its old velocity on exit).
+		player.setDeltaMovement(velocity);
 		WallJumpSound.play(player);
 		player.resetFallDistance();
 

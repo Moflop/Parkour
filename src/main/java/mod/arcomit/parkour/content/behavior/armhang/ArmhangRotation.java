@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.behavior.armhang;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -22,10 +24,14 @@ public class ArmhangRotation {
 	 */
 	public static void tryInsideCornerRotation(Player player,
 			WallMovementData wallMovementData) {
-		Direction facing = player.getDirection();
-		// 依赖重构后的 CollisionLogic
-		if (ArmhangCollision.hasValidHangPoint(player, facing)) {
-			wallMovementData.setArmhang(facing);
-		}
+		Direction current = wallMovementData.getArmhang();
+		Direction facing = DynamicSurfaceFacing.hangDirection(player);
+		if (current == null || facing == null || facing == current
+				|| facing == current.getOpposite()) return;
+		// Looking away does not release the old grip; a neighboring face must hold after adhesion.
+		wallMovementData.setArmhang(facing);
+		if (ArmhangPhysics.tryAdhesion(player, facing)) return;
+		wallMovementData.setArmhang(current);
+		DynamicSurfaceMotion.capture(player);
 	}
 }

@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
@@ -25,7 +26,7 @@ public class JumpStateHandler {
 		Player player = event.getEntity();
 		JumpData jumpData = ParkourContext.get(player).jump();
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		if (player.onGround()) {
+		if (DynamicCollisions.isOnGround(player)) {
 			if (jumpData.getLastViewJump() != null) {
 				jumpData.resetLastViewJump();
 			}

@@ -40,7 +40,7 @@ public class ClientLandingRollHandler {
 		}
 
 		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null || !ParkourChecks.isFallUnsafe(player)) {
+		if (player == null) {
 			return;
 		}
 

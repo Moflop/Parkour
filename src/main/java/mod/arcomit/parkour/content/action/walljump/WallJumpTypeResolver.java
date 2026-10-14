@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.action.walljump;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.init.ParkourTags;
 import mod.arcomit.parkour.utils.BlockCollisions;
 import mod.arcomit.parkour.utils.Directions;
@@ -35,7 +36,8 @@ public class WallJumpTypeResolver {
 			return WallJumpType.UP;
 		}
 
-		if (Directions.isFacing(player, wallDir, PARALLEL_JUMP_ANGLE)) {
+		if (Directions.isFacing(player, DynamicSurfaceMotion.wallNormal(player, wallDir),
+				PARALLEL_JUMP_ANGLE)) {
 			return WallJumpType.PARALLEL;
 		}
 

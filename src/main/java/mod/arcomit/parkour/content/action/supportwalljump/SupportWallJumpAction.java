@@ -1,5 +1,6 @@
 package mod.arcomit.parkour.content.action.supportwalljump;
 
+import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
@@ -45,14 +46,14 @@ public class SupportWallJumpAction {
 		if (supportWallJumpType == SupportWallJumpType.NONE)
 			return false;
 
-		Vec3 velocity = SupportWallJumpVelocity.computeJumpVelocity(player,
-				supportWallJumpType);
-		player.setDeltaMovement(velocity);
+		Vec3 velocity = DynamicSurfaceMotion.jumpVelocity(player, wallDir,
+				SupportWallJumpVelocity.computeJumpVelocity(player, supportWallJumpType));
 
 		JumpData jumpData = context.jump();
 		jumpData.setJumped(true);
 		jumpData.setTicksSinceLastJump(0);
 		ParkourStateMachine.resetToDefaultState(player, context);
+		player.setDeltaMovement(velocity);
 		SupportWallJumpSound.play(player);
 		player.resetFallDistance();
 

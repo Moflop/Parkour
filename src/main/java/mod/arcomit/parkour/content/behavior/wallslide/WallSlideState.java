@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.behavior.wallslide;
 
 import mod.arcomit.parkour.ParkourConfig;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.init.ParkourAnimationIds;
@@ -42,7 +43,7 @@ public class WallSlideState extends AbstractParkourState {
 	 */
 	private static boolean meetsBaseConditions(Player player, ParkourContext context) {
 		// 快速失败：基础状态不满足滑墙条件
-		if (!ParkourConfig.enableWallSlide || player.onGround() || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
+		if (!ParkourConfig.enableWallSlide || DynamicCollisions.isOnGround(player) || player.onClimbable() || player.isInWater() || player.isInLava() || !ParkourChecks.canPerformBehavior(
 				player)) {
 			return false;
 		}
@@ -68,9 +69,9 @@ public class WallSlideState extends AbstractParkourState {
 	 */
 	@Override
 	public void onEnter(Player player, ParkourContext context) {
-		super.onEnter(player, context);
 		WallMovementData wallMovementData = context.wall();
 		WallSlideDirection.trySwitchCollisionDirection(player, wallMovementData);
+		super.onEnter(player, context);
 	}
 
 	/**
