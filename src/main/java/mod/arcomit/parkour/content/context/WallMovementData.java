@@ -84,14 +84,6 @@ public class WallMovementData {
 	@Setter
 	private double obstaclesHeight = 0.0;
 
-	// ---- 攀爬物理计时器字段（非序列化，纯运行时物理状态追踪） ----
-	@Setter
-	private int climbUpTicks = 0;
-	@Setter
-	private int climbDownTicks = 0;
-	@Setter
-	private boolean climbingUpThisTick = false;
-
 	// ---- Direction 缓存字段（惰性加载，不参与序列化） ----
 	private Direction runCollision;
 	private Direction runMove;
@@ -110,24 +102,6 @@ public class WallMovementData {
 		this.armhangRaw = armhangRaw;
 		this.armhangCooldown = armhangCooldown;
 		this.obstaclesHeight = obstaclesHeight;
-	}
-
-	// ==================== 攀爬计时器快捷操作 API ====================
-
-	public void incrementClimbUpTicks() {
-		this.climbUpTicks++;
-	}
-
-	public void resetClimbUpTicks() {
-		this.climbUpTicks = 0;
-	}
-
-	public void incrementClimbDownTicks() {
-		this.climbDownTicks++;
-	}
-
-	public void resetClimbDownTicks() {
-		this.climbDownTicks = 0;
 	}
 
 	// ==================== 私有 Helper ====================

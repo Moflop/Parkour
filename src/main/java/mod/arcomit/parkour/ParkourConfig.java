@@ -262,42 +262,42 @@ public class ParkourConfig {
 				builder.comment("Allows climbing more block types (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.can_climb_more_blocks")
 						.define("canClimbMoreBlocks", true);
-		// 启用向上攀爬速度提升
+		// 疾跑键控制上爬加速；关闭后禁用所有额外上爬增速
 		ENABLE_UP_CLIMB_SPEED_INCREASE =
-				builder.comment("Enable upward climb speed increase (default: true)")
+				builder.comment("Enable sprint-key upward climb acceleration; disabling this removes all upward climb boosts (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_up_climb_speed_increase")
 						.define("enableUpClimbSpeedIncrease", true);
-		// 向上攀爬速度系数
+		// 疾跑上爬相对于原版速度的基础系数，受安全速度上限约束
 		UP_CLIMB_SPEED_MULTIPLIER =
-				builder.comment("Upward climb speed multiplier (default: 1.25)")
+				builder.comment("Base upward climb speed multiplier while the sprint key is active, subject to a safe speed limit (default: 1.25)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.up_climb_speed_multiplier")
 						.defineInRange("upClimbSpeedMultiplier", 1.25, 1.0,
 								5.0);
-		// 启用向下攀爬速度加速
+		// 疾跑键控制下滑加速，不依赖视角；关闭后禁用所有额外下滑增速
 		ENABLE_DOWN_CLIMB_SPEED_INCREASE =
-				builder.comment("Enable downward climb speed increase when looking down (default: true)")
+				builder.comment("Enable sprint-key downward climb acceleration regardless of look direction; disabling this removes all downward climb boosts (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_climb_down_speed_increase")
 						.define("enableClimbDownSpeedIncrease", true);
-		// 向下攀爬速度系数
+		// 疾跑下滑相对于原版速度的基础系数，受安全速度上限约束
 		DOWN_CLIMB_SPEED_MULTIPLIER =
-				builder.comment("Downward climb speed multiplier (default: 2.0)")
+				builder.comment("Base downward climb speed multiplier while the sprint key is active, subject to a safe speed limit (default: 2.0)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.down_climb_speed_multiplier")
 						.defineInRange("downClimbSpeedMultiplier", 2.0, 1.0,
 								5.0);
-		// 启用攀爬随时间加速
+		// 以 8 tick（约 0.4 秒）平滑缓入并应用最大额外增速系数；关闭则立即使用基础速度系数
 		ENABLE_CLIMB_ACCELERATION_OVER_TIME =
-				builder.comment("Enable climb acceleration over time (default: true)")
+				builder.comment("Smoothly accelerate over 8 ticks (about 0.4 seconds) and apply the maximum extra speed multiplier; when disabled, apply only the base speed multiplier immediately (default: true)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.enable_climb_acceleration_over_time")
 						.define("enableClimbAccelerationOverTime", true);
-		// 向上攀爬增速系数
+		// 平滑加速开启时，上爬在基础速度系数上叠乘的最大额外系数，受安全速度上限约束
 		UP_CLIMB_ACCELERATION_MULTIPLIER =
-				builder.comment("Upward climb acceleration multiplier (default: 2.0)")
+				builder.comment("Maximum extra upward speed multiplier applied to the base multiplier when smooth acceleration is enabled, subject to a safe speed limit (default: 2.0)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.up_climb_acceleration_multiplier")
 						.defineInRange("upClimbAccelerationMultiplier", 2.0,
 								1.0, 5.0);
-		// 向下攀爬增速系数
+		// 平滑加速开启时，下滑在基础速度系数上叠乘的最大额外系数，受安全速度上限约束
 		DOWN_CLIMB_ACCELERATION_MULTIPLIER =
-				builder.comment("Downward climb acceleration multiplier (default: 1.5)")
+				builder.comment("Maximum extra downward speed multiplier applied to the base multiplier when smooth acceleration is enabled, subject to a safe speed limit (default: 1.5)")
 						.translation(ParkourMod.MODID + ".configuration.wall_movement_settings.down_climb_acceleration_multiplier")
 						.defineInRange("downClimbAccelerationMultiplier",
 								1.5, 1.0, 5.0);

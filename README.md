@@ -26,6 +26,10 @@
 - 水中推进；
 - <span style="color: red;">以上功能均已提供配置文件开启/关闭或调整数值，更多特性正在开发中...</span>
 
+### 梯子操作
+
+沿用原版方向操作：朝梯子移动或按住跳跃键（默认空格）上爬，松开上爬输入自然下滑。启用疾跑键（默认 Ctrl）即可加快当前方向，支持键位重绑和原版按住/切换疾跑设置，无需调整视角。潜行键（默认 Shift）可立即刹停；潜行加跳跃仍以原版速度上爬。默认经过约 0.4 秒的平滑缓入达到加速速度，接近梯顶会自动减速，离梯后收掉额外上冲惯性。脚手架仍使用原版操作。
+
 ## 👍 鸣谢与归属
 
 本项目的开发离不开开源社区的贡献，部分代码逻辑参考或派生自以下项目。特此鸣谢：
@@ -99,6 +103,10 @@
 - Swimming Boost;
 - <span style="color: red;">All the above features can be enabled/disabled or customized via configuration files, and more features are currently under development...
   </span>
+
+### Ladder Controls
+
+Use the vanilla controls: move into the ladder or hold Jump (Space by default) to climb up, and release those inputs to slide down. Activate Sprint (Ctrl by default) to accelerate in the current direction; key remapping and the vanilla Hold/Toggle Sprint setting are supported, with no need to change your view angle. Sneak (Shift by default) brakes immediately, while Sneak + Jump still climbs at vanilla speed. By default, acceleration eases in over about 0.4 seconds. You slow down automatically near the top, and extra upward climbing momentum is cleared when you leave the ladder. Scaffolding retains vanilla controls.
 
 ## 👍 Acknowledgements and Attribution
 

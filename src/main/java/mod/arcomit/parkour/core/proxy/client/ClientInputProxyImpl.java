@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.proxy.client;
 
 import mod.arcomit.parkour.core.proxy.api.IInputProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec2;
@@ -82,6 +83,11 @@ public class ClientInputProxyImpl implements IInputProxy {
 			return localPlayer.input.shiftKeyDown;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean getSprintKeyDown(Player player) {
+		return player instanceof LocalPlayer && Minecraft.getInstance().options.keySprint.isDown();
 	}
 
 	@Override

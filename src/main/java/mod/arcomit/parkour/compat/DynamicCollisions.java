@@ -52,6 +52,12 @@ public final class DynamicCollisions {
 		return Providers.SABLE ? SableClimbingCompat.findClimbablePole(entity) : null;
 	}
 
+	/** Null means no confirmed dynamic ladder contact; zero means climb without a boost. */
+	@Nullable
+	public static Double findUpwardClimbBoostFactor(Player player) {
+		return Providers.SABLE ? SableClimbingCompat.findUpwardClimbBoostFactor(player) : null;
+	}
+
 	/** Additional corrections still use the normal collision solver, without replaying inertia. */
 	public static void move(Player player, MoverType type, Vec3 motion) {
 		if (player instanceof ServerPlayer && !DynamicSurfaceMotion.supportsServerPlayerCorrections(player)) {

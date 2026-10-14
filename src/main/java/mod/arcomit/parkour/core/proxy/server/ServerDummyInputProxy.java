@@ -56,6 +56,11 @@ public class ServerDummyInputProxy implements IInputProxy {
 	}
 
 	@Override
+	public boolean getSprintKeyDown(Player player) {
+		return false;
+	}
+
+	@Override
 	public Vec2 getMoveVector(Player player) {
 		return Vec2.ZERO;
 	}

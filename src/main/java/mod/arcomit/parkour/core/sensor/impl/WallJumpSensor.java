@@ -32,7 +32,7 @@ import java.util.List;
 public class WallJumpSensor {
 	private static final double BOX_MIN_HEIGHT_RATIO = 0.0;
 	private static final double BOX_MAX_HEIGHT_RATIO = 0.3;
-	private static final double COLLISION_CHECK_DISTANCE = 0.2;
+	private static final double COLLISION_CHECK_DISTANCE = 0.45;
 	private static final TagKey<Block> IGNORED_BLOCKS_TAG =
 			ParkourTags.Blocks.SCAFFOLDING_BLOCKS;
 

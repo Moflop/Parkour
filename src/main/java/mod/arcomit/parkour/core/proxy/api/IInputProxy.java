@@ -78,6 +78,12 @@ public interface IInputProxy {
 	boolean getShiftKeyDown(Player player);
 
 	/**
+	 * 疾跑绑定当前是否激活，遵循重绑定及原版按住/切换设置。
+	 * 不使用玩家的持续疾跑状态；服务端及非本地玩家返回 false。
+	 */
+	boolean getSprintKeyDown(Player player);
+
+	/**
 	 * 获取归一化后的移动方向向量。
 	 *
 	 * @param player 目标玩家，不可为null

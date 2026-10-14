@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -9,13 +10,12 @@ import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangTravelGuard;
 import mod.arcomit.parkour.content.context.ParkourContext;
-import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
+import mod.arcomit.parkour.content.mechanic.climb.SprintClimbController;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import mod.arcomit.parkour.utils.ClimbablePoles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,13 +44,7 @@ import java.util.Optional;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 	@Unique
-	private static final Double DOWN_CLIMB_ACCELERATE_LOOK_MIN_PITCH = 20.0;
-	@Unique
-	private static final Double DOWN_CLIMB_ACCELERATE_LOOK_MAX_PITCH = 90.0;
-	@Unique
-	private static final int CLIMB_ACCELERATION_START_TICK = 0;
-	@Unique
-	private static final int CLIMB_ACCELERATION_FINISH_TICK = 60;
+	private final SprintClimbController parkour$sprintClimb = new SprintClimbController();
 	@Shadow
 	public boolean jumping;
 	@Shadow
@@ -63,15 +57,19 @@ public abstract class LivingEntityMixin extends Entity {
 	@Shadow
 	public abstract boolean onClimbable();
 
-	/** Includes Sable's travel-return transport before deciding whether a ledge step was safe. */
+	/** Includes Sable's travel-return transport in ledge and ladder exit handling. */
 	@WrapMethod(method = "travel(Lnet/minecraft/world/phys/Vec3;)V")
-	private void parkour$guardArmhangTravel(Vec3 input, Operation<Void> original) {
+	private void parkour$guardTravel(Vec3 input, Operation<Void> original) {
 		Player player = (Object) this instanceof Player value ? value : null;
 		ArmhangTravelGuard.Snapshot before = player == null ? null : ArmhangTravelGuard.begin(player);
+		if (player != null) parkour$sprintClimb.beginTravel(player);
 		try {
 			original.call(input);
 		} finally {
-			if (player != null) ArmhangTravelGuard.finish(player, before);
+			if (player != null) {
+				ArmhangTravelGuard.finish(player, before);
+				parkour$sprintClimb.finishTravel(player);
+			}
 		}
 	}
 
@@ -108,103 +106,32 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	/**
-	 * 加速向上攀爬。 修改垂直移动速度参数，实现随时间加速的效果。
-	 */
+	/** 原版决定何时上爬，疾跑键只改变这次上爬的目标速度。 */
 	@ModifyArg(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/world/phys/Vec3;<init>(DDD)V"),
 			index = 1)
 	private double accelerateUpClimbing(double vanillaClimbSpeed) {
-		if (!((Object) this instanceof Player player) || !this.onClimbable()) {
-			return vanillaClimbSpeed;
-		}
-		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
-			return vanillaClimbSpeed;
-		}
-		WallMovementData wallData = ParkourContext.get(player).wall();
-		wallData.setClimbingUpThisTick(true);
-
-		// 基础速度提升
-		if (ParkourConfig.enableUpClimbSpeedIncrease) {
-			vanillaClimbSpeed *= ParkourConfig.upClimbSpeedMultiplier;
-		}
-		if (ParkourConfig.enableClimbAccelerationOverTime) {
-			// 在3秒（60刻）内，速度线性增加
-			double maxSpeed =
-					vanillaClimbSpeed * ParkourConfig.upClimbAccelerationMultiplier;
-			double climbYSpeed =
-					Mth.clampedMap(wallData.getClimbUpTicks(), CLIMB_ACCELERATION_START_TICK,
-							CLIMB_ACCELERATION_FINISH_TICK,
-							vanillaClimbSpeed, maxSpeed);
-			return Math.max(this.getDeltaMovement().y, climbYSpeed);
-		} else {
-			return Math.max(this.getDeltaMovement().y, vanillaClimbSpeed);
-		}
+		return (Object) this instanceof Player player
+				? parkour$sprintClimb.upwardSpeed(player, vanillaClimbSpeed) : vanillaClimbSpeed;
 	}
 
-	/**
-	 * 加速向下攀爬。 根据玩家的视角（俯仰角）调整下行速度。向下看时速度更快。
-	 */
-	@WrapOperation(method = "handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;",
-			at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(DD)D"))
-	private double accelerateDownClimbing(double currentYSpeed, double vanillaDownSpeed, Operation<Double> original) {
-		if (!((Object) this instanceof Player player)) {
-			return original.call(currentYSpeed, vanillaDownSpeed);
-		}
-		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
-			return original.call(currentYSpeed, vanillaDownSpeed);
-		}
-		if (ParkourConfig.enableDownClimbSpeedIncrease) {
-			double maxSpeedIncrease =
-					vanillaDownSpeed * ParkourConfig.downClimbSpeedMultiplier;
-			vanillaDownSpeed = Mth.clampedMap(this.getXRot(),
-					DOWN_CLIMB_ACCELERATE_LOOK_MIN_PITCH,
-					DOWN_CLIMB_ACCELERATE_LOOK_MAX_PITCH, vanillaDownSpeed,
-					maxSpeedIncrease);
-			;
-		}
-		if (ParkourConfig.enableClimbAccelerationOverTime) {
-			double acceleratedSpeed =
-					vanillaDownSpeed * ParkourConfig.downClimbAccelerationMultiplier;
-			WallMovementData wallData = ParkourContext.get(player).wall();
-			vanillaDownSpeed = Mth.clampedMap(wallData.getClimbDownTicks(),
-					CLIMB_ACCELERATION_START_TICK,
-					CLIMB_ACCELERATION_FINISH_TICK, vanillaDownSpeed,
-					acceleratedSpeed);
-		}
-		return original.call(currentYSpeed, vanillaDownSpeed);
+	/** 下滑加速、潜行刹停和梯顶减速必须在实际 move 之前处理。 */
+	@WrapOperation(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
+			at = @At(value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/LivingEntity;handleOnClimbable(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
+	private Vec3 parkour$controlClimbMovement(LivingEntity entity, Vec3 incoming, Operation<Vec3> original) {
+		Vec3 vanilla = original.call(entity, incoming);
+		return entity instanceof Player player
+				? parkour$sprintClimb.beforeMove(player, incoming, vanilla) : vanilla;
 	}
 
-
-	/**
-	 * 更新攀爬计时器。 在每刻结束时调用，用于统计连续攀爬的时间。
-	 */
-	@Inject(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
-			at = @At("RETURN"), cancellable = true)
-	private void updateClimbTimer(CallbackInfoReturnable<Vec3> cir) {
-		if (!((Object) this instanceof Player player)) {
-			return;
-		}
-		if(ParkourChecks.isVanillaState(ParkourContext.get(player))) {
-			return;
-		}
-		WallMovementData wallData = ParkourContext.get(player).wall();
-		Vec3 movement = cir.getReturnValue();
-		// 如果在梯子上，且正在向下移动，且视角向下超过20度，增加下行计时器
-		if (this.onClimbable() && movement.y < 0 && this.getXRot() > DOWN_CLIMB_ACCELERATE_LOOK_MIN_PITCH.intValue()) {
-			wallData.incrementClimbDownTicks();
-		} else {
-			wallData.resetClimbDownTicks();
-		}
-
-		if (wallData.isClimbingUpThisTick()) {
-			wallData.incrementClimbUpTicks();
-			wallData.setClimbingUpThisTick(false);
-		} else {
-			wallData.resetClimbUpTicks();
-		}
-		cir.setReturnValue(movement);
+	/** 本刻越过梯顶或横向离梯时，不让额外上冲速度进入空中运动。 */
+	@ModifyReturnValue(method = "handleRelativeFrictionAndCalculateMovement(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;",
+			at = @At("RETURN"))
+	private Vec3 parkour$finishClimbMovement(Vec3 movement) {
+		return (Object) this instanceof Player player
+				? parkour$sprintClimb.afterMove(player, movement) : movement;
 	}
 
 	/**
