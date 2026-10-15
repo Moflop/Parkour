@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
@@ -37,6 +38,7 @@ public class ParkourEventForwarderHandler {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Pre event) {
 		Player player = event.getEntity();
+		DynamicCollisions.resolveServerContact(player);
 		DynamicSurfaceMotion.beforeTick(player);
 		ParkourStateMachine.tick(player);
 	}

@@ -26,6 +26,8 @@ config = "${mod_id}.mixins.json"
 config = "${mod_id}.player_animation_library.mixins.json"
 [[mixins]]
 config = "${mod_id}.sable.mixins.json"
+[[mixins]]
+config = "${mod_id}.create.mixins.json"
 
 # [[accessTransformers]] 区块允许你声明 AT（访问转换器）文件的位置。
 # 如果省略了这个区块，系统会尝试作为备用方案，从 META-INF/accesstransformer.cfg 路径下加载 AT 文件。

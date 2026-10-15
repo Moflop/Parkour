@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.compat;
 
 import mod.arcomit.parkour.compat.create.CreateCollisionProvider;
+import mod.arcomit.parkour.compat.create.CreateCorrectionCollision;
+import mod.arcomit.parkour.compat.create.CreateMovementCompat;
 import mod.arcomit.parkour.compat.sable.SableCollisionProvider;
 import mod.arcomit.parkour.compat.sable.SableClimbingCompat;
 import mod.arcomit.parkour.compat.sable.SableMovementCompat;
@@ -32,12 +34,13 @@ public final class DynamicCollisions {
 
 	// Lazy loading keeps either integration optional on both logical sides.
 	private static class Providers {
+		private static final boolean CREATE = ModList.get().isLoaded("create");
 		private static final boolean SABLE = ModList.get().isLoaded("sable");
 		private static final List<DynamicCollisionProvider> ALL = create();
 
 		private static List<DynamicCollisionProvider> create() {
 			List<DynamicCollisionProvider> providers = new ArrayList<>();
-			if (ModList.get().isLoaded("create")) providers.add(new CreateCollisionProvider());
+			if (CREATE) providers.add(new CreateCollisionProvider());
 			if (SABLE) providers.add(new SableCollisionProvider());
 			return List.copyOf(providers);
 		}
@@ -45,6 +48,13 @@ public final class DynamicCollisions {
 
 	public static boolean isEnabled() {
 		return !Providers.ALL.isEmpty();
+	}
+
+	/** Align server wall queries with Create's current pose, including packet-time queries. */
+	public static void resolveServerContact(Player player) {
+		if (Providers.CREATE && player instanceof ServerPlayer && CreateMovementCompat.isEnabled(player)) {
+			CreateCorrectionCollision.resolveServerPenetration(player);
+		}
 	}
 
 	/** Optional Sable lookup; ordinary ladders retain their native implementation. */
@@ -64,6 +74,7 @@ public final class DynamicCollisions {
 		if (player instanceof ServerPlayer && !DynamicSurfaceMotion.supportsServerPlayerCorrections(player)) {
 			return;
 		}
+		if (Providers.CREATE) motion = CreateCorrectionCollision.clip(player, motion);
 		if (Providers.SABLE) SableMovementCompat.move(player, type, motion);
 		else player.move(type, motion);
 	}
@@ -103,6 +114,18 @@ public final class DynamicCollisions {
 	public static boolean hasBlockCollision(Level level, @Nullable Entity entity, AABB box,
 			@Nullable TagKey<Block> skipTag) {
 		return findCollision(level, entity, box, skipTag) != null;
+	}
+
+	/** Support for a candidate body in the collision solver's own frame. */
+	public static boolean hasTransformedSupport(Level level, Entity entity, AABB box,
+			UnaryOperator<Vec3> toWorld) {
+		AABB search = CollisionGeometry.transformBounds(box, toWorld);
+		for (DynamicCollisionProvider provider : Providers.ALL) {
+			for (DynamicCollisionSource source : provider.sources(level, search)) {
+				if (source.isValid() && source.hasSupport(box, toWorld, entity, null)) return true;
+			}
+		}
+		return false;
 	}
 
 	/** Check an already oriented body without rotating its world-space movement again. */

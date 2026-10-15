@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.core.statemachine.network;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -65,6 +66,10 @@ public record RequestStateTransitionC2SPayload(ResourceLocation targetStateId, i
 					IParkourState targetState =
 							ParkourRegistries.PARKOUR_STATE_REGISTRY.get(
 									stateId);
+					if (targetState != null) {
+						// Requests can arrive after the structure advances but before PlayerTick.Pre.
+						DynamicCollisions.resolveServerContact(player);
+					}
 
 					if (targetState instanceof ArmhangState) {
 						// Movement packets restore the synchronized position after server travel,

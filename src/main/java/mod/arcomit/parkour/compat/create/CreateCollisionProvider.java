@@ -41,6 +41,12 @@ import java.util.function.Predicate;
 public final class CreateCollisionProvider implements DynamicCollisionProvider {
 	private static final boolean SABLE_LOADED = ModList.get().isLoaded("sable");
 
+	@Nullable
+	public static DynamicCollisionSource source(AbstractContraptionEntity entity) {
+		Contraption contraption = entity.getContraption();
+		return contraption == null ? null : new Source(entity, contraption);
+	}
+
 	@Override
 	public List<DynamicCollisionSource> sources(Level level, AABB worldBounds) {
 		List<DynamicCollisionSource> sources = new ArrayList<>();
@@ -76,6 +82,12 @@ public final class CreateCollisionProvider implements DynamicCollisionProvider {
 		}
 
 		@Override
+		public boolean supportsServerPlayerCorrections() {
+			// Create resolves local players on ClientTick.Post and skips ServerPlayer.
+			return false;
+		}
+
+		@Override
 		public Vec3 toLocal(Vec3 world) {
 			Vec3 parentLocal = SABLE_LOADED ? SableBridge.toLocal(entity, world) : world;
 			return entity.toLocalVector(parentLocal, 1.0F);
@@ -95,8 +107,37 @@ public final class CreateCollisionProvider implements DynamicCollisionProvider {
 
 		@Override
 		public Vec3 pointMotion(Vec3 worldPoint) {
-			return SABLE_LOADED ? SableBridge.pointMotion(entity, worldPoint)
-					: entity.getContactPointMotion(worldPoint);
+			Vec3 localPoint = toLocal(worldPoint);
+			Vec3 current = entity.toGlobalVector(localPoint, 1.0F);
+			Vec3 previous = entity.isPrevPosInvalid() ? current
+					: entity.toGlobalVector(localPoint, 0.0F, true);
+			if (SABLE_LOADED) {
+				current = SableBridge.toWorld(entity, current);
+				previous = SableBridge.toPreviousWorld(entity, previous);
+			}
+			return current.subtract(previous);
+		}
+
+		@Override
+		public UnaryOperator<Vec3> sensorTransform(Entity collidingEntity) {
+			// Create's OBB excludes this outer yaw from its basis on pitched vehicles.
+			return CreateSensorGeometry.sensorTransform(collidingEntity.position(),
+					entity.getRotationState().getYawOffset());
+		}
+
+		@Override
+		public double wallSensorTolerance(Entity collidingEntity, Direction direction, double maximum) {
+			Vec3 pivot = collidingEntity.position();
+			UnaryOperator<Vec3> transform = sensorTransform(collidingEntity);
+			Vec3 toward = transform.apply(pivot.add(Vec3.atLowerCornerOf(direction.getNormal())))
+					.subtract(transform.apply(pivot));
+			Vec3 local = toLocal(pivot);
+			Vec3 localToward = toLocal(pivot.add(toward)).subtract(local);
+			Direction face = Direction.getNearest(localToward.x, localToward.y, localToward.z);
+			// A tilted local floor is not an extra-reach wall.
+			if (face.getAxis() == Direction.Axis.Y) return 0;
+			Vec3 normal = toWorld(local.add(Vec3.atLowerCornerOf(face.getNormal()))).subtract(toWorld(local));
+			return CreateSensorGeometry.wallSensorTolerance(normal, collidingEntity.getBbHeight(), maximum);
 		}
 
 		@Override
@@ -132,9 +173,12 @@ public final class CreateCollisionProvider implements DynamicCollisionProvider {
 			BlockPos max = BlockPos.containing(localBounds.maxX + 1, localBounds.maxY + 1,
 					localBounds.maxZ + 1);
 			Level blockLevel = contraption.getContraptionWorld();
+			UnaryOperator<Vec3> entityToWorld = collidingEntity == null ? UnaryOperator.identity()
+					: sensorTransform(collidingEntity);
 			CollisionContext context = collidingEntity == null ? CollisionContext.empty()
 					: new LocalCollisionContext(collidingEntity,
-						CollisionGeometry.transformBounds(collidingEntity.getBoundingBox(), this::toLocal).minY);
+						CollisionGeometry.transformBounds(collidingEntity.getBoundingBox(),
+							point -> toLocal(entityToWorld.apply(point))).minY);
 
 			for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
 				StructureBlockInfo info = contraption.getBlocks().get(pos);
@@ -216,14 +260,9 @@ public final class CreateCollisionProvider implements DynamicCollisionProvider {
 			return parent == null ? parentLocal : parent.logicalPose().transformPosition(parentLocal);
 		}
 
-		private static Vec3 pointMotion(AbstractContraptionEntity entity, Vec3 worldPoint) {
+		private static Vec3 toPreviousWorld(AbstractContraptionEntity entity, Vec3 parentLocal) {
 			SubLevel parent = Sable.HELPER.getContaining(entity);
-			if (parent == null) {
-				return entity.getContactPointMotion(worldPoint);
-			}
-			Vec3 parentLocal = parent.logicalPose().transformPositionInverse(worldPoint);
-			return parent.logicalPose().transformNormal(entity.getContactPointMotion(parentLocal))
-					.add(worldPoint.subtract(parent.lastPose().transformPosition(parentLocal)));
+			return parent == null ? parentLocal : parent.lastPose().transformPosition(parentLocal);
 		}
 
 		private static boolean isNativeCarrier(AbstractContraptionEntity entity, Player player) {

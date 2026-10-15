@@ -4,6 +4,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 /** Broad-phase bounds and exact separating-axis tests for transformed voxel boxes. */
@@ -22,6 +24,59 @@ public final class CollisionGeometry {
 			case UP -> box.minY - point.y;
 			case DOWN -> point.y - box.maxY;
 		};
+	}
+
+	/** Keeps only the sensor-covered parts of a face that are not internal to adjacent shapes. */
+	public static boolean hasExposedFace(AABB query, UnaryOperator<Vec3> queryToLocal,
+			AABB localBox, Direction toward, List<AABB> occluders) {
+		Direction.Axis axis = toward.getAxis();
+		Direction.Axis u = axis == Direction.Axis.X ? Direction.Axis.Y : Direction.Axis.X;
+		Direction.Axis v = axis == Direction.Axis.Z ? Direction.Axis.Y : Direction.Axis.Z;
+		boolean positive = toward.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+		double plane = positive ? localBox.min(axis) : localBox.max(axis);
+		List<FacePatch> remaining = List.of(new FacePatch(localBox.min(u), localBox.min(v),
+				localBox.max(u), localBox.max(v)));
+		for (AABB occluder : occluders) {
+			// A nearby box is not an occluder unless it reaches the face from outside.
+			boolean coversPlane = positive
+					? occluder.min(axis) < plane - EPSILON && occluder.max(axis) >= plane - EPSILON
+					: occluder.max(axis) > plane + EPSILON && occluder.min(axis) <= plane + EPSILON;
+			if (!coversPlane) continue;
+			List<FacePatch> exposed = new ArrayList<>();
+			for (FacePatch patch : remaining) {
+				patch.subtract(occluder.min(u), occluder.min(v), occluder.max(u), occluder.max(v), exposed);
+			}
+			if (exposed.isEmpty()) return false;
+			remaining = exposed;
+		}
+		for (FacePatch patch : remaining) {
+			if (intersects(query, queryToLocal, patch.box(axis, plane), UnaryOperator.identity())) return true;
+		}
+		return false;
+	}
+
+	private record FacePatch(double minU, double minV, double maxU, double maxV) {
+		private void subtract(double otherMinU, double otherMinV, double otherMaxU, double otherMaxV,
+				List<FacePatch> result) {
+			double lowU = Math.max(minU, otherMinU), highU = Math.min(maxU, otherMaxU);
+			double lowV = Math.max(minV, otherMinV), highV = Math.min(maxV, otherMaxV);
+			if (highU - lowU <= EPSILON || highV - lowV <= EPSILON) {
+				result.add(this);
+				return;
+			}
+			if (lowU - minU > EPSILON) result.add(new FacePatch(minU, minV, lowU, maxV));
+			if (maxU - highU > EPSILON) result.add(new FacePatch(highU, minV, maxU, maxV));
+			if (lowV - minV > EPSILON) result.add(new FacePatch(lowU, minV, highU, lowV));
+			if (maxV - highV > EPSILON) result.add(new FacePatch(lowU, highV, highU, maxV));
+		}
+
+		private AABB box(Direction.Axis axis, double plane) {
+			return switch (axis) {
+				case X -> new AABB(plane, minU, minV, plane, maxU, maxV);
+				case Y -> new AABB(minU, plane, minV, maxU, plane, maxV);
+				case Z -> new AABB(minU, minV, plane, maxU, maxV, plane);
+			};
+		}
 	}
 
 	/** Classifies a world direction in the horizontal frame used by an oriented sensor. */

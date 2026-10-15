@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mod.arcomit.parkour.compat.create.mixin",
+  "plugin": "mod.arcomit.parkour.compat.create.mixin.CreateMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "Matrix3dAccessor",
+    "LivingEntityMixin",
+    "ContraptionHandlerMixin",
+    "ContraptionColliderMixin"
+  ],
+  "client": [
+    "client.LocalPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

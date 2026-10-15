@@ -5,6 +5,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +17,86 @@ class CollisionGeometryTest {
 	private static final AABB UNIT = new AABB(0, 0, 0, 1, 1, 1);
 	private static final AABB CENTERED = new AABB(-1, -1, -1, 1, 1, 1);
 	private static final UnaryOperator<Vec3> IDENTITY = point -> point;
+
+	@Test
+	void slightYawCannotTurnAContinuousWallsInternalBlockFaceIntoAFrontWall() {
+		double yaw = Math.toRadians(2);
+		UnaryOperator<Vec3> wallToWorld = point -> rotateY(point, -yaw);
+		UnaryOperator<Vec3> worldToWall = point -> rotateY(point, yaw);
+		Vec3 localPlayer = new Vec3(.6, 0, -.3 * (Math.cos(yaw) + Math.sin(yaw)) - .0001);
+		Vec3 worldPlayer = wallToWorld.apply(localPlayer);
+		AABB eastHeadProbe = new AABB(-.299, 1.531, -.299, .449, 1.799, .299).move(worldPlayer);
+		AABB nextBlock = new AABB(1, 0, 0, 2, 3, 1);
+		AABB precedingBlock = new AABB(0, 0, 0, 1, 3, 1);
+
+		assertTrue(CollisionGeometry.intersects(eastHeadProbe, nextBlock, wallToWorld));
+		assertTrue(CollisionGeometry.faceDistance(localPlayer, nextBlock, Direction.EAST) > 0,
+				"Being in front of a block's local plane does not make that plane exposed");
+		assertTrue(CollisionGeometry.hasExposedFace(eastHeadProbe, worldToWall, nextBlock,
+				Direction.EAST, List.of()), "The same geometry is a real wall end without its neighbor");
+		assertFalse(CollisionGeometry.hasExposedFace(eastHeadProbe, worldToWall, nextBlock,
+				Direction.EAST, List.of(precedingBlock)));
+	}
+
+	@Test
+	void severalAdjacentShapesCanJointlyCoverOneInternalFace() {
+		AABB faceProbe = new AABB(-.1, .1, .1, .1, .9, .9);
+		AABB lowerNeighbor = new AABB(-1, 0, 0, 0, .5, 1);
+		AABB upperNeighbor = new AABB(-1, .5, 0, 0, 1, 1);
+		assertFalse(CollisionGeometry.hasExposedFace(faceProbe, IDENTITY, UNIT,
+				Direction.EAST, List.of(lowerNeighbor, upperNeighbor)));
+		assertFalse(CollisionGeometry.hasExposedFace(faceProbe, IDENTITY, UNIT,
+				Direction.EAST, List.of(upperNeighbor, lowerNeighbor)));
+	}
+
+	@Test
+	void partialOcclusionRetainsOnlyTheExposedPatchReachedByTheSensor() {
+		AABB lowerNeighbor = new AABB(-1, 0, 0, 0, .5, 1);
+		assertTrue(CollisionGeometry.hasExposedFace(new AABB(-.1, .6, .2, .1, .9, .8),
+				IDENTITY, UNIT, Direction.EAST, List.of(lowerNeighbor)));
+		assertFalse(CollisionGeometry.hasExposedFace(new AABB(-.1, .1, .2, .1, .4, .8),
+				IDENTITY, UNIT, Direction.EAST, List.of(lowerNeighbor)),
+				"An exposed patch elsewhere on the block does not validate this probe");
+	}
+
+	@Test
+	void disconnectedOrInteriorBoxesCannotOccludeTheOutsideOfAFace() {
+		AABB faceProbe = new AABB(-.1, .1, .1, .1, .9, .9);
+		for (AABB unrelated : List.of(new AABB(-2, 0, 0, -1, 1, 1),
+				new AABB(-1, 0, 0, -.0001, 1, 1), UNIT,
+				new AABB(-1, 2, 0, 0, 3, 1))) {
+			assertTrue(CollisionGeometry.hasExposedFace(faceProbe, IDENTITY, UNIT,
+					Direction.EAST, List.of(unrelated)));
+		}
+	}
+
+	@Test
+	void occlusionWorksForBothSignsOfEveryBlockAxis() {
+		AABB broadProbe = UNIT.inflate(.1);
+		for (Direction toward : Direction.values()) {
+			Vec3 step = Vec3.atLowerCornerOf(toward.getNormal());
+			AABB outside = UNIT.move(step.scale(-1));
+			AABB opposite = UNIT.move(step);
+			assertTrue(CollisionGeometry.hasExposedFace(broadProbe, IDENTITY, UNIT,
+					toward, List.of(opposite)), toward.toString());
+			assertFalse(CollisionGeometry.hasExposedFace(broadProbe, IDENTITY, UNIT,
+					toward, List.of(outside)), toward.toString());
+		}
+	}
+
+	@Test
+	void subtractionKeepsAllFourSidesAroundAPartialOccluder() {
+		AABB middleNeighbor = new AABB(-1, .4, .4, 0, .6, .6);
+		for (AABB probe : List.of(new AABB(-.1, .1, .45, .1, .2, .55),
+				new AABB(-.1, .8, .45, .1, .9, .55),
+				new AABB(-.1, .45, .1, .1, .55, .2),
+				new AABB(-.1, .45, .8, .1, .55, .9))) {
+			assertTrue(CollisionGeometry.hasExposedFace(probe, IDENTITY, UNIT,
+					Direction.EAST, List.of(middleNeighbor)));
+		}
+		assertFalse(CollisionGeometry.hasExposedFace(new AABB(-.1, .45, .45, .1, .55, .55),
+				IDENTITY, UNIT, Direction.EAST, List.of(middleNeighbor)));
+	}
 
 	@Test
 	void sensorDirectionsPreserveIdentityAndFollowNativeGridYawTransition() {

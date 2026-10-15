@@ -14,6 +14,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Resolves sensor slots from the actual wall and horizontal view, before a contact exists. */
 public final class DynamicSurfaceFacing {
@@ -92,7 +94,8 @@ public final class DynamicSurfaceFacing {
 			if (direction == player.getDirection() && hasStaticCollision(player, box, skipTag)) return true;
 			DynamicBlockHit hit = DynamicCollisions.findSensorCollision(player.level(), player, box, skipTag,
 					source -> direction == CollisionGeometry.sensorDirection(look,
-							player.position(), source.sensorTransform(player)));
+							player.position(), source.sensorTransform(player)),
+					candidate -> facesPlayer(player, direction, candidate, box, skipTag));
 			if (hit != null) return true;
 		}
 		return false;
@@ -122,9 +125,11 @@ public final class DynamicSurfaceFacing {
 		}
 		DynamicBlockHit hit = hanging
 				? DynamicCollisions.findSensorCollision(player.level(), player, box, skip,
-						source -> true, candidate -> facesPlayer(player, direction, candidate))
+						source -> true, candidate -> facesPlayer(player, direction, candidate, box, skip))
 				: DynamicCollisions.findRelaxedSensorCollision(player.level(), player, box,
-						direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE, skip);
+						direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE, skip,
+						source -> true, candidate -> facesPlayer(player, direction, candidate,
+							relaxedWallQuery(player, direction, box, candidate.source()), skip));
 		if (hit == null) return null;
 		DynamicCollisionSource source = hit.source();
 		Vec3 pivot = player.position(), local = source.toLocal(pivot);
@@ -141,7 +146,15 @@ public final class DynamicSurfaceFacing {
 		return new Candidate(direction, horizontalNormal, true, Math.max(0, gap) * Math.max(0, gap));
 	}
 
-	private static boolean facesPlayer(Player player, Direction direction, DynamicBlockHit hit) {
+	private static AABB relaxedWallQuery(Player player, Direction direction, AABB box, DynamicCollisionSource source) {
+		double reach = source.wallSensorTolerance(player, direction, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE);
+		if (!Double.isFinite(reach) || reach <= 0) return box;
+		reach = Math.min(reach, ParkourConstants.DYNAMIC_WALL_SENSOR_TOLERANCE);
+		return box.expandTowards(direction.getStepX() * reach, 0, direction.getStepZ() * reach);
+	}
+
+	private static boolean facesPlayer(Player player, Direction direction, DynamicBlockHit hit,
+			AABB query, @Nullable TagKey<Block> skip) {
 		DynamicCollisionSource source = hit.source();
 		Vec3 pivot = player.position(), local = source.toLocal(pivot);
 		var transform = source.sensorTransform(player);
@@ -150,8 +163,28 @@ public final class DynamicSurfaceFacing {
 		Vec3 localToward = source.toLocal(pivot.add(toward)).subtract(local);
 		Direction face = Direction.getNearest(localToward.x, localToward.y, localToward.z);
 		// An overlapping side probe does not create a new face on a broad ledge.
-		return CollisionGeometry.faceDistance(local, hit.localBox(), face)
-				>= -ParkourConstants.AABB_DEFLATE_EPSILON;
+		if (CollisionGeometry.faceDistance(local, hit.localBox(), face)
+				< -ParkourConstants.AABB_DEFLATE_EPSILON) return false;
+		List<AABB> occluders = new ArrayList<>();
+		// Adjacent voxels hide internal faces, including unions of partial shapes.
+		source.findCollision(outsideFace(hit.localBox(), face), source::toWorld, player, skip, neighbor -> {
+			occluders.add(neighbor.localBox());
+			return false;
+		});
+		return CollisionGeometry.hasExposedFace(query, point -> source.toLocal(transform.apply(point)),
+				hit.localBox(), face, occluders);
+	}
+
+	private static AABB outsideFace(AABB box, Direction toward) {
+		double depth = 2.0E-4;
+		return switch (toward) {
+			case EAST -> new AABB(box.minX - depth, box.minY, box.minZ, box.minX, box.maxY, box.maxZ);
+			case WEST -> new AABB(box.maxX, box.minY, box.minZ, box.maxX + depth, box.maxY, box.maxZ);
+			case SOUTH -> new AABB(box.minX, box.minY, box.minZ - depth, box.maxX, box.maxY, box.minZ);
+			case NORTH -> new AABB(box.minX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ + depth);
+			case UP -> new AABB(box.minX, box.minY - depth, box.minZ, box.maxX, box.minY, box.maxZ);
+			case DOWN -> new AABB(box.minX, box.maxY, box.minZ, box.maxX, box.maxY + depth, box.maxZ);
+		};
 	}
 
 	private static boolean hasStaticCollision(Player player, AABB box, @Nullable TagKey<Block> skip) {
