@@ -4,6 +4,7 @@
   "package": "mod.arcomit.parkour.content.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EntityGetterMixin",
     "LivingEntityMixin",
     "PlayerMixin",
     "ServerGamePacketListenerImplMixin"

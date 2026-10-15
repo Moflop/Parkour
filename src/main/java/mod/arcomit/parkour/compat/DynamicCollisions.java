@@ -7,6 +7,7 @@ import mod.arcomit.parkour.compat.sable.SableCollisionProvider;
 import mod.arcomit.parkour.compat.sable.SableClimbingCompat;
 import mod.arcomit.parkour.compat.sable.SableMovementCompat;
 import mod.arcomit.parkour.ParkourConstants;
+import mod.arcomit.parkour.content.mechanic.entitysupport.EntitySupport;
 import mod.arcomit.parkour.utils.FilteredBlockCollisions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -88,6 +89,7 @@ public final class DynamicCollisions {
 	public static boolean isOnGround(Player player) {
 		if (!player.onGround()) return false;
 		if (!Providers.SABLE || !SableMovementCompat.needsGroundCheck(player)) return true;
+		if (EntitySupport.findSupport(player) != null) return true;
 		AABB bounds = player.getBoundingBox();
 		double skin = ParkourConstants.AABB_DEFLATE_EPSILON;
 		AABB support = new AABB(bounds.minX + skin, bounds.minY - 0.05,

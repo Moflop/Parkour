@@ -24,6 +24,8 @@
 - 攀爬机制改革；
 - 游泳机制改革；
 - 水中推进；
+- 实体顶部行走、潜行与随动；
+- 靠近实体时借力二段跳；
 - <span style="color: red;">以上功能均已提供配置文件开启/关闭或调整数值，更多特性正在开发中...</span>
 
 ## 👍 鸣谢与归属
@@ -97,6 +99,8 @@
 - Climbing Mechanics Overhaul;
 - Swimming Mechanics Overhaul;
 - Swimming Boost;
+- Walking, sneaking and moving with entity tops;
+- An extra jump near entities;
 - <span style="color: red;">All the above features can be enabled/disabled or customized via configuration files, and more features are currently under development...
   </span>
 

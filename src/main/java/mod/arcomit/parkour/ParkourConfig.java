@@ -29,6 +29,10 @@ public class ParkourConfig {
 
 	public static ModConfigSpec.BooleanValue REMOVE_SPEED_LIMITS;
 
+	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_WALKING;
+	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_JUMP;
+	public static ModConfigSpec.DoubleValue ENTITY_JUMP_REACH;
+
 	public static ModConfigSpec.BooleanValue ENABLE_OMNI_SPRINT;
 	public static ModConfigSpec.BooleanValue ENABLE_CRAWL;
 	public static ModConfigSpec.BooleanValue ENABLE_SLIDE;
@@ -74,6 +78,9 @@ public class ParkourConfig {
 	public static ModConfigSpec.IntValue WALL_CLIMB_DURATION;
 	public static ModConfigSpec.DoubleValue WALL_CLIMB_SPEED;
 	public static boolean removeSpeedLimits;
+	public static boolean enableEntityWalking;
+	public static boolean enableEntityJump;
+	public static double entityJumpReach;
 	public static boolean enableOmniSprint;
 	public static boolean enableCrawl;
 	public static boolean enableSlide;
@@ -134,6 +141,17 @@ public class ParkourConfig {
 		builder.comment("Locomotion settings let you change all options related to movement on the ground.")
 				.translation(ParkourMod.MODID + ".configuration.locomotion_settings")
 				.push("locomotion_settings");
+
+		// 实体顶部行走与借力跳可分别关闭。
+		ENABLE_ENTITY_WALKING = builder.comment("Enable walking and sneaking on top of entities (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.locomotion_settings.enable_entity_walking")
+				.define("enableEntityWalking", true);
+		ENABLE_ENTITY_JUMP = builder.comment("Press jump again near an entity for one extra jump per airborne period (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.locomotion_settings.enable_entity_jump")
+				.define("enableEntityJump", true);
+		ENTITY_JUMP_REACH = builder.comment("Maximum gap between hitboxes for an entity jump, in blocks (default: 0.6)")
+				.translation(ParkourMod.MODID + ".configuration.locomotion_settings.entity_jump_reach")
+				.defineInRange("entityJumpReach", 0.6, 0.1, 2.0);
 
 		// 启用全向疾跑功能？
 		ENABLE_OMNI_SPRINT =
@@ -367,6 +385,9 @@ public class ParkourConfig {
 		removeSpeedLimits = REMOVE_SPEED_LIMITS.get();
 
 		enableMoveSpeedIncrease = ENABLE_MOVE_SPEED_INCREASE.get();
+		enableEntityWalking = ENABLE_ENTITY_WALKING.get();
+		enableEntityJump = ENABLE_ENTITY_JUMP.get();
+		entityJumpReach = ENTITY_JUMP_REACH.get();
 		enableOmniSprint = ENABLE_OMNI_SPRINT.get();
 		enableCrawl = ENABLE_CRAWL.get();
 		enableSlide = ENABLE_SLIDE.get();

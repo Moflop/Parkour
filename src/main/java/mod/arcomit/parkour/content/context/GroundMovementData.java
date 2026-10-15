@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mod.arcomit.parkour.content.mechanic.entitysupport.EntitySupportMotion;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -43,6 +44,8 @@ public class GroundMovementData {
 	private int slideCooldown = 0;
 	/** 落地翻滚窗口（tick） */
 	private int landingRollWindow = 0;
+	/** 本地实体支撑跟随，不参与存档、网络快照或 copyFrom。 */
+	private final transient EntitySupportMotion entitySupport = new EntitySupportMotion();
 
 	public void copyFrom(GroundMovementData other) {
 		this.slideCooldown = other.slideCooldown;

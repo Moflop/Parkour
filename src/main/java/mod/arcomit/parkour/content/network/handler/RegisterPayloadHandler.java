@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.content.network.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.action.entityjump.network.EntityJumpC2SPayload;
 import mod.arcomit.parkour.content.action.speedvaultjump.network.SpeedVaultJumpC2SPayload;
 import mod.arcomit.parkour.content.action.supportwalljump.network.SupportWallJumpC2SPayload;
 import mod.arcomit.parkour.content.action.swimmingboost.network.UseSwimmingBoostC2SPayload;
@@ -34,6 +35,9 @@ public class RegisterPayloadHandler {
 	@SubscribeEvent
 	public static void register(RegisterPayloadHandlersEvent event) {
 		final PayloadRegistrar registrar = event.registrar("1");
+
+		registrar.playToServer(EntityJumpC2SPayload.TYPE, EntityJumpC2SPayload.STREAM_CODEC,
+				(payload, context) -> EntityJumpC2SPayload.Server.handle(payload, context));
 
 		registrar.playToServer(SetLandingRollWindowC2SPayload.TYPE,
 				SetLandingRollWindowC2SPayload.STREAM_CODEC,

@@ -63,12 +63,14 @@ public abstract class LivingEntityMixin extends Entity {
 		Player player = (Object) this instanceof Player value ? value : null;
 		ArmhangTravelGuard.Snapshot before = player == null ? null : ArmhangTravelGuard.begin(player);
 		if (player != null) parkour$sprintClimb.beginTravel(player);
+		if (player != null) ParkourContext.get(player).ground().getEntitySupport().beforeTravel(player);
 		try {
 			original.call(input);
 		} finally {
 			if (player != null) {
 				ArmhangTravelGuard.finish(player, before);
 				parkour$sprintClimb.finishTravel(player);
+				ParkourContext.get(player).ground().getEntitySupport().afterTravel(player);
 			}
 		}
 	}

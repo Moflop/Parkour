@@ -79,6 +79,9 @@ public class JumpData {
 	/** 速过自然结束后的接跳窗口，双端各自计时，不参与存档或网络快照 */
 	private transient int speedVaultJumpWindow = 0;
 
+	/** 本次腾空是否已借实体二段跳；由双端实际落地清除，不从网络快照恢复。 */
+	private transient boolean entityJumpUsed = false;
+
 	// ---- Direction 缓存（惰性加载，仅对外有引用的三种类型） ----
 	private transient Direction lastViewJump;
 	private transient Direction lastUpJump;
