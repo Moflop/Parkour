@@ -173,7 +173,7 @@ public final class DynamicSurfaceMotion {
 		TagKey<Block> skip = ParkourTags.Blocks.COMMON_IGNORED_BLOCKS;
 		AABB box;
 		if (state instanceof ArmhangState) {
-			skip = ParkourTags.Blocks.SCAFFOLDING_BLOCKS;
+			skip = ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS;
 			if (ArmhangEyeSensor.isValidCollision(player, direction)) {
 				box = ArmhangEyeSensor.getBoxes(player, direction).getFirst();
 			} else if (ArmhangTopSensor.isValidCollision(player, direction)) {

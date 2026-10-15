@@ -1,12 +1,10 @@
 package mod.arcomit.parkour.core.client.animation.player.modifier;
 
 import com.zigythebird.playeranimcore.animation.AnimationData;
-import com.zigythebird.playeranimcore.animation.RawAnimation;
 import com.zigythebird.playeranimcore.animation.layered.AnimationSnapshot;
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
 import com.zigythebird.playeranimcore.bones.AdvancedBoneSnapshot;
 import com.zigythebird.playeranimcore.bones.AdvancedPlayerAnimBone;
-import com.zigythebird.playeranimcore.bones.IBoneEnabled;
 import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
 import com.zigythebird.playeranimcore.easing.EasingType;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
@@ -51,25 +49,11 @@ public class ImmediateFadeOutModifier extends AbstractModifier {
 
 			AdvancedBoneSnapshot snap = new AdvancedBoneSnapshot(snapshotBone);
 
-			// 核心修复：从 baseBone 同步通道状态
-			if (baseBone instanceof IBoneEnabled enabledBone) {
-				snap.positionXEnabled = enabledBone.isPositionXEnabled();
-				snap.positionYEnabled = enabledBone.isPositionYEnabled();
-				snap.positionZEnabled = enabledBone.isPositionZEnabled();
-				snap.rotXEnabled = enabledBone.isRotXEnabled();
-				snap.rotYEnabled = enabledBone.isRotYEnabled();
-				snap.rotZEnabled = enabledBone.isRotZEnabled();
-				snap.scaleXEnabled = enabledBone.isScaleXEnabled();
-				snap.scaleYEnabled = enabledBone.isScaleYEnabled();
-				snap.scaleZEnabled = enabledBone.isScaleZEnabled();
-				snap.bendEnabled = enabledBone.isBendEnabled();
-			} else {
-				// 兜底处理
-				snap.positionXEnabled = snap.positionYEnabled = snap.positionZEnabled = true;
-				snap.rotXEnabled = snap.rotYEnabled = snap.rotZEnabled = true;
-				snap.scaleXEnabled = snap.scaleYEnabled = snap.scaleZEnabled = true;
-				snap.bendEnabled = true;
-			}
+			// 程序化握姿也写入位置和缩放，不能只复制 JSON 中启用的通道。
+			snap.positionXEnabled = snap.positionYEnabled = snap.positionZEnabled = true;
+			snap.rotXEnabled = snap.rotYEnabled = snap.rotZEnabled = true;
+			snap.scaleXEnabled = snap.scaleYEnabled = snap.scaleZEnabled = true;
+			snap.bendEnabled = true;
 
 			snapshots.put(boneName, snap);
 		}
@@ -95,10 +79,13 @@ public class ImmediateFadeOutModifier extends AbstractModifier {
 		super.tick(state);
 		this.time++;
 		if (this.time >= this.fadeTicks) {
-			if (this.getController() != null) {
-				this.getController().triggerAnimation(RawAnimation.begin());
-			}
+			if (this.getController() instanceof ParkourAnimationController controller) controller.finishAnimation();
 		}
+	}
+
+	@Override
+	public boolean canRemove() {
+		return this.time >= this.fadeTicks;
 	}
 
 	@Override

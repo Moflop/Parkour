@@ -112,5 +112,12 @@
   "parkour.subtitle.armhang": "Armhang sound",
   "parkour.subtitle.speed_vault": "Speed vault sound",
   "message.parkour.enabled": "Parkour Mode: Enabled",
-  "message.parkour.disabled": "Parkour Mode: Disabled"
+  "message.parkour.disabled": "Parkour Mode: Disabled",
+	"block.parkour.horizontal_bar": "Parkour Horizontal Bar",
+	"parkour.configuration.bar_swing_settings": "Bar Swing Settings",
+	"parkour.configuration.bar_swing_settings.enable_bar_swing": "Enable Bar Swing",
+	"parkour.configuration.bar_swing_settings.jump_strength": "Bar Release Jump Strength",
+	"parkour.configuration.client_settings.bar_swing_camera": "Bar Swing Camera Pitch",
+	"item.parkour.horizontal_bar.grab": "Jump toward the bar to grab. Jump again to launch; sneak to let go.",
+	"item.parkour.horizontal_bar.swing": "Forward builds swing; backward brakes. Connect bars horizontally."
 }

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
+import mod.arcomit.parkour.content.behavior.barswing.BarSwingState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
 import mod.arcomit.parkour.content.init.ParkourAttachmentTypes;
@@ -70,6 +71,13 @@ public abstract class LocalPlayerMixin extends LivingEntity {
 		if (stateData.getState() instanceof SlideState) {
 			cir.setReturnValue(false);
 		}
+	}
+
+	// The native auto-crouch probe still tests a full standing body under the rod.
+	// Hanging uses its own reduced dimensions and must not inherit its input/model offset.
+	@ModifyReturnValue(method = "isCrouching", at = @At("RETURN"))
+	private boolean parkour$barSwingDoesNotAutoCrouch(boolean original) {
+		return original && !(ParkourContext.get((Player) (Object) this).state().getState() instanceof BarSwingState);
 	}
 
 	/**

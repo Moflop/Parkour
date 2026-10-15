@@ -75,6 +75,9 @@ public final class CreateCollisionProvider implements DynamicCollisionProvider {
 		}
 
 		@Override
+		public java.util.UUID networkId() { return entity.getUUID(); }
+
+		@Override
 		public boolean isValid() {
 			return entity.isAlive() && entity.collisionEnabled()
 					&& entity.getContraption() == contraption && !contraption.disassembled

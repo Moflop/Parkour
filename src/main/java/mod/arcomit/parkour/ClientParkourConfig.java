@@ -20,6 +20,8 @@ public class ClientParkourConfig {
 
 	public static ModConfigSpec.BooleanValue ENABLE_PARKOUR;
 	public static boolean enableParkour;
+	public static ModConfigSpec.BooleanValue BAR_SWING_CAMERA;
+	public static boolean barSwingCamera;
 
 	static {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -33,6 +35,9 @@ public class ClientParkourConfig {
 				.translation(ParkourMod.MODID + ".configuration.client_settings.enable_parkour")
 				.define("enableParkour", true);
 
+		BAR_SWING_CAMERA = builder.comment("Subtle first-person pitch while swinging on bars (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.client_settings.bar_swing_camera")
+				.define("barSwingCamera", true);
 		builder.pop();
 		SPEC = builder.build();
 	}
@@ -62,5 +67,6 @@ public class ClientParkourConfig {
 			return;
 
 		enableParkour = ENABLE_PARKOUR.get();
+		barSwingCamera = BAR_SWING_CAMERA.get();
 	}
 }

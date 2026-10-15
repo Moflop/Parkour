@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.client.init;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.barswing.client.BarSwingPlayerAnimModifier;
+import mod.arcomit.parkour.content.behavior.barswing.client.BarSwingJumpPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.slide.client.animation.player.SlidePlayerAnimModifier;
@@ -112,6 +114,13 @@ public class ClientParkourPlayerAnimations {
 						)
 				)
 		);
+
+		PLAYER_ANIMATIONS.put(ParkourAnimationIds.BAR_SWING,
+				new PlayerAnimation(ParkourAnimationIds.BAR_SWING, 4, 4,
+						(player, variant) -> List.of(new BarSwingPlayerAnimModifier(player)), true));
+		PLAYER_ANIMATIONS.put(ParkourAnimationIds.BAR_SWING_JUMP,
+				new PlayerAnimation(ParkourAnimationIds.BAR_SWING_JUMP, 2, 3,
+						(player, variant) -> List.of(new BarSwingJumpPlayerAnimModifier(player)), true));
 
 		PLAYER_ANIMATIONS.put(ParkourAnimationIds.SPEED_VAULT_LEFT,
 				new PlayerAnimation(

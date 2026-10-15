@@ -1,6 +1,8 @@
 package mod.arcomit.parkour.content.network.handler;
 
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.content.behavior.barswing.network.BarSwingJumpC2SPayload;
+import mod.arcomit.parkour.content.behavior.barswing.network.SyncBarSwingS2CPayload;
 import mod.arcomit.parkour.content.action.entityjump.network.EntityJumpC2SPayload;
 import mod.arcomit.parkour.content.action.speedvaultjump.network.SpeedVaultJumpC2SPayload;
 import mod.arcomit.parkour.content.action.supportwalljump.network.SupportWallJumpC2SPayload;
@@ -35,6 +37,9 @@ public class RegisterPayloadHandler {
 	@SubscribeEvent
 	public static void register(RegisterPayloadHandlersEvent event) {
 		final PayloadRegistrar registrar = event.registrar("1");
+
+		registrar.playToServer(BarSwingJumpC2SPayload.TYPE, BarSwingJumpC2SPayload.STREAM_CODEC, BarSwingJumpC2SPayload::handle);
+		registrar.playToClient(SyncBarSwingS2CPayload.TYPE, SyncBarSwingS2CPayload.STREAM_CODEC, SyncBarSwingS2CPayload::handle);
 
 		registrar.playToServer(EntityJumpC2SPayload.TYPE, EntityJumpC2SPayload.STREAM_CODEC,
 				(payload, context) -> EntityJumpC2SPayload.Server.handle(payload, context));

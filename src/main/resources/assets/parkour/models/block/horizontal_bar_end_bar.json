@@ -1,0 +1,9 @@
+{
+	"parent": "minecraft:block/block",
+	"textures": {
+		"0": "parkour:block/horizontal_bar",
+		"1": "parkour:block/horizontal_bar_grip",
+		"particle": "parkour:block/horizontal_bar"
+	},
+	"elements": []
+}

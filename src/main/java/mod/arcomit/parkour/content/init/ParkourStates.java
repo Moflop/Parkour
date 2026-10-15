@@ -5,6 +5,7 @@ import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.behavior.backstep.BackstepState;
 import mod.arcomit.parkour.content.behavior.base.DefaultState;
+import mod.arcomit.parkour.content.behavior.barswing.BarSwingState;
 import mod.arcomit.parkour.content.behavior.crawl.CrawlState;
 import mod.arcomit.parkour.content.behavior.landingroll.LandingRollState;
 import mod.arcomit.parkour.content.behavior.slide.SlideState;
@@ -45,6 +46,9 @@ public class ParkourStates {
 
 	public static final DeferredHolder<IParkourState, DefaultState> DEFAULT =
 			PARKOUR_STATES.register("default", DefaultState::new);
+
+	public static final DeferredHolder<IParkourState, BarSwingState> BAR_SWING =
+			PARKOUR_STATES.register("bar_swing", BarSwingState::new);
 
 	public static final DeferredHolder<IParkourState, VanillaState> VANILLA =
 			PARKOUR_STATES.register("vanilla", VanillaState::new);

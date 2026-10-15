@@ -51,6 +51,17 @@ public final class DynamicCollisions {
 		return !Providers.ALL.isEmpty();
 	}
 
+	/** Live frames used by attachments such as swing bars; integrations remain optional. */
+	public static List<DynamicCollisionSource> sources(Level level, AABB bounds) {
+		List<DynamicCollisionSource> result = new ArrayList<>();
+		for (DynamicCollisionProvider provider : Providers.ALL) {
+			for (DynamicCollisionSource source : provider.sources(level, bounds)) {
+				if (source.isValid()) result.add(source);
+			}
+		}
+		return result;
+	}
+
 	/** Align server wall queries with Create's current pose, including packet-time queries. */
 	public static void resolveServerContact(Player player) {
 		if (Providers.CREATE && player instanceof ServerPlayer && CreateMovementCompat.isEnabled(player)) {

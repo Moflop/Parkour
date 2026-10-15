@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.content.mechanic.entitysupport.EntitySupport;
+import mod.arcomit.parkour.content.behavior.barswing.BarSwingState;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +25,9 @@ public class ServerGamePacketListenerImplMixin {
 	/** 站在真实实体顶部属于有效支撑，不能被原版的纯方块悬空检测踢出。 */
 	@ModifyReturnValue(method = "noBlocksAround", at = @At("RETURN"))
 	private boolean parkour$entityGround(boolean original, Entity entity) {
-		return original && !(entity instanceof Player player && EntitySupport.findSupport(player) != null);
+		return original && !(entity instanceof Player player && (EntitySupport.findSupport(player) != null
+				|| ParkourContext.get(player).state().getState() instanceof BarSwingState state
+				&& state.isValid(player, ParkourContext.get(player))));
 	}
 
 	@WrapOperation(

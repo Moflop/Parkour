@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class ArmhangEyeSensor {
 	private static final TagKey<Block> IGNORED_BLOCKS_TAG =
-			ParkourTags.Blocks.SCAFFOLDING_BLOCKS;
+			ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS;
 
 	/**
 	 * 获取指定方向经缓存更新的碰撞检测盒列表。

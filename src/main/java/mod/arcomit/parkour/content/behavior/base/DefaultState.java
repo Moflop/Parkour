@@ -41,6 +41,8 @@ public class DefaultState extends AbstractParkourState {
 						ParkourInputActions.SLIDE, this::canBackstep),
 
 				// Tick类转移 (注意：WallRun 和 WallClimb 作为高优先级判定放在前面)
+				IParkourStateTransition.onLocalTick(ParkourStates.BAR_SWING::get,
+						(player, context) -> !isShiftKeyDown(player)),
 				IParkourStateTransition.onLocalTick(ParkourStates.ARMHANG::get,
 						this::canArmHang),
 				IParkourStateTransition.onLocalTick(ParkourStates.WALL_RUN::get,

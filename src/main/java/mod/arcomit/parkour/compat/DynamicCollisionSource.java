@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.function.UnaryOperator;
 import java.util.function.Predicate;
+import java.util.UUID;
 
 /** A live structure transform. Positions and collision queries use world coordinates. */
 public interface DynamicCollisionSource {
@@ -18,6 +19,9 @@ public interface DynamicCollisionSource {
 	boolean isValid();
 	Vec3 toLocal(Vec3 world);
 	Vec3 toWorld(Vec3 local);
+
+	/** Stable reference for server-authored attachments shown by other clients. */
+	default UUID networkId() { return null; }
 
 	/** Visual pose for this frame; collision and movement keep using the logical pose. */
 	default Vec3 toRenderWorld(Vec3 local, float partialTick) {

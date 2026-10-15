@@ -32,5 +32,8 @@ public class ParkourTags {
 				createBlockTag("common_ignored_blocks");
 		public static final TagKey<Block> SCAFFOLDING_BLOCKS =
 				createBlockTag("scaffolding_blocks");
+		/** 垂挂探头忽略的设施；横杆由专用摆荡状态接管。 */
+		public static final TagKey<Block> ARMHANG_IGNORED_BLOCKS =
+				createBlockTag("armhang_ignored_blocks");
 	}
 }

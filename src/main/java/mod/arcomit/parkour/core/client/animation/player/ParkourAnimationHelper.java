@@ -5,6 +5,8 @@ import com.zigythebird.playeranim.animation.PlayerAnimResources;
 import com.zigythebird.playeranim.api.PlayerAnimationAccess;
 import com.zigythebird.playeranimcore.animation.Animation;
 import com.zigythebird.playeranimcore.animation.RawAnimation;
+import com.zigythebird.playeranimcore.api.firstPerson.FirstPersonConfiguration;
+import com.zigythebird.playeranimcore.api.firstPerson.FirstPersonMode;
 import mod.arcomit.parkour.content.client.handler.ClientParkourSetupHandler;
 import mod.arcomit.parkour.content.client.init.ClientParkourPlayerAnimations;
 import mod.arcomit.parkour.content.context.ParkourContext;
@@ -43,9 +45,9 @@ public class ParkourAnimationHelper {
 		if (animData == null)
 			return;
 
-		controller.playAnimation(RawAnimation.begin().thenLoop(animData),
+		if (controller.playAnimation(RawAnimation.begin().thenLoop(animData),
 				ParkourAnimType.STATE, anim.fadeInTicks,
-				anim.getAnimationModifiers(player, state.getAnimVariant()));
+				anim.getAnimationModifiers(player, state.getAnimVariant()))) configureFirstPerson(controller, anim);
 	}
 
 	public static void playActionAnim(AbstractClientPlayer player, ResourceLocation animId) {
@@ -63,15 +65,22 @@ public class ParkourAnimationHelper {
 		if (animData == null)
 			return;
 
-		controller.playFadeOutAnim(
+		if (!controller.playFadeOutAnim(
 				RawAnimation.begin().then(animData, Animation.LoopType.PLAY_ONCE),
 				ParkourAnimType.ACTION, anim.fadeInTicks, anim.fadeOutTicks,
-				anim.getAnimationModifiers(player, 0));
+				anim.getAnimationModifiers(player, 0))) return;
+		configureFirstPerson(controller, anim);
 
 		if (player.isLocalPlayer()) {
 			PacketDistributor.sendToServer(
 					new RequestPlayActionAnimC2SPayload(animId));
 		}
+	}
+
+	private static void configureFirstPerson(ParkourAnimationController controller, PlayerAnimation animation) {
+		controller.setFirstPersonMode(animation.firstPerson ? FirstPersonMode.THIRD_PERSON_MODEL : FirstPersonMode.NONE);
+		controller.setFirstPersonConfiguration(new FirstPersonConfiguration(true, true, false, false));
+		controller.setFirstPersonTransitionLength(animation.firstPerson ? 3 : 0);
 	}
 
 	private static ParkourAnimationController getController(AbstractClientPlayer player) {

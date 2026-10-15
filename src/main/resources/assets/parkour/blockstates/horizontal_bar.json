@@ -1,0 +1,302 @@
+{
+	"multipart": [
+		{
+			"when": {
+				"axis": "x"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "open"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_open",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "bar"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_bar",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "full"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_full",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "fence"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_fence",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "wall"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "wall_side"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall_side",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"positive": "pane"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_pane",
+				"y": 0
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "open"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_open",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "bar"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_bar",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "full"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_full",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "fence"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_fence",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "wall"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "wall_side"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall_side",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "x",
+				"negative": "pane"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_pane",
+				"y": 180
+			}
+		},
+		{
+			"when": {
+				"axis": "z"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "open"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_open",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "bar"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_bar",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "full"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_full",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "fence"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_fence",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "wall"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "wall_side"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall_side",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"positive": "pane"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_pane",
+				"y": 90
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "open"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_open",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "bar"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_bar",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "full"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_full",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "fence"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_fence",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "wall"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "wall_side"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_wall_side",
+				"y": 270
+			}
+		},
+		{
+			"when": {
+				"axis": "z",
+				"negative": "pane"
+			},
+			"apply": {
+				"model": "parkour:block/horizontal_bar_end_pane",
+				"y": 270
+			}
+		}
+	]
+}

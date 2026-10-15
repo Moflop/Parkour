@@ -62,6 +62,9 @@ public final class SableCollisionProvider implements DynamicCollisionProvider {
 		}
 
 		@Override
+		public java.util.UUID networkId() { return subLevel.getUniqueId(); }
+
+		@Override
 		public boolean isValid() {
 			return !subLevel.isRemoved();
 		}

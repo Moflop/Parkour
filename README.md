@@ -18,6 +18,7 @@
 - 墙跑；
 - 墙爬；
 - 垂挂；
+- 横杆摆荡与借势跳跃；
 - 蹬墙跳/撑墙跳；
 - 落地翻滚；
 - 移动机制改革；
@@ -93,6 +94,7 @@
 - Wall Running;
 - Wall Climbing;
 - Arm Hanging;
+- Horizontal Bar Swinging and Release Jumps;
 - Wall Jumping;
 - Landing Roll;
 - Movement Mechanics Overhaul;

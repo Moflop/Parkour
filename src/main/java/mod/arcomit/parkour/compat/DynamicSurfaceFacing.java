@@ -106,7 +106,7 @@ public final class DynamicSurfaceFacing {
 		AABB box;
 		TagKey<Block> skip;
 		if (hanging) {
-			skip = ParkourTags.Blocks.SCAFFOLDING_BLOCKS;
+			skip = ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS;
 			if (ArmhangEyeSensor.isValidCollision(player, direction)) {
 				box = ArmhangEyeSensor.getBoxes(player, direction).getFirst();
 			} else if (ArmhangTopSensor.isValidCollision(player, direction)) {

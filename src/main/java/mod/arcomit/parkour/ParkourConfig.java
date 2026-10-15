@@ -74,6 +74,8 @@ public class ParkourConfig {
 	public static ModConfigSpec.BooleanValue ENABLE_SUPPORT_WALL_JUMP;
 	public static ModConfigSpec.BooleanValue ENABLE_SPEED_VAULT;
 	public static ModConfigSpec.BooleanValue ENABLE_SPEED_VAULT_JUMP;
+	public static ModConfigSpec.BooleanValue ENABLE_BAR_SWING;
+	public static ModConfigSpec.DoubleValue BAR_SWING_JUMP_STRENGTH;
 	public static ModConfigSpec.BooleanValue ENABLE_WALL_CLIMB;
 	public static ModConfigSpec.IntValue WALL_CLIMB_DURATION;
 	public static ModConfigSpec.DoubleValue WALL_CLIMB_SPEED;
@@ -120,6 +122,8 @@ public class ParkourConfig {
 	public static boolean enableSupportWallJump;
 	public static boolean enableSpeedVault;
 	public static boolean enableSpeedVaultJump;
+	public static boolean enableBarSwing;
+	public static double barSwingJumpStrength;
 	public static boolean enableWallClimb;
 	public static int wallClimbDuration;
 	public static double wallClimbSpeed;
@@ -367,6 +371,14 @@ public class ParkourConfig {
 
 		builder.pop();
 
+		builder.comment("Horizontal bar swinging").push("bar_swing_settings");
+		ENABLE_BAR_SWING = builder.comment("Automatically catch horizontal bars while airborne (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.bar_swing_settings.enable_bar_swing")
+				.define("enableBarSwing", true);
+		BAR_SWING_JUMP_STRENGTH = builder.comment("Bar release jump strength multiplier (default: 1.0)")
+				.translation(ParkourMod.MODID + ".configuration.bar_swing_settings.jump_strength")
+				.defineInRange("barSwingJumpStrength", 1.0, 0.5, 1.5);
+		builder.pop();
 		SPEC = builder.build();
 	}
 
@@ -428,6 +440,8 @@ public class ParkourConfig {
 		armhangResetWallClimb = ARMHANG_RESET_WALL_CLIMB.get();
 		enableSpeedVault = ENABLE_SPEED_VAULT.get();
 		enableSpeedVaultJump = ENABLE_SPEED_VAULT_JUMP.get();
+		enableBarSwing = ENABLE_BAR_SWING.get();
+		barSwingJumpStrength = BAR_SWING_JUMP_STRENGTH.get();
 		enableWallClimb = ENABLE_WALL_CLIMB.get();
 		wallClimbDuration = WALL_CLIMB_DURATION.get();
 		wallClimbSpeed = WALL_CLIMB_SPEED.get();

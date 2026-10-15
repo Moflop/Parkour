@@ -89,7 +89,7 @@ public class ServerArmhangSound {
 
 		if (blockState.isAir()) {
 			DynamicSurfaceSounds.playStepSound(player, contactBox,
-					ParkourTags.Blocks.SCAFFOLDING_BLOCKS, SOUND_VOLUME_MULTIPLIER);
+					ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS, SOUND_VOLUME_MULTIPLIER);
 			return;
 		}
 

@@ -1,0 +1,80 @@
+{
+	"parent": "minecraft:block/block",
+	"textures": {
+		"0": "parkour:block/horizontal_bar",
+		"1": "parkour:block/horizontal_bar_grip",
+		"particle": "parkour:block/horizontal_bar"
+	},
+	"elements": [
+		{
+			"name": "open_collar",
+			"from": [
+				14,
+				6,
+				6
+			],
+			"to": [
+				16,
+				10,
+				10
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						4,
+						4
+					],
+					"texture": "#1"
+				}
+			}
+		}
+	]
+}

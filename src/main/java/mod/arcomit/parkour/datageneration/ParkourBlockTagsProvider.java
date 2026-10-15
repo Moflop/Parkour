@@ -1,6 +1,7 @@
 package mod.arcomit.parkour.datageneration;
 
 import mod.arcomit.parkour.content.init.ParkourTags;
+import mod.arcomit.parkour.content.init.ParkourBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -50,5 +51,7 @@ public class ParkourBlockTagsProvider extends BlockTagsProvider {
 				.addTag(ParkourTags.Blocks.CLIMBABLE);
 		this.tag(ParkourTags.Blocks.COMMON_IGNORED_BLOCKS).addTag(BlockTags.CLIMBABLE);
 		this.tag(ParkourTags.Blocks.SCAFFOLDING_BLOCKS).add(Blocks.SCAFFOLDING);
+		this.tag(ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS)
+				.addTag(ParkourTags.Blocks.SCAFFOLDING_BLOCKS).add(ParkourBlocks.HORIZONTAL_BAR.get());
 	}
 }

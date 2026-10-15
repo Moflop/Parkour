@@ -10,6 +10,8 @@
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "BarSwingJumpModelMixin",
+    "EntityViewMixin",
     "CameraMixin",
     "InputMixin",
     "LocalPlayerMixin"

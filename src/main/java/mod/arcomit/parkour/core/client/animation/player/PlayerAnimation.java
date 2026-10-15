@@ -27,6 +27,7 @@ public class PlayerAnimation {
 	public final int fadeOutTicks;
 
 	public final PlayerAnimModifierProvider modifierProvider;
+	public final boolean firstPerson;
 
 	/**
 	 * @param animName 动画资源标识符，不可为 null，需在 PAL 侧有对应的动画文件
@@ -41,10 +42,17 @@ public class PlayerAnimation {
 	 * 全参数构造器（支持传入自定义 Modifier 方法）
 	 */
 	public PlayerAnimation(ResourceLocation animName, int fadeInTicks, int fadeOutTicks, PlayerAnimModifierProvider modifierProvider) {
+		this(animName, fadeInTicks, fadeOutTicks, modifierProvider, false);
+	}
+
+	/** 选择性启用 PAL 第一人称双臂，默认保留原有动画的渲染方式。 */
+	public PlayerAnimation(ResourceLocation animName, int fadeInTicks, int fadeOutTicks,
+			PlayerAnimModifierProvider modifierProvider, boolean firstPerson) {
 		this.animName = animName;
 		this.fadeInTicks = fadeInTicks;
 		this.fadeOutTicks = fadeOutTicks;
 		this.modifierProvider = modifierProvider;
+		this.firstPerson = firstPerson;
 	}
 
 	// 包装一个快捷调用的方法

@@ -1,0 +1,10 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "building",
+	"pattern": ["NIN"],
+	"key": {
+		"N": {"item": "minecraft:iron_nugget"},
+		"I": {"item": "minecraft:iron_ingot"}
+	},
+	"result": {"id": "parkour:horizontal_bar", "count": 4}
+}

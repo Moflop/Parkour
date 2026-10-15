@@ -95,7 +95,7 @@ public final class ArmhangTravelGuard {
 			box = ArmhangTopSensor.getBoxes(player, direction).getFirst();
 		} else return false;
 		return source.findCollision(box, source.sensorTransform(player), player,
-				ParkourTags.Blocks.SCAFFOLDING_BLOCKS) != null;
+				ParkourTags.Blocks.ARMHANG_IGNORED_BLOCKS) != null;
 	}
 
 	private static boolean finite(Vec3 vector) {

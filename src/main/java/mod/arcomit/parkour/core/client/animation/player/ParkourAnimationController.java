@@ -2,6 +2,8 @@ package mod.arcomit.parkour.core.client.animation.player;
 
 import com.zigythebird.playeranim.animation.PlayerAnimationController;
 import com.zigythebird.playeranimcore.animation.RawAnimation;
+import com.zigythebird.playeranimcore.animation.AnimationData;
+import com.zigythebird.playeranimcore.api.firstPerson.FirstPersonMode;
 import com.zigythebird.playeranimcore.animation.layered.AnimationSnapshot;
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractFadeModifier;
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
@@ -47,7 +49,12 @@ public class ParkourAnimationController extends PlayerAnimationController {
 				PlayerAnimBone snapshotBone = new PlayerAnimBone(baseBone.getName());
 				this.get3DTransform(snapshotBone);
 				// 存入全身快照
-				snapshots.put(baseBone.getName(), new AdvancedBoneSnapshot(snapshotBone));
+				var snapshot = new AdvancedBoneSnapshot(snapshotBone);
+				snapshot.positionXEnabled = snapshot.positionYEnabled = snapshot.positionZEnabled = true;
+				snapshot.rotXEnabled = snapshot.rotYEnabled = snapshot.rotZEnabled = true;
+				snapshot.scaleXEnabled = snapshot.scaleYEnabled = snapshot.scaleZEnabled = true;
+				snapshot.bendEnabled = true;
+				snapshots.put(baseBone.getName(), snapshot);
 			}
 			fadeModifier.setTransitionAnimation(new AnimationSnapshot(snapshots));
 		}
@@ -79,11 +86,11 @@ public class ParkourAnimationController extends PlayerAnimationController {
 	/**
 	 * 一般用于播放持续的状态动画
 	 */
-	public void playAnimation(RawAnimation rawAnimation, ParkourAnimType animType, int fadeTicks, Iterable<? extends AbstractModifier> modifiers) {
+	public boolean playAnimation(RawAnimation rawAnimation, ParkourAnimType animType, int fadeTicks, Iterable<? extends AbstractModifier> modifiers) {
 		cleanUpInactiveState();
 
 		if (this.isActive() && !animType.canOverride(this.currentType)) {
-			return;
+			return false;
 		}
 
 		applyFadeTransition(fadeTicks);
@@ -91,32 +98,64 @@ public class ParkourAnimationController extends PlayerAnimationController {
 		this.triggerAnimation(rawAnimation);
 
 		this.currentType = animType;
+		return true;
 	}
 
 	/**
 	 * 一般用于播放一次性的动作动画，播放完后会自动淡出
 	 */
-	public void playFadeOutAnim(RawAnimation rawAnimation, ParkourAnimType animType, int fadeTicks, int fadeOutTicks, Iterable<? extends AbstractModifier> modifiers) {
-		this.playAnimation(rawAnimation, animType, fadeTicks, modifiers);
+	public boolean playFadeOutAnim(RawAnimation rawAnimation, ParkourAnimType animType, int fadeTicks, int fadeOutTicks, Iterable<? extends AbstractModifier> modifiers) {
+		if (!this.playAnimation(rawAnimation, animType, fadeTicks, modifiers)) return false;
 		if (fadeOutTicks > 0) {
 			this.addModifierLast(new FadeOutModifier(fadeOutTicks));
 		}
+		return true;
 	}
 
 	public void stopAnimation(int fadeTicks) {
 		if (this.currentType == ParkourAnimType.ACTION) return;
+		// 同一默认状态可能同步两次，不能重新截取快照或重新启动淡出。
+		if (this.currentType == null && this.isActive()) return;
 
 		if (this.isActive()) {
 			if (fadeTicks <= 0) {
-				this.removeAllModifiers();
-				this.triggerAnimation(RawAnimation.begin());
-				this.currentType = null;
+				finishAnimation();
 				return;
 			}
 			this.addModifierLast(new ImmediateFadeOutModifier(this, fadeTicks));
 		}
 
 		this.currentType = null;
+		if (!this.isActive()) finishAnimation();
+	}
+
+	/** 结束当前播放所有权；PAL 会把刚触发的空动画也标记为 RUNNING。 */
+	public void finishAnimation() {
+		this.stopTriggeredAnimation();
+		this.stop();
+		this.removeAllModifiers();
+		this.currentType = null;
+		resetFirstPersonMode();
+	}
+
+	@Override
+	public void tick(AnimationData state) {
+		super.tick(state);
+		// 未渲染的远端玩家也必须按 tick 结束动作，不能依赖下一次 setupAnim。
+		if (!this.isActive() || this.currentType == ParkourAnimType.ACTION && this.getCurrentAnimation() != null
+				&& this.getAnimationTicks() >= this.getCurrentAnimation().animation().length()) finishAnimation();
+	}
+
+	@Override
+	public void setupAnim(AnimationData state) {
+		super.setupAnim(state);
+		if (!this.isActive()) finishAnimation();
+	}
+
+	/** 清除一次性动作或状态动画设置的第一人称模型渲染模式。 */
+	public void resetFirstPersonMode() {
+		this.setFirstPersonMode(FirstPersonMode.NONE);
+		this.setFirstPersonTransitionLength(0);
 	}
 
 	public Map<String, AdvancedPlayerAnimBone> getBone() {
