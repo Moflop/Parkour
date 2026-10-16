@@ -113,11 +113,11 @@
   "parkour.subtitle.speed_vault": "速过音效",
   "message.parkour.enabled": "跑酷模式：已开启",
   "message.parkour.disabled": "跑酷模式：已关闭",
-	"block.parkour.horizontal_bar": "跑酷横杆",
-	"parkour.configuration.bar_swing_settings": "横杆摆荡设置",
-	"parkour.configuration.bar_swing_settings.enable_bar_swing": "启用横杆摆荡",
-	"parkour.configuration.bar_swing_settings.jump_strength": "横杆跃出力度",
-	"parkour.configuration.client_settings.bar_swing_camera": "横杆摆荡镜头俯仰",
-	"item.parkour.horizontal_bar.grab": "跳向横杆自动抓握；跳跃键跃出，潜行键松手。",
-	"item.parkour.horizontal_bar.swing": "前进加力，后退刹摆。可水平拼接。"
+  "block.parkour.horizontal_bar": "跑酷横杆",
+  "parkour.configuration.bar_swing_settings": "横杆摆荡设置",
+  "parkour.configuration.bar_swing_settings.enable_bar_swing": "启用横杆摆荡",
+  "parkour.configuration.bar_swing_settings.jump_strength": "横杆跃出力度",
+  "parkour.configuration.client_settings.bar_swing_camera": "横杆摆荡镜头俯仰",
+  "item.parkour.horizontal_bar.grab": "跳向横杆自动抓握；跳跃键跃出，潜行键松手。",
+  "item.parkour.horizontal_bar.swing": "前进加力，后退刹摆。可水平拼接。"
 }

@@ -370,8 +370,9 @@ public class ParkourConfig {
 				.defineInRange("wallClimbSpeed", 0.2, 0.05, 1.0);
 
 		builder.pop();
-
-		builder.comment("Horizontal bar swinging").push("bar_swing_settings");
+		builder.comment("Horizontal bar swinging")
+				.translation(ParkourMod.MODID + ".configuration.bar_swing_settings")
+				.push("bar_swing_settings");
 		ENABLE_BAR_SWING = builder.comment("Automatically catch horizontal bars while airborne (default: true)")
 				.translation(ParkourMod.MODID + ".configuration.bar_swing_settings.enable_bar_swing")
 				.define("enableBarSwing", true);
