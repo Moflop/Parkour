@@ -2,7 +2,7 @@
   "key.parkour.toggle_tutorial": "开启/关闭跑酷教程",
   "message.parkour.tutorial.enabled": "跑酷教程已开启",
   "message.parkour.tutorial.disabled": "跑酷教程已关闭",
-  "parkour.tutorial.toggle": "开启/关闭教程",
+  "parkour.tutorial.toggle": "开启/关闭跑酷教程",
   "parkour.configuration.client_settings.tutorial_hud_position_initialized": "教程位置已初始化",
   "parkour.configuration.client_settings.tutorial_hud_position_initialized.tooltip": "首次启用教程时，将灵活按键显示的默认位置设为左侧居中后自动将该选项设置为true，方便之后保留你自行选择的位置。",
   "parkour.configuration.client_settings.enable_tutorial_prompts": "情境按键教程",

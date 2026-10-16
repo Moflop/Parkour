@@ -5,6 +5,7 @@ import mod.arcomit.parkour.ParkourConstants;
 import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.content.behavior.wallrun.network.BroadcastWallRunDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.wallrun.server.ServerWallRunSound;
 import mod.arcomit.parkour.content.context.JumpData;
 import mod.arcomit.parkour.content.context.ParkourContext;
@@ -20,9 +21,11 @@ import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * 跑墙状态 —— 玩家在竖直墙面上水平跑动。
@@ -88,6 +91,26 @@ public class WallRunState extends AbstractParkourState {
 		JumpData jumpData = context.jump();
 		WallRunPhysics.setupInitialMovement(player, wallMovementData);
 		jumpData.resetLastParallelJump();
+	}
+
+	/** 远程玩家不执行模拟初始化，必须在状态动画广播前同步跑墙方向。 */
+	@Override
+	public void onServerEnter(Player player, ParkourContext context) {
+		Direction movement = context.wall().getRunMove();
+		if (movement != null) {
+			PacketDistributor.sendToPlayersTrackingEntity(player,
+					new BroadcastWallRunDirS2CPayload(player.getId(), movement));
+		}
+	}
+
+	/** 为跑墙途中才开始追踪的玩家补发方向。 */
+	@Override
+	public void onTrackingStart(ServerPlayer tracker, Player target, ParkourContext context) {
+		Direction movement = context.wall().getRunMove();
+		if (movement != null) {
+			PacketDistributor.sendToPlayer(tracker,
+					new BroadcastWallRunDirS2CPayload(target.getId(), movement));
+		}
 	}
 
 	/**

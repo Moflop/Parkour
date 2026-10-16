@@ -123,6 +123,9 @@ dependencies {
 //    //runtimeOnly "curse.maven:reflex-antilag-1197629:6306767"
 //    // Replay
 //    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
+
+    // TACZ
+    implementation "maven.modrinth:OypNE65K:62q6mB5Q"
     // 方便在游戏中修改配置文件
     runtimeOnly "curse.maven:configured-457570:7276577"
 

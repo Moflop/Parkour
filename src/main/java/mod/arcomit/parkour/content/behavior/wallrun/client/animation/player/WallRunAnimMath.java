@@ -37,6 +37,7 @@ public class WallRunAnimMath {
 		// 提前获取墙跑的目标偏航角 (targetYaw) 和香草身体偏航角
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
 		Direction movement = wallMovementData.getRunMove();
+		// 远程实体的方向尚未同步，或退出状态后的淡出仍在渲染时，方向可能为空。
 		if (movement == null) movement = player.getDirection();
 		Direction wall = wallMovementData.getRunCollision();
 		Vec3 targetDirection = Vec3.atLowerCornerOf(movement.getNormal());

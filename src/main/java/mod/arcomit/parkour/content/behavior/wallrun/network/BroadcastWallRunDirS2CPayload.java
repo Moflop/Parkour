@@ -1,7 +1,6 @@
 package mod.arcomit.parkour.content.behavior.wallrun.network;
 
 import mod.arcomit.parkour.ParkourMod;
-import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangDirC2SPayload;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,12 +14,12 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * 服务端广播某个玩家的悬挂方向给所有追踪该玩家的客户端。
+ * 服务端向追踪者同步玩家的跑墙运动方向。
  * <p>
- * 当服务端收到客户端发来的悬挂方向同步 （{@link SyncArmhangDirC2SPayload}）后，通过此包将方向变化广播给 周围的其他玩家，使远程玩家的动画姿态与悬挂方向一致。
+ * 进入跑墙状态时广播方向，并在新追踪者进入视野时补发，使远程玩家的动画朝向与运动方向一致。
  *
  * @param entityId  目标玩家的实体 ID，不可为负数
- * @param direction 新的悬挂方向，不可为 null
+ * @param direction 跑墙运动方向，不可为 null
  * @author Mitok
  * @since 2026-06-08
  */
@@ -42,7 +41,7 @@ public record BroadcastWallRunDirS2CPayload(int entityId, Direction direction)
 
 
 	/**
-	 * 客户端接收处理：为非本地玩家的远程实体更新悬挂方向， 使第三人称视角下其他玩家的悬挂动画朝向正确。
+	 * 客户端接收处理：为远程玩家更新跑墙运动方向，保留本地玩家预测的方向。
 	 */
 	public static class Client {
 		/**
