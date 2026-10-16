@@ -9,6 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
@@ -17,7 +18,7 @@ import org.lwjgl.glfw.GLFW;
 /**
  * 客户端跑酷按键绑定管理。
  *
- * <p>定义并注册所有自定义按键映射（当前仅滑铲键 V），在客户端初始化时通过
+ * <p>定义并注册动作键、跑酷开关和可选的教程开关，在客户端初始化时通过
  * {@link RegisterKeyMappingsEvent} 事件注册到原版按键系统中。
  *
  * @author Mitok
@@ -44,9 +45,17 @@ public class ClientParkourKeyBindings {
 			CATEGORY
 	);
 
+	/** Client-only tutorial preference, available when Smart Key Prompts is installed. */
+	public static final KeyMapping TUTORIAL_KEY = ModList.get().isLoaded("smartkeyprompts") ? new KeyMapping(
+			"key." + ParkourMod.MODID + ".toggle_tutorial",
+			KeyConflictContext.IN_GAME, KeyModifier.CONTROL,
+			InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, CATEGORY
+	) : null;
+
 	@SubscribeEvent
 	public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
 		event.register(SLIDE_KEY);
 		event.register(ENABLE_PARKOUR_KEY);
+		if (TUTORIAL_KEY != null) event.register(TUTORIAL_KEY);
 	}
 }

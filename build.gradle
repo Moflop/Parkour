@@ -126,12 +126,18 @@ dependencies {
     // 方便在游戏中修改配置文件
     runtimeOnly "curse.maven:configured-457570:7276577"
 
+    // Oelib
+    implementation "maven.modrinth:oelib:${oelib_version}"
+    // 灵活按键显示
+    compileOnly "maven.modrinth:smart-key-prompts:${smart_key_prompts_version}"
+    localRuntime "maven.modrinth:smart-key-prompts:${smart_key_prompts_version}"
+
     // 机械动力
-    implementation "curse.maven:create-328085:7963363"
+    implementation "maven.modrinth:create:${create_version}"
     // Sable
-    implementation "curse.maven:sable-1312371:9043865"
+    implementation "maven.modrinth:sable:${sable_version}"
     // 航空学
-    implementation "curse.maven:create-aeronautics-676721:8763471"
+    implementation "maven.modrinth:create-aeronautics:${aeronautics_version}"
 
     // These API types live in the mods' jar-in-jar libraries. Compile against the
     // exact bundled versions; the owning mods supply them at runtime.

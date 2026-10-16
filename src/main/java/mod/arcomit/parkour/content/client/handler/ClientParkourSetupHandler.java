@@ -3,6 +3,7 @@ package mod.arcomit.parkour.content.client.handler;
 import com.zigythebird.playeranim.api.PlayerAnimationFactory;
 import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
+import mod.arcomit.parkour.compat.smartkeyprompts.SmartKeyPromptsCompat;
 import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.slide.client.animation.player.SlidePlayerAnimModifier;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 
@@ -66,6 +68,9 @@ public class ClientParkourSetupHandler {
 		ParkourProxies.GET_CLIENT_CONFIG_PROXY = new ClientGetClientConfigProxyImpl();
 
 		event.enqueueWork(() -> {
+			if (ModList.get().isLoaded("smartkeyprompts")) {
+				SmartKeyPromptsCompat.register();
+			}
 			PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
 					PARKOUR_ANIM_LAYER_ID, PARKOUR_ANIM_LAYER_PRIORITY,
 					(avatar) -> new ParkourAnimationController(avatar,

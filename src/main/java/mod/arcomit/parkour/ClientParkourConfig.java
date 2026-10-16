@@ -22,6 +22,9 @@ public class ClientParkourConfig {
 	public static boolean enableParkour;
 	public static ModConfigSpec.BooleanValue BAR_SWING_CAMERA;
 	public static boolean barSwingCamera;
+	public static ModConfigSpec.BooleanValue ENABLE_TUTORIAL_PROMPTS;
+	public static boolean enableTutorialPrompts;
+	public static ModConfigSpec.BooleanValue TUTORIAL_HUD_POSITION_INITIALIZED;
 
 	static {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -38,6 +41,14 @@ public class ClientParkourConfig {
 		BAR_SWING_CAMERA = builder.comment("Subtle first-person pitch while swinging on bars (default: true)")
 				.translation(ParkourMod.MODID + ".configuration.client_settings.bar_swing_camera")
 				.define("barSwingCamera", true);
+		ENABLE_TUTORIAL_PROMPTS = builder
+				.comment("Show contextual parkour key hints when Smart Key Prompts is installed (default: true)")
+				.translation(ParkourMod.MODID + ".configuration.client_settings.enable_tutorial_prompts")
+				.define("enableTutorialPrompts", true);
+		TUTORIAL_HUD_POSITION_INITIALIZED = builder
+				.comment("Tracks the one-time Smart Key Prompts default-position setup; later position choices are preserved.")
+				.translation(ParkourMod.MODID + ".configuration.client_settings.tutorial_hud_position_initialized")
+				.define("tutorialHudPositionInitialized", false);
 		builder.pop();
 		SPEC = builder.build();
 	}
@@ -56,6 +67,15 @@ public class ClientParkourConfig {
 		return newState;
 	}
 
+	/** Local tutorial preference; no server state or ability is changed. */
+	public static boolean toggleTutorialPrompts() {
+		boolean newState = !enableTutorialPrompts;
+		ENABLE_TUTORIAL_PROMPTS.set(newState);
+		ENABLE_TUTORIAL_PROMPTS.save();
+		enableTutorialPrompts = newState;
+		return newState;
+	}
+
 	/**
 	 * 配置加载/重载时将最新值刷新到静态原始类型字段。
 	 */
@@ -68,5 +88,6 @@ public class ClientParkourConfig {
 
 		enableParkour = ENABLE_PARKOUR.get();
 		barSwingCamera = BAR_SWING_CAMERA.get();
+		enableTutorialPrompts = ENABLE_TUTORIAL_PROMPTS.get();
 	}
 }

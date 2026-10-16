@@ -240,6 +240,12 @@ public final class DynamicSurfaceMotion {
 		if (DynamicCollisions.isEnabled() && !matchesDirection(player, contact, fallback)) {
 			capture(player);
 		}
+		return readOnlyWallNormal(player, fallback);
+	}
+
+	/** Physics-frame query for observers such as tutorials; never captures or changes a grip. */
+	public static Vec3 readOnlyWallNormal(Player player, Direction fallback) {
+		Contact contact = contact(player);
 		if (matchesDirection(player, contact, fallback)) {
 			Vec3 normal = transformDirection(contact.source, contact.localAnchor, contact.localNormal);
 			if (normal.horizontalDistanceSqr() > 1.0E-8) return new Vec3(normal.x, 0, normal.z).normalize();
