@@ -3,6 +3,7 @@ package mod.arcomit.parkour;
 import com.mojang.logging.LogUtils;
 import mod.arcomit.parkour.content.init.ParkourAttachmentTypes;
 import mod.arcomit.parkour.content.init.ParkourBlocks;
+import mod.arcomit.parkour.content.init.ParkourCreativeModeTabs;
 import mod.arcomit.parkour.content.init.ParkourSounds;
 import mod.arcomit.parkour.content.init.ParkourStates;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +39,7 @@ public class ParkourMod {
 		ParkourStates.register(modEventBus);
 		ParkourSounds.register(modEventBus);
 		ParkourBlocks.register(modEventBus);
+		ParkourCreativeModeTabs.register(modEventBus);
 		LOGGER.info("Parkour mod initialized!");
 	}
 

@@ -82,7 +82,13 @@ public class BarSwingState extends AbstractParkourState {
 		data.angularVelocity = Mth.clamp(player.getDeltaMovement().dot(data.forward) / BarSwingMath.LENGTH, 0.07, 0.18);
 		data.velocity = BarSwingMath.tangent(data.forward, data.down, data.angle, data.angularVelocity);
 		context.jump().setSpeedVaultJumpWindow(0);
+		// 成功抓杆后刷新同墙动作次数，允许摆荡跃出后再次使用原来的墙面。
+		// 此入口由本地预测和服务端共同执行；未找到抓点时不会清除记录。
+		//context.wall().resetRunCollision();
 		context.wall().resetClimb();
+		context.jump().resetLastViewJump();
+		context.jump().resetLastUpJump();
+		context.jump().resetLastParallelJump();
 		player.resetFallDistance();
 		player.setDeltaMovement(Vec3.ZERO);
 	}

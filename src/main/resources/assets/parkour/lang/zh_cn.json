@@ -1,4 +1,5 @@
 {
+  "itemGroup.parkour": "简单跑酷",
   "key.parkour.toggle_tutorial": "开启/关闭跑酷教程",
   "message.parkour.tutorial.enabled": "跑酷教程已开启",
   "message.parkour.tutorial.disabled": "跑酷教程已关闭",

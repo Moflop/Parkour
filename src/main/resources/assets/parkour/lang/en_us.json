@@ -1,4 +1,5 @@
 {
+  "itemGroup.parkour": "Parkour",
   "key.parkour.toggle_tutorial": "Toggle Parkour Tutorial",
   "message.parkour.tutorial.enabled": "Parkour tutorial enabled",
   "message.parkour.tutorial.disabled": "Parkour tutorial disabled",

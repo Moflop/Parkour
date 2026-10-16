@@ -124,6 +124,13 @@ dependencies {
 //    // Replay
 //    runtimeOnly "curse.maven:reforgedplay-mod-1018692:6942967"
 
+    // GL错误隐藏前置：Architectury API
+    runtimeOnly "maven.modrinth:lhGA9TYQ:1IiqEQGl"
+    // GL错误隐藏前置：jamlib
+    runtimeOnly "maven.modrinth:IYY9Siz8:n6UM6TcS"
+    // GL错误隐藏
+    runtimeOnly "maven.modrinth:houIxdGF:ZBew9Akz"
+
     // TACZ
     implementation "maven.modrinth:OypNE65K:62q6mB5Q"
     // 方便在游戏中修改配置文件
