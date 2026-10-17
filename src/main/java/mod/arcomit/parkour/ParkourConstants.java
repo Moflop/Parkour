@@ -24,7 +24,7 @@ public final class ParkourConstants {
 	/** 悬挂抓握高度比例（基于玩家身高），用于确定碰撞检测盒和音效定位的垂直偏移量 */
 	public static final double ARMHANG_GRIP_HEIGHT_RATIO = 0.34;
 	/** 悬挂传感器水平检测偏移距离（单位：格） */
-	public static final double ARMHANG_SENSOR_CHECK_DISTANCE = 0.5;
+	public static final double ARMHANG_SENSOR_CHECK_DISTANCE = 0.3;
 	/** 状态退出后速度提升效果的持续时长（单位：刻，40刻=2秒） */
 	public static final int EXIT_SPEED_BOOST_DURATION = 40;
 	/** 状态退出后速度提升效果的增幅等级（0=速度I） */

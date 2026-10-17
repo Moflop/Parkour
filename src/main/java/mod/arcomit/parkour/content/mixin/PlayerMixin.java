@@ -1,7 +1,6 @@
 package mod.arcomit.parkour.content.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import mod.arcomit.parkour.content.behavior.crawl.CrawlState;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.utils.ParkourChecks;
 import net.minecraft.world.entity.Pose;
@@ -12,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * 防止攻击时打断疾跑的Mixin。
+ * 防止攻击打断疾跑，并保护跑酷状态绑定的强制姿态。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -34,9 +33,12 @@ public abstract class PlayerMixin {
 	@Inject(method = "setForcedPose", at = @At("HEAD"), cancellable = true)
 	private void onSetForcedPose(Pose pose, CallbackInfo ci) {
 		Player player = (Player) (Object) this;
-		if (ParkourContext.get(player).state()
-				.getState() instanceof CrawlState && pose != Pose.SWIMMING) {
-			ci.cancel();// 我看谁敢动我的爬行动作，我的爬行动作必须是最高优先级！（霸总音）
+		Pose linkedPose = ParkourContext.get(player).state().getState().getLinkedPose();
+		// TACZ 等模组会在未爬行时每 tick 清除强制姿态，使滑铲在低顶下变为
+		// 原版爬行并被状态校验中断。动作期间保留当前状态声明的姿态。
+		// 状态机先切换状态再设置姿态，因此回到默认状态后仍可正常清除。
+		if (linkedPose != null && pose != linkedPose) {
+			ci.cancel();
 		}
 	}
 }
