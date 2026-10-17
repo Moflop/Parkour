@@ -41,6 +41,7 @@ import org.lwjgl.glfw.GLFW;
 /** Camera-space arms for non-bar actions. Isolated models keep PAL's full-body poses untouched. */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public final class FirstPersonParkourRenderer {
+	private static final float ARM_DEPTH_OFFSET = .12F;
 	private static final FirstPersonMotion MOTION = new FirstPersonMotion();
 	private static PlayerModel<AbstractClientPlayer> wide, slim;
 	private static AbstractClientPlayer owner;
@@ -267,7 +268,9 @@ public final class FirstPersonParkourRenderer {
 			ModelPart sleeve, FirstPersonPose.Arm pose, int side, boolean isSlim) {
 		stack.pushPose();
 		try {
-			stack.translate(pose.x(), pose.y(), pose.z());
+			// Camera forward is -Z. Shift before rotation so sleeves and held items
+			// share the same depth without changing the arm's pose or reach direction.
+			stack.translate(pose.x(), pose.y(), pose.z() - ARM_DEPTH_OFFSET);
 			Vector3f direction = new Vector3f(pose.dx(), pose.dy(), pose.dz()).normalize();
 			Quaternionf armRotation = armRotation(direction);
 			stack.mulPose(armRotation);
