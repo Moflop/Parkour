@@ -120,7 +120,7 @@ public class ClientParkourPlayerAnimations {
 						(player, variant) -> List.of(new BarSwingPlayerAnimModifier(player)), true));
 		PLAYER_ANIMATIONS.put(ParkourAnimationIds.BAR_SWING_JUMP,
 				new PlayerAnimation(ParkourAnimationIds.BAR_SWING_JUMP, 2, 3,
-						(player, variant) -> List.of(new BarSwingJumpPlayerAnimModifier(player)), true));
+						(player, variant) -> List.of(new BarSwingJumpPlayerAnimModifier(player))));
 
 		PLAYER_ANIMATIONS.put(ParkourAnimationIds.SPEED_VAULT_LEFT,
 				new PlayerAnimation(

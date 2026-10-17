@@ -76,8 +76,6 @@ public class ParkourAnimationHelper {
 
 		if (player.isLocalPlayer()) {
 			if (animId.equals(ParkourAnimationIds.LANDING_ROLL)) FirstPersonParkourRenderer.play(FirstPersonAction.ROLL);
-			if (animId.equals(ParkourAnimationIds.SPEED_VAULT_LEFT)) FirstPersonParkourRenderer.play(FirstPersonAction.VAULT, -1);
-			if (animId.equals(ParkourAnimationIds.SPEED_VAULT_RIGHT)) FirstPersonParkourRenderer.play(FirstPersonAction.VAULT, 1);
 			PacketDistributor.sendToServer(
 					new RequestPlayActionAnimC2SPayload(animId));
 		}

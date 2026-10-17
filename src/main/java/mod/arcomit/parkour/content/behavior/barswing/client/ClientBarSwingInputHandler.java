@@ -4,6 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingJump;
 import mod.arcomit.parkour.content.behavior.barswing.network.BarSwingJumpC2SPayload;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -31,6 +33,7 @@ public class ClientBarSwingInputHandler {
 		if (mc.player == null || mc.screen != null || mc.isPaused() || !mc.isWindowActive() || mc.options.keyShift.isDown()) return;
 		// 先发当前普通位置，服务端据此验证抓握位置和松手方向。
 		if (BarSwingJump.execute(mc.player)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.BAR_SWING_JUMP);
 			mc.player.sendPosition();
 			PacketDistributor.sendToServer(new BarSwingJumpC2SPayload());
 		}

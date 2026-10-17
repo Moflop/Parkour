@@ -6,6 +6,56 @@ import org.joml.Vector3f;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FirstPersonMotionTest {
+    @Test void endingActionsFinishTheirExitBeforeReleasingOwnership() {
+        var lowered = FirstPersonPose.sample(FirstPersonAction.NONE, 0, 0, 1);
+        for (var action : FirstPersonAction.values()) {
+            if (action == FirstPersonAction.NONE) continue;
+            var motion = new FirstPersonMotion();
+            if (action.duration > 0) motion.play(action, 1);
+            for (int tick = 0; tick < Math.max(8, action.duration); tick++) {
+                motion.tick(action.duration > 0 ? FirstPersonAction.NONE : action, 1, .1f);
+            }
+            if (action == FirstPersonAction.SWIM_BOOST) {
+                assertEquals(FirstPersonPose.sample(action, action.duration - 1, 0, 1), motion.pose(1));
+                motion.tick(FirstPersonAction.NONE, 1, 0);
+                assertFalse(motion.isActive(), action.name());
+                continue;
+            }
+            var previous = motion.pose(1);
+            int loweringTicks = action == FirstPersonAction.SUPPORT_JUMP_UP
+                    || action == FirstPersonAction.VAULT_JUMP ? 3 : 5;
+            for (int tick = 0; tick < loweringTicks; tick++) {
+                motion.tick(FirstPersonAction.NONE, 1, 0);
+                assertTrue(motion.isActive(), action.name());
+                assertEquals(previous, motion.pose(0));
+                var current = motion.pose(1);
+                assertTrue(current.left().y() <= previous.left().y());
+                assertTrue(current.right().y() <= previous.right().y());
+                previous = current;
+            }
+            assertEquals(lowered, motion.pose(1));
+            motion.tick(FirstPersonAction.NONE, 1, 0);
+            assertFalse(motion.isActive(), action.name());
+            assertEquals(lowered, motion.pose(0));
+        }
+    }
+
+    @Test void anotherActionCanInterruptLoweringWithoutDroppingRenderOwnership() {
+        var motion = new FirstPersonMotion();
+        for (int i = 0; i < 8; i++) motion.tick(FirstPersonAction.CRAWL, 1, .1f);
+        motion.tick(FirstPersonAction.NONE, 1, 0);
+        motion.tick(FirstPersonAction.NONE, 1, 0);
+        var before = motion.pose(1);
+        motion.play(FirstPersonAction.WALL_JUMP, -1);
+        motion.tick(FirstPersonAction.NONE, -1, 0);
+        assertEquals(before, motion.pose(0));
+        assertEquals(FirstPersonAction.WALL_JUMP, motion.action());
+        assertTrue(motion.isActive());
+        motion.reset();
+        motion.tick(FirstPersonAction.NONE, 1, 0);
+        assertFalse(motion.isActive());
+    }
+
     @Test void clipsFinishAndReturnHandsEvenWithoutRendering() {
         for (var action : FirstPersonAction.values()) {
             if (action.duration == 0) continue;
@@ -35,14 +85,19 @@ class FirstPersonMotionTest {
         assertEquals(FirstPersonAction.NONE, motion.action());
     }
 
-    @Test void allPosesKeepShouldersBehindCameraAndHaveFiniteForwardReaches() {
+    @Test void allPosesKeepShouldersBehindCameraAndHaveFiniteNonzeroReaches() {
         for (var action : FirstPersonAction.values()) for (int side : new int[]{-1, 1}) {
             for (int tick = 0; tick < 100; tick++) {
                 var pose = FirstPersonPose.sample(action, tick, tick * .2f, side);
-                for (var arm : new FirstPersonPose.Arm[]{pose.left(), pose.right()}) {
+                for (int hand : new int[]{-1, 1}) {
+                    var arm = hand < 0 ? pose.left() : pose.right();
                     assertTrue(arm.z() > .1f);
                     assertTrue(Float.isFinite(arm.dx()) && Float.isFinite(arm.dy()) && Float.isFinite(arm.dz()));
-                    assertTrue(arm.dz() < -.2f);
+                    assertTrue(arm.dx() * arm.dx() + arm.dy() * arm.dy() + arm.dz() * arm.dz() > 1.0e-6f);
+                    // Wall running's free arm deliberately swings behind the camera.
+                    if (action != FirstPersonAction.WALL_RUN || hand == side) {
+                        assertTrue(arm.dz() < -.2f);
+                    }
                 }
             }
         }

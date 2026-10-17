@@ -1,7 +1,5 @@
 package mod.arcomit.parkour.content.action.walljump.client.handler;
 
-import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
-import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.ParkourMod;
@@ -98,7 +96,6 @@ public class ClientWallJumpKeyInputHandler {
 		lastJumpPressMs = now;
 
 		if (WallJumpAction.execute(player)) {
-			FirstPersonParkourRenderer.play(FirstPersonAction.WALL_JUMP);
 			player.sendPosition();
 			PacketDistributor.sendToServer(new WallJumpC2SPayload());
 		}

@@ -4,7 +4,10 @@ import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
 import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.supportwalljump.SupportWallJumpAction;
+import mod.arcomit.parkour.content.action.supportwalljump.SupportWallJumpType;
+import mod.arcomit.parkour.content.action.supportwalljump.SupportWallJumpTypeResolver;
 import mod.arcomit.parkour.content.action.supportwalljump.network.SupportWallJumpC2SPayload;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.proxy.ParkourProxies;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -50,8 +53,12 @@ public class ClientSupportWallJumpHandler {
 		}
 
 
+		var wall = ParkourContext.get(localPlayer).wall().getArmhang();
+		SupportWallJumpType jumpType = SupportWallJumpTypeResolver.resolve(localPlayer, wall);
 		if (SupportWallJumpAction.execute(localPlayer)) {
-			FirstPersonParkourRenderer.play(FirstPersonAction.SUPPORT_JUMP);
+			if (jumpType == SupportWallJumpType.UP) {
+				FirstPersonParkourRenderer.play(FirstPersonAction.SUPPORT_JUMP_UP);
+			}
 			localPlayer.sendPosition();
 			PacketDistributor.sendToServer(new SupportWallJumpC2SPayload());
 		}

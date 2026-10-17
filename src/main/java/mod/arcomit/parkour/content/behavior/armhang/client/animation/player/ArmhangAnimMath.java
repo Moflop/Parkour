@@ -41,8 +41,11 @@ public class ArmhangAnimMath {
 
 		// 头部独立修正
 		float pitch = Mth.lerp(partialTick, player.xRotO, player.getXRot());
-		float netYaw = SurfaceAnimationMath.relativeYaw(player.yRotO,
-				player.getYRot(), targetYaw, partialTick);
+		// Use the head/camera yaw here. yRot is the body yaw and may remain locked
+		// to the ledge while the player looks around; using it made the first-person
+		// and third-person reference diverge as soon as the camera turned.
+		float netYaw = SurfaceAnimationMath.relativeYaw(player.yHeadRotO,
+				player.getYHeadRot(), targetYaw, partialTick);
 		data.headRotX = pitch * Mth.DEG_TO_RAD;
 		data.headRotY = netYaw * Mth.DEG_TO_RAD - bodyTurnAngle;
 

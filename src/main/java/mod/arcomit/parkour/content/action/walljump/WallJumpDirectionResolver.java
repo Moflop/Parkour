@@ -29,7 +29,7 @@ public class WallJumpDirectionResolver {
 	 * @param context 跑酷上下文，不可为null
 	 * @return 弹跳应参照的墙面方向；无法判定时返回null（调用方应立即中止执行）
 	 */
-	static Direction resolveWallDirection(Player player, IParkourState state,
+	public static Direction resolveWallDirection(Player player, IParkourState state,
 			ParkourContext context) {
 		if (state instanceof WallRunState) {
 			WallMovementData wallMovementData = context.wall();
