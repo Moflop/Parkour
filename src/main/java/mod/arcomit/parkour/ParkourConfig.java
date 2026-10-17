@@ -8,12 +8,14 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /**
  * 服务器端跑酷配置。
  *
- * <p>配置项分为四大类别：
+ * <p>配置项按以下类别组织：
  * <ul>
  *   <li>{@code online_settings} - 多人游戏相关（速度限制移除）</li>
+ *   <li>{@code animation_settings} - 第一人称动画相关（手持物品、爬行动画等）</li>
  *   <li>{@code locomotion_settings} - 地面移动相关（全向疾跑、爬行、滑铲、翻滚、步高、移速等）</li>
  *   <li>{@code swimming_settings} - 水中移动相关（浅水游泳、水中推进、自由泳等）</li>
  *   <li>{@code wall_movement_settings} - 墙面移动相关（爬墙、墙跑、墙滑、蹬墙跳、垂挂、速过等）</li>
+ *   <li>{@code bar_swing_settings} - 横杆摆荡相关</li>
  * </ul>
  *
  * <p>静态代码块构建 {@link ModConfigSpec} 定义树后，通过 {@code static boolean/int/double}
@@ -29,6 +31,7 @@ public class ParkourConfig {
 
 	public static ModConfigSpec.BooleanValue REMOVE_SPEED_LIMITS;
 	public static ModConfigSpec.BooleanValue ENABLE_FIRST_PERSON_ANIMATIONS;
+	public static ModConfigSpec.BooleanValue ENABLE_CRAWL_FIRST_PERSON_ANIMATIONS;
 
 	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_WALKING;
 	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_JUMP;
@@ -82,6 +85,7 @@ public class ParkourConfig {
 	public static ModConfigSpec.DoubleValue WALL_CLIMB_SPEED;
 	public static boolean removeSpeedLimits;
 	public static boolean enableFirstPersonAnimations;
+	public static boolean enableCrawlFirstPersonAnimations;
 	public static boolean enableEntityWalking;
 	public static boolean enableEntityJump;
 	public static double entityJumpReach;
@@ -142,10 +146,21 @@ public class ParkourConfig {
 						.translation(ParkourMod.MODID + ".configuration.online_settings.remove_speed_limits")
 						.define("removeSpeedLimits", false);
 
+		builder.pop();
+
+		builder.comment("Animation settings let you change first-person parkour animations.")
+				.translation(ParkourMod.MODID + ".configuration.animation_settings")
+				.push("animation_settings");
+
 		ENABLE_FIRST_PERSON_ANIMATIONS =
 				builder.comment("Enable first-person parkour arm animations while holding items (default: true). Bar swinging keeps its own animation.")
-						.translation(ParkourMod.MODID + ".configuration.online_settings.enable_first_person_animations")
+						.translation(ParkourMod.MODID + ".configuration.animation_settings.enable_first_person_animations")
 						.define("enableFirstPersonAnimations", true);
+
+		ENABLE_CRAWL_FIRST_PERSON_ANIMATIONS =
+				builder.comment("Enable first-person crawl animations (default: true). Still respects enableFirstPersonAnimations while holding items. Does not affect crawling itself.")
+						.translation(ParkourMod.MODID + ".configuration.animation_settings.enable_crawl_first_person_animations")
+						.define("enableCrawlFirstPersonAnimations", false);
 
 		builder.pop();
 
@@ -404,6 +419,7 @@ public class ParkourConfig {
 			return;
 		removeSpeedLimits = REMOVE_SPEED_LIMITS.get();
 		enableFirstPersonAnimations = ENABLE_FIRST_PERSON_ANIMATIONS.get();
+		enableCrawlFirstPersonAnimations = ENABLE_CRAWL_FIRST_PERSON_ANIMATIONS.get();
 
 		enableMoveSpeedIncrease = ENABLE_MOVE_SPEED_INCREASE.get();
 		enableEntityWalking = ENABLE_ENTITY_WALKING.get();

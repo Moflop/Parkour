@@ -72,8 +72,10 @@ public final class FirstPersonParkourRenderer {
 
 	private static boolean enabled(AbstractClientPlayer player) {
 		boolean emptyHands = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
-		return (ParkourConfig.enableFirstPersonAnimations || emptyHands) && ClientParkourConfig.enableParkour
-				&& ParkourContext.get(player).state().isParkourEnabled() && player.isAlive()
+		var state = ParkourContext.get(player).state();
+		return (ParkourConfig.enableFirstPersonAnimations || emptyHands)
+				&& (ParkourConfig.enableCrawlFirstPersonAnimations || !state.getStateId().getPath().equals("crawl"))
+				&& ClientParkourConfig.enableParkour && state.isParkourEnabled() && player.isAlive()
 				&& !player.isSpectator() && !player.isPassenger() && !player.isFallFlying()
 				&& !player.getAbilities().flying;
 	}
