@@ -28,6 +28,7 @@ public class ParkourConfig {
 	protected static final ModConfigSpec SPEC;
 
 	public static ModConfigSpec.BooleanValue REMOVE_SPEED_LIMITS;
+	public static ModConfigSpec.BooleanValue ENABLE_FIRST_PERSON_ANIMATIONS;
 
 	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_WALKING;
 	public static ModConfigSpec.BooleanValue ENABLE_ENTITY_JUMP;
@@ -80,6 +81,7 @@ public class ParkourConfig {
 	public static ModConfigSpec.IntValue WALL_CLIMB_DURATION;
 	public static ModConfigSpec.DoubleValue WALL_CLIMB_SPEED;
 	public static boolean removeSpeedLimits;
+	public static boolean enableFirstPersonAnimations;
 	public static boolean enableEntityWalking;
 	public static boolean enableEntityJump;
 	public static double entityJumpReach;
@@ -139,6 +141,11 @@ public class ParkourConfig {
 				builder.comment("Remove speed limits imposed by server.\nThis removes most rollbacks but makes it easier to cheat on a server. (default: false)")
 						.translation(ParkourMod.MODID + ".configuration.online_settings.remove_speed_limits")
 						.define("removeSpeedLimits", false);
+
+		ENABLE_FIRST_PERSON_ANIMATIONS =
+				builder.comment("Enable first-person parkour arm animations while holding items (default: true). Bar swinging keeps its own animation.")
+						.translation(ParkourMod.MODID + ".configuration.online_settings.enable_first_person_animations")
+						.define("enableFirstPersonAnimations", true);
 
 		builder.pop();
 
@@ -396,6 +403,7 @@ public class ParkourConfig {
 		if (event.getConfig().getSpec() != SPEC)
 			return;
 		removeSpeedLimits = REMOVE_SPEED_LIMITS.get();
+		enableFirstPersonAnimations = ENABLE_FIRST_PERSON_ANIMATIONS.get();
 
 		enableMoveSpeedIncrease = ENABLE_MOVE_SPEED_INCREASE.get();
 		enableEntityWalking = ENABLE_ENTITY_WALKING.get();

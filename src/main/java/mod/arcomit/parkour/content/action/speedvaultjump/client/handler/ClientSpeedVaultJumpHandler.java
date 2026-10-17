@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.action.speedvaultjump.client.handler;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.speedvaultjump.SpeedVaultJumpAction;
@@ -68,6 +70,7 @@ public class ClientSpeedVaultJumpHandler {
 		}
 
 		if (SpeedVaultJumpAction.execute(player)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.VAULT_JUMP);
 			player.sendPosition();
 			PacketDistributor.sendToServer(new SpeedVaultJumpC2SPayload());
 		}

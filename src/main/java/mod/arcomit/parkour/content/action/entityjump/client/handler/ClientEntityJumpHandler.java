@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.action.entityjump.client.handler;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import com.mojang.blaze3d.platform.InputConstants;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.entityjump.EntityJumpAction;
@@ -35,6 +37,7 @@ public class ClientEntityJumpHandler {
 		if (player == null || mc.screen != null || mc.isPaused() || !mc.isWindowActive()
 				|| mc.options.keyShift.isDown()) return;
 		if (EntityJumpAction.execute(player)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.ENTITY_JUMP);
 			player.sendPosition();
 			PacketDistributor.sendToServer(new EntityJumpC2SPayload());
 		}

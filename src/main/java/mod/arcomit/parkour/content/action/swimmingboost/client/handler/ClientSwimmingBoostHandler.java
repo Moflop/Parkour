@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.action.swimmingboost.client.handler;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.swimmingboost.SwimmingBoostAction;
 import mod.arcomit.parkour.content.action.swimmingboost.client.ClientSwimmingBoostSound;
@@ -53,6 +55,7 @@ public class ClientSwimmingBoostHandler {
 
 		SwimMovementData swimData = ParkourContext.get(player).swim();
 		if (SwimmingBoostAction.execute(player, swimData)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.SWIM_BOOST);
 			ClientSwimmingBoostSound.play(player);
 			player.sendPosition();
 			PacketDistributor.sendToServer(new UseSwimmingBoostC2SPayload());

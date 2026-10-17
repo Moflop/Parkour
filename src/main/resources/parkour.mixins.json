@@ -10,6 +10,7 @@
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "ParkourHandRendererMixin",
     "BarSwingJumpModelMixin",
     "EntityViewMixin",
     "CameraMixin",

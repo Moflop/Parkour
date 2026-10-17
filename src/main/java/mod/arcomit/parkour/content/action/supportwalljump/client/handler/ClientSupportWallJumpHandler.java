@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.action.supportwalljump.client.handler;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.supportwalljump.SupportWallJumpAction;
 import mod.arcomit.parkour.content.action.supportwalljump.network.SupportWallJumpC2SPayload;
@@ -49,6 +51,7 @@ public class ClientSupportWallJumpHandler {
 
 
 		if (SupportWallJumpAction.execute(localPlayer)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.SUPPORT_JUMP);
 			localPlayer.sendPosition();
 			PacketDistributor.sendToServer(new SupportWallJumpC2SPayload());
 		}

@@ -48,6 +48,8 @@
   "parkour.configuration.online_settings.tooltip": "该设置允许你更改所有与多人游戏相关选项。",
   "parkour.configuration.online_settings.remove_speed_limits": "移除速度限制",
   "parkour.configuration.online_settings.remove_speed_limits.tooltip": "移除服务器施加的速度限制。\n这消除了大多数回弹，但也使在服务器上作弊变得更容易。(默认: false)",
+  "parkour.configuration.online_settings.enable_first_person_animations": "手持物品时播放跑酷第一人称动画",
+  "parkour.configuration.online_settings.enable_first_person_animations.tooltip": "是否允许手持物品时播放跑酷第一人称手臂动画。关闭后，只有双手空置时播放；横杆摆荡不受影响。(默认: true)",
   "parkour.configuration.locomotion_settings": "地面移动设置",
   "parkour.configuration.locomotion_settings.tooltip": "该设置允许你更改所有与地面移动相关选项。",
   "parkour.configuration.locomotion_settings.enable_entity_walking": "启用实体顶部行走",

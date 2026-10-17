@@ -1,5 +1,8 @@
 package mod.arcomit.parkour.core.client.animation.player;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
+import mod.arcomit.parkour.content.init.ParkourAnimationIds;
 import com.zigythebird.playeranim.PlayerAnimLibMod;
 import com.zigythebird.playeranim.animation.PlayerAnimResources;
 import com.zigythebird.playeranim.api.PlayerAnimationAccess;
@@ -72,6 +75,9 @@ public class ParkourAnimationHelper {
 		configureFirstPerson(controller, anim);
 
 		if (player.isLocalPlayer()) {
+			if (animId.equals(ParkourAnimationIds.LANDING_ROLL)) FirstPersonParkourRenderer.play(FirstPersonAction.ROLL);
+			if (animId.equals(ParkourAnimationIds.SPEED_VAULT_LEFT)) FirstPersonParkourRenderer.play(FirstPersonAction.VAULT, -1);
+			if (animId.equals(ParkourAnimationIds.SPEED_VAULT_RIGHT)) FirstPersonParkourRenderer.play(FirstPersonAction.VAULT, 1);
 			PacketDistributor.sendToServer(
 					new RequestPlayActionAnimC2SPayload(animId));
 		}
@@ -79,7 +85,7 @@ public class ParkourAnimationHelper {
 
 	private static void configureFirstPerson(ParkourAnimationController controller, PlayerAnimation animation) {
 		controller.setFirstPersonMode(animation.firstPerson ? FirstPersonMode.THIRD_PERSON_MODEL : FirstPersonMode.NONE);
-		controller.setFirstPersonConfiguration(new FirstPersonConfiguration(true, true, false, false));
+		controller.setFirstPersonConfiguration(new FirstPersonConfiguration(true, true, true, true));
 		controller.setFirstPersonTransitionLength(animation.firstPerson ? 3 : 0);
 	}
 

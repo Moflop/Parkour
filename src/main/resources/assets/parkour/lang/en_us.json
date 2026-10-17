@@ -48,6 +48,8 @@
   "parkour.configuration.online_settings.tooltip": "Online settings let you change all options related to multiplayer.",
   "parkour.configuration.online_settings.remove_speed_limits": "Remove Speed Limits",
   "parkour.configuration.online_settings.remove_speed_limits.tooltip": "Remove speed limits imposed by server.\nThis removes most rollbacks but makes it easier to cheat on a server. (default: false)",
+  "parkour.configuration.online_settings.enable_first_person_animations": "First-person Parkour Animations",
+  "parkour.configuration.online_settings.enable_first_person_animations.tooltip": "Allow first-person Parkour arm animations while holding items. When disabled, they only play with empty hands. Bar swinging is unaffected. (default: true)",
   "parkour.configuration.locomotion_settings": "Locomotion Settings",
   "parkour.configuration.locomotion_settings.tooltip": "Locomotion settings let you change all options related to movement on the ground.",
   "parkour.configuration.locomotion_settings.enable_entity_walking": "Enable Entity Walking",

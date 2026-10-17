@@ -1,5 +1,7 @@
 package mod.arcomit.parkour.content.action.swimmingjump.client.handler;
 
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonAction;
+import mod.arcomit.parkour.core.client.animation.firstperson.FirstPersonParkourRenderer;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.action.swimmingjump.SwimmingJumpAction;
 import mod.arcomit.parkour.content.action.swimmingjump.network.UseSwimmingJumpC2SPayload;
@@ -41,6 +43,7 @@ public class ClientSwimmingJumpHandler {
 		}
 
 		if (SwimmingJumpAction.execute(localPlayer)) {
+			FirstPersonParkourRenderer.play(FirstPersonAction.SWIM_JUMP);
 			localPlayer.sendPosition();
 			PacketDistributor.sendToServer(new UseSwimmingJumpC2SPayload());
 		}
