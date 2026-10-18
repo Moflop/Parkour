@@ -4,6 +4,7 @@ import com.zigythebird.playeranim.api.PlayerAnimationFactory;
 import com.zigythebird.playeranimcore.enums.PlayState;
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.compat.smartkeyprompts.SmartKeyPromptsCompat;
+import mod.arcomit.parkour.compat.tacz.TaczFirstPersonCompat;
 import mod.arcomit.parkour.content.behavior.armhang.client.animation.player.ArmhangPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.landingroll.client.animation.player.LandingRollPlayerAnimModifier;
 import mod.arcomit.parkour.content.behavior.slide.client.animation.player.SlidePlayerAnimModifier;
@@ -68,6 +69,9 @@ public class ClientParkourSetupHandler {
 		ParkourProxies.GET_CLIENT_CONFIG_PROXY = new ClientGetClientConfigProxyImpl();
 
 		event.enqueueWork(() -> {
+			if (ModList.get().isLoaded("tacz")) {
+				TaczFirstPersonCompat.register();
+			}
 			if (ModList.get().isLoaded("smartkeyprompts")) {
 				SmartKeyPromptsCompat.register();
 			}

@@ -10,6 +10,7 @@ import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.client.handler.ClientParkourSetupHandler;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.compat.tacz.TaczFirstPersonCompat;
 import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.core.client.animation.player.ParkourAnimationController;
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -41,7 +43,6 @@ import org.lwjgl.glfw.GLFW;
 /** Camera-space arms for non-bar actions. Isolated models keep PAL's full-body poses untouched. */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public final class FirstPersonParkourRenderer {
-	private static final float ARM_DEPTH_OFFSET = .12F;
 	private static final FirstPersonMotion MOTION = new FirstPersonMotion();
 	private static PlayerModel<AbstractClientPlayer> wide, slim;
 	private static AbstractClientPlayer owner;
@@ -125,6 +126,7 @@ public final class FirstPersonParkourRenderer {
 		if (mc.isPaused() || mc.gameMode == null || !isAnimationPlaying()) return;
 		if (mc.gameMode.isDestroying()) mc.gameMode.stopDestroyBlock();
 		if (mc.player.isUsingItem()) mc.gameMode.releaseUsingItem(mc.player);
+		if (ModList.get().isLoaded("tacz")) TaczFirstPersonCompat.stopShooting(mc.player);
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -167,6 +169,9 @@ public final class FirstPersonParkourRenderer {
 	public static boolean renderHands(float partialTick, PoseStack stack, MultiBufferSource.BufferSource buffer,
 			LocalPlayer player, int packedLight) {
 		var mc = Minecraft.getInstance();
+		if (player != null && player == mc.player && ModList.get().isLoaded("tacz")) {
+			TaczFirstPersonCompat.beforeHandRender(player);
+		}
 		if (player == null || player != mc.player || owner != player || !enabled(player) || palOwnsHands(player)
 				|| !mc.options.getCameraType().isFirstPerson() || mc.getCameraEntity() != player
 				|| mc.options.hideGui || !MOTION.isActive() || wide == null || slim == null) return false;
@@ -270,7 +275,7 @@ public final class FirstPersonParkourRenderer {
 		try {
 			// Camera forward is -Z. Shift before rotation so sleeves and held items
 			// share the same depth without changing the arm's pose or reach direction.
-			stack.translate(pose.x(), pose.y(), pose.z() - ARM_DEPTH_OFFSET);
+			stack.translate(pose.x(), pose.y(), pose.z() - ClientParkourConfig.armDepthOffset);
 			Vector3f direction = new Vector3f(pose.dx(), pose.dy(), pose.dz()).normalize();
 			Quaternionf armRotation = armRotation(direction);
 			stack.mulPose(armRotation);

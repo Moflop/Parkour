@@ -11,6 +11,7 @@
   ],
   "client": [
     "ParkourHandRendererMixin",
+    "ParkourPlayerRendererMixin",
     "BarSwingJumpModelMixin",
     "EntityViewMixin",
     "CameraMixin",

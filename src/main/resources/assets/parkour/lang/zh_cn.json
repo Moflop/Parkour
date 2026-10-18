@@ -44,6 +44,8 @@
   "parkour.configuration.client_settings.tooltip": "该设置允许你更改所有本地偏好选项。",
   "parkour.configuration.client_settings.enable_parkour": "启用跑酷",
   "parkour.configuration.client_settings.enable_parkour.tooltip": "在本地启用或禁用跑酷能力 (默认: true)",
+  "parkour.configuration.client_settings.arm_depth_offset": "手臂深度偏移",
+  "parkour.configuration.client_settings.arm_depth_offset.tooltip": "手臂深度偏移 (默认: 0.15)",
   "parkour.configuration.online_settings": "在线设置",
   "parkour.configuration.online_settings.tooltip": "该设置允许你更改所有与多人游戏相关选项。",
   "parkour.configuration.online_settings.remove_speed_limits": "移除速度限制",

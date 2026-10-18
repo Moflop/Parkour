@@ -125,5 +125,10 @@ public record FirstPersonPose(Arm left, Arm right) {
 		return new Arm(x, y, z, reachX - x, reachY - y, reachZ - z);
 	}
 
-	private static float lerp(float from, float to, float t) { return from + (to - from) * t; }
+	private static float lerp(float from, float to, float t) {
+		// Keep tick endpoints exact: arithmetic at t == 1 can round away from to.
+		if (t == 0) return from;
+		if (t == 1) return to;
+		return from + (to - from) * t;
+	}
 }

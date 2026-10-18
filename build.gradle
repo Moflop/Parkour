@@ -153,6 +153,7 @@ dependencies {
     // exact bundled versions; the owning mods supply them at runtime.
     compatibilityCompileArchives "curse.maven:create-328085:7963363"
     compatibilityCompileArchives "curse.maven:sable-1312371:9043865"
+    compatibilityCompileArchives "maven.modrinth:OypNE65K:62q6mB5Q"
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.3"
@@ -178,6 +179,7 @@ def extractCompatibilityApis = tasks.register('extractCompatibilityApis', Sync) 
     from({ configurations.compatibilityCompileArchives.collect { zipTree(it) } }) {
         include 'META-INF/jarjar/ponder-neoforge-*.jar'
         include 'META-INF/jarjar/sable-companion-common-*.jar'
+        include 'META-INF/jarjar/simplebedrockmodel-*.jar'
         eachFile { path = name }
         includeEmptyDirs = false
     }

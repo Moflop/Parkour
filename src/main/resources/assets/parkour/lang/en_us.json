@@ -44,6 +44,8 @@
   "parkour.configuration.client_settings.tooltip": "Client settings let you change local preferences.",
   "parkour.configuration.client_settings.enable_parkour": "Enable Parkour",
   "parkour.configuration.client_settings.enable_parkour.tooltip": "Enable or disable parkour abilities locally (default: true)",
+  "parkour.configuration.client_settings.arm_depth_offset": "Arm Depth Offset",
+  "parkour.configuration.client_settings.arm_depth_offset.tooltip": "Adjusts the depth of the player's arms in first-person view (default: 0.15)",
   "parkour.configuration.online_settings": "Online Settings",
   "parkour.configuration.online_settings.tooltip": "Online settings let you change all options related to multiplayer.",
   "parkour.configuration.online_settings.remove_speed_limits": "Remove Speed Limits",

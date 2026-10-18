@@ -25,6 +25,8 @@ public class ClientParkourConfig {
 	public static ModConfigSpec.BooleanValue ENABLE_TUTORIAL_PROMPTS;
 	public static boolean enableTutorialPrompts;
 	public static ModConfigSpec.BooleanValue TUTORIAL_HUD_POSITION_INITIALIZED;
+	public static double armDepthOffset;
+	public static ModConfigSpec.DoubleValue ARM_DEPTH_OFFSET;
 
 	static {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -49,6 +51,11 @@ public class ClientParkourConfig {
 				.comment("Tracks the one-time Smart Key Prompts default-position setup; later position choices are preserved.")
 				.translation(ParkourMod.MODID + ".configuration.client_settings.tutorial_hud_position_initialized")
 				.define("tutorialHudPositionInitialized", false);
+		ARM_DEPTH_OFFSET = builder
+				.comment("Adjusts the depth of the player's arms in first-person view (default: 0.15)")
+				.translation(ParkourMod.MODID + ".configuration.client_settings.arm_depth_offset")
+				.defineInRange("armDepthOffset", 0.15, -1.0, 1.0);
+
 		builder.pop();
 		SPEC = builder.build();
 	}
@@ -89,5 +96,6 @@ public class ClientParkourConfig {
 		enableParkour = ENABLE_PARKOUR.get();
 		barSwingCamera = BAR_SWING_CAMERA.get();
 		enableTutorialPrompts = ENABLE_TUTORIAL_PROMPTS.get();
+		armDepthOffset = ARM_DEPTH_OFFSET.get();
 	}
 }
