@@ -89,10 +89,10 @@ public class DefaultState extends AbstractParkourState {
 	}
 
 	/**
-	 * 手臂悬挂准入：刚完成跳跃、未按潜行键、且处于下落过程中。
+	 * 腾空下落接近边缘时抓边；跳跃和从高处走落均可，潜行明确阻止自动抓握。
 	 */
 	private boolean canArmHang(Player player, ParkourContext context) {
-		return context.jump().isJumped() && !isShiftKeyDown(player) && isFalling(player);
+		return !isShiftKeyDown(player) && !player.onGround() && isFalling(player);
 	}
 
 	/**

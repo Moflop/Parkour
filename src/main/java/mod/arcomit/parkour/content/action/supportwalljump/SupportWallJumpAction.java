@@ -45,6 +45,8 @@ public class SupportWallJumpAction {
 				SupportWallJumpTypeResolver.resolve(player, wallDir);
 		if (supportWallJumpType == SupportWallJumpType.NONE)
 			return false;
+		// Facing the ledge belongs to the checked mantle path, including server requests.
+		if (supportWallJumpType == SupportWallJumpType.UP) return false;
 
 		Vec3 velocity = DynamicSurfaceMotion.jumpVelocity(player, wallDir,
 				SupportWallJumpVelocity.computeJumpVelocity(player, supportWallJumpType));

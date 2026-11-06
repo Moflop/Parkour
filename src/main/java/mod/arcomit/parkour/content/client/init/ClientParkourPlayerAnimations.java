@@ -107,13 +107,16 @@ public class ClientParkourPlayerAnimations {
 
 		PLAYER_ANIMATIONS.put(ParkourAnimationIds.ARMHANG,
 				new PlayerAnimation(
-						ParkourMod.prefix("armhang"),
-						3, 5,
+						ParkourMod.prefix("armhang_ledge"),
+						2, 3,
 						(player, variant) -> List.of(
 								new ArmhangPlayerAnimModifier(player)
-						)
+						), true
 				)
 		);
+		PLAYER_ANIMATIONS.put(ParkourAnimationIds.ARMHANG_MANTLE,
+				new PlayerAnimation(ParkourAnimationIds.ARMHANG_MANTLE, 2, 3,
+						(player, variant) -> List.of(new ArmhangPlayerAnimModifier(player, true)), true));
 
 		PLAYER_ANIMATIONS.put(ParkourAnimationIds.BAR_SWING,
 				new PlayerAnimation(ParkourAnimationIds.BAR_SWING, 4, 4,

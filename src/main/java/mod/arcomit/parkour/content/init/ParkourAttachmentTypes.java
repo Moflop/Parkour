@@ -4,6 +4,7 @@ import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingData;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangData;
 import mod.arcomit.parkour.core.sensor.SensorDataManager;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -49,6 +50,9 @@ public class ParkourAttachmentTypes {
 	/** 抓杆约束为运行时数据；玩家重生、重进世界时自然清除。 */
 	public static final Supplier<AttachmentType<BarSwingData>> BAR_SWING =
 			ATTACHMENT_TYPES.register("bar_swing", () -> AttachmentType.builder(BarSwingData::new).build());
+
+	public static final Supplier<AttachmentType<ArmhangData>> ARMHANG =
+			ATTACHMENT_TYPES.register("armhang", () -> AttachmentType.builder(ArmhangData::new).build());
 
 	/** Dynamic structure contact is local runtime state, discarded on respawn/dimension changes. */
 	public static final Supplier<AttachmentType<DynamicSurfaceMotion.Contact>> DYNAMIC_SURFACE_CONTACT =

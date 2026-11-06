@@ -11,6 +11,7 @@ import mod.arcomit.parkour.content.action.swimmingjump.network.UseSwimmingJumpC2
 import mod.arcomit.parkour.content.action.walljump.network.WallJumpC2SPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.BroadcastArmhangDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangDirC2SPayload;
+import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangGripS2CPayload;
 import mod.arcomit.parkour.content.behavior.landingroll.network.SetLandingRollWindowC2SPayload;
 import mod.arcomit.parkour.content.behavior.wallrun.network.BroadcastWallRunDirS2CPayload;
 import mod.arcomit.parkour.content.behavior.wallslide.network.BroadcastWallSlideDirS2CPayload;
@@ -40,6 +41,7 @@ public class RegisterPayloadHandler {
 
 		registrar.playToServer(BarSwingJumpC2SPayload.TYPE, BarSwingJumpC2SPayload.STREAM_CODEC, BarSwingJumpC2SPayload::handle);
 		registrar.playToClient(SyncBarSwingS2CPayload.TYPE, SyncBarSwingS2CPayload.STREAM_CODEC, SyncBarSwingS2CPayload::handle);
+		registrar.playToClient(SyncArmhangGripS2CPayload.TYPE, SyncArmhangGripS2CPayload.STREAM_CODEC, SyncArmhangGripS2CPayload::handle);
 
 		registrar.playToServer(EntityJumpC2SPayload.TYPE, EntityJumpC2SPayload.STREAM_CODEC,
 				(payload, context) -> EntityJumpC2SPayload.Server.handle(payload, context));

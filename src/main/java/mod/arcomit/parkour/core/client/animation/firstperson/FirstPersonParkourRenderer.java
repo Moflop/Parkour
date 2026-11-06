@@ -40,7 +40,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-/** Camera-space arms for non-bar actions. Isolated models keep PAL's full-body poses untouched. */
+/** Camera-space arms for free motions; bar and ledge grips use PAL's world-space hands. */
 @EventBusSubscriber(modid = ParkourMod.MODID, value = Dist.CLIENT)
 public final class FirstPersonParkourRenderer {
 	private static final FirstPersonMotion MOTION = new FirstPersonMotion();
@@ -144,11 +144,10 @@ public final class FirstPersonParkourRenderer {
 		String state = context.state().getStateId().getPath();
 		int side = context.state().getAnimVariant() == 0 ? -1 : 1;
 		// State variants describe left/right for wall running and sliding. For
-		// wall slide and armhang the hand that is actually near the surface depends
+		// wall slide the hand that is actually near the surface depends
 		// on the current camera turn, so derive it from the same surface frame used
 		// by the third-person modifiers.
 		if (state.equals("wall_slide")) side = wallSlideHandSide(player);
-		if (state.equals("armhang")) side = armhangHandSide(player);
 		if (state.equals("backstep") && !state.equals(previousState)) MOTION.play(FirstPersonAction.DODGE, side);
 		previousState = state;
 		FirstPersonAction action = switch (state) {
@@ -157,7 +156,8 @@ public final class FirstPersonParkourRenderer {
 			case "wall_run" -> FirstPersonAction.WALL_RUN;
 			case "wall_climb" -> FirstPersonAction.WALL_CLIMB;
 			case "wall_slide" -> FirstPersonAction.WALL_SLIDE;
-			case "armhang" -> FirstPersonAction.ARMHANG;
+			// Ledge states use PAL's world-space hands, including its fade-out frames.
+			case "armhang", "armhang_mantle" -> FirstPersonAction.NONE;
 			default -> FirstPersonAction.NONE;
 		};
 		float distance = (float) player.position().distanceTo(new net.minecraft.world.phys.Vec3(player.xo, player.yo, player.zo));
@@ -204,16 +204,6 @@ public final class FirstPersonParkourRenderer {
 	public static int wallHandSide(Player player, net.minecraft.core.Direction wall) {
 		return wall == null ? -1 : cameraSideForSurface(player,
 				DynamicSurfaceMotion.renderWallNormal(player, wall, 1.0F));
-	}
-
-	private static int armhangHandSide(Player player) {
-		var wall = ParkourContext.get(player).wall().getArmhang();
-		if (wall == null) return 0;
-		float surfaceYaw = Directions.horizontalYaw(DynamicSurfaceMotion.renderWallNormal(player, wall, 1.0F));
-		float lookAwayYaw = net.minecraft.util.Mth.wrapDegrees(player.getYRot() - surfaceYaw);
-		// Match ArmhangAnimState and ArmhangAnimMath: positive camera-minus-surface
-		// yaw keeps the left hand attached (-1); negative yaw keeps the right (+1).
-		return Math.abs(lookAwayYaw) > 75.0F ? (lookAwayYaw > 0 ? -1 : 1) : 0;
 	}
 
 	private static int wallSlideHandSide(Player player) {

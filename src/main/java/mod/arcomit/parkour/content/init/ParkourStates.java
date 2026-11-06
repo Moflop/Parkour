@@ -3,6 +3,7 @@ package mod.arcomit.parkour.content.init;
 import mod.arcomit.parkour.ParkourMod;
 // import mod.arcomit.parkour.v2.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMantleState;
 import mod.arcomit.parkour.content.behavior.backstep.BackstepState;
 import mod.arcomit.parkour.content.behavior.base.DefaultState;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingState;
@@ -70,6 +71,8 @@ public class ParkourStates {
 
 	public static final DeferredHolder<IParkourState, ArmhangState> ARMHANG =
 			PARKOUR_STATES.register("armhang", ArmhangState::new);
+	public static final DeferredHolder<IParkourState, ArmhangMantleState> ARMHANG_MANTLE =
+			PARKOUR_STATES.register("armhang_mantle", ArmhangMantleState::new);
 
 	public static final DeferredHolder<IParkourState, SpeedVaultState> SPEED_VAULT =
 			PARKOUR_STATES.register("speed_vault", SpeedVaultState::new);

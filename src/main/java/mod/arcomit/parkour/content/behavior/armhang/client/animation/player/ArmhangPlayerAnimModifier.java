@@ -2,119 +2,98 @@ package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 
 import com.zigythebird.playeranimcore.animation.AnimationData;
 import com.zigythebird.playeranimcore.animation.layered.modifier.AbstractModifier;
+import com.zigythebird.playeranimcore.api.firstPerson.FirstPersonMode;
 import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
-import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
-import mod.arcomit.parkour.content.context.ParkourContext;
-import mod.arcomit.parkour.content.context.WallMovementData;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangData;
 import mod.arcomit.parkour.utils.Directions;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * 垂挂动画修改器：作为协调者，统筹 State 更新并将 Math 计算出的帧数据应用到指定骨骼上。
- *
- * @author Mitok
- * @since 2026-06-08
- */
-@OnlyIn(Dist.CLIENT)
-public class ArmhangPlayerAnimModifier extends AbstractModifier {
-
+/** Both views solve the model's palms against the same material points on the ledge. */
+public final class ArmhangPlayerAnimModifier extends AbstractModifier {
 	private final Player player;
+	private final boolean mantle;
 	private final ArmhangAnimState animState = new ArmhangAnimState();
 	private int lastUpdateTick = -1;
+	private ArmhangAnimMath.FrameData frame;
 
-	/** 当前渲染帧的预计算结果，同一帧内的多个骨骼复用此数据，避免重复计算 */
-	private ArmhangAnimMath.FrameData currentFrameData;
-
-	/**
-	 * @param player 绑定的玩家实例，不可为 null
-	 */
-	public ArmhangPlayerAnimModifier(Player player) {
+	public ArmhangPlayerAnimModifier(Player player) { this(player, false); }
+	public ArmhangPlayerAnimModifier(Player player, boolean mantle) {
 		this.player = player;
+		this.mantle = mantle;
 	}
 
-	/**
-	 * 在每一帧骨骼渲染开始前，一次性计算所有骨骼的插值偏移数据。 若当前不在悬挂状态（armhangDir 为 null），帧数据置空，后续骨骼变换将被跳过。
-	 */
 	@Override
 	public void setupAnim(AnimationData state) {
 		super.setupAnim(state);
-
-		WallMovementData wallMovementData = ParkourContext.get(this.player).wall();
-		Direction armhangDir = wallMovementData.getArmhang();
-
-		if (armhangDir != null) {
-			// The structure already supplies its interpolated render pose. Smoothing the
-			// absolute world yaw again makes the hands lag behind a rotating ledge.
-			float surfaceYaw = DynamicSurfaceMotion.hasRenderSurface(this.player, armhangDir)
-					? Directions.horizontalYaw(DynamicSurfaceMotion.renderWallNormal(
-							this.player, armhangDir, state.getPartialTick()))
-					: Mth.rotLerp(state.getPartialTick(), this.animState.armhangYawO,
-							this.animState.armhangYaw);
-
-			this.currentFrameData =
-					ArmhangAnimMath.calculate(this.player, this.animState,
-							state.getPartialTick(),
-							surfaceYaw);
-		} else {
-			this.currentFrameData = null;
+		var data = ArmhangData.get(player);
+		float partial = state.getPartialTick();
+		Vec3 left = ArmhangData.renderLeftHand(player, partial);
+		Vec3 right = ArmhangData.renderRightHand(player, partial);
+		if (data.grip == null || left == null || right == null) {
+			frame = null;
+			return;
 		}
+		Vec3 normal = data.grip.normal(partial);
+		float yaw = Directions.horizontalYaw(normal);
+		frame = ArmhangAnimMath.calculate(player, animState, partial, yaw, normal, left, right, mantle);
 	}
 
-	/**
-	 * 每个游戏 tick 更新一次动画状态机（而非每个渲染帧），避免状态跳帧。
-	 */
 	@Override
 	public void tick(AnimationData state) {
 		super.tick(state);
-		if (this.player.tickCount != this.lastUpdateTick) {
-			this.lastUpdateTick = this.player.tickCount;
-			this.animState.tick(this.player);
+		if (player.tickCount != lastUpdateTick) {
+			lastUpdateTick = player.tickCount;
+			animState.tick(player);
 		}
 	}
 
-	/**
-	 * 将预计算的帧数据叠加到指定骨骼的旋转变换上。
-	 * <p>
-	 * 当前影响头部（朝向）、身体（Y 旋转+弹跳）、左臂和右臂（摆动+下垂）。 若帧数据为空（非悬挂状态），直接返回原始骨骼不做修改。
-	 *
-	 * @param bone 要变换的骨骼，不可为 null
-	 * @return 叠加了悬挂动画偏移的骨骼，不可为 null
-	 */
 	@Override
 	public PlayerAnimBone get3DTransform(@NotNull PlayerAnimBone bone) {
 		bone = super.get3DTransform(bone);
-
-		if (this.currentFrameData == null) {
-			return bone;
+		if (frame == null) return bone;
+		switch (bone.getName()) {
+			case "body" -> {
+				bone.rotX += (float) frame.rotation().x;
+				bone.rotY += (float) frame.rotation().y;
+				bone.rotZ += (float) frame.rotation().z;
+				bone.positionX += (float) frame.offset().x;
+				bone.positionY += (float) frame.offset().y;
+				bone.positionZ += (float) frame.offset().z;
+			}
+			case "head" -> { bone.rotX += frame.headPitch(); bone.rotY += frame.headYaw(); }
+			case "torso" -> bone.rotX += frame.torsoPitch();
+			case "left_arm" -> applyArm(bone, 1);
+			case "right_arm" -> applyArm(bone, -1);
+			case "left_leg" -> bone.rotX += frame.leftLegPitch();
+			case "right_leg" -> bone.rotX += frame.rightLegPitch();
 		}
-
-		String boneName = bone.getName();
-		switch (boneName) {
-			case "head":
-				bone.rotX += this.currentFrameData.headRotX;
-				bone.rotY += this.currentFrameData.headRotY;
-				break;
-			case "body":
-				bone.rotY += this.currentFrameData.bodyRotY;
-				bone.positionY += this.currentFrameData.bodyPosY;
-				break;
-			case "left_arm":
-				bone.rotX += this.currentFrameData.leftArmRotX;
-				bone.rotY += this.currentFrameData.leftArmRotY;
-				bone.rotZ += this.currentFrameData.leftArmRotZ;
-				break;
-			case "right_arm":
-				bone.rotX += this.currentFrameData.rightArmRotX;
-				bone.rotY += this.currentFrameData.rightArmRotY;
-				bone.rotZ += this.currentFrameData.rightArmRotZ;
-				break;
-		}
-
 		return bone;
+	}
+
+	private void applyArm(PlayerAnimBone bone, int side) {
+		boolean slim = player instanceof AbstractClientPlayer client && client.getSkin().model() == PlayerSkin.Model.SLIM;
+		Vec3 shoulder = frame.rig().shoulder(side, slim);
+		var mc = Minecraft.getInstance();
+		boolean firstPerson = player == mc.getCameraEntity() && FirstPersonMode.isFirstPersonPass();
+		if (firstPerson) {
+			var camera = mc.gameRenderer.getMainCamera();
+			shoulder = ArmhangPoseMath.cameraShoulder(camera.getPosition(), new Vec3(camera.getLookVector()),
+					new Vec3(camera.getUpVector()), new Vec3(camera.getLeftVector()), side);
+		}
+		double centerX = side * (slim ? .5 : 1), shoulderY = slim ? 2.5 : 2;
+		var arm = ArmhangPoseMath.arm(frame.rig(), shoulder, frame.rig().palm(side), centerX, firstPerson);
+		bone.positionX = (float) (arm.pivot().x - side * 5);
+		bone.positionY = (float) (shoulderY - arm.pivot().y);
+		bone.positionZ = (float) arm.pivot().z;
+		bone.rotX = arm.pitch();
+		bone.rotY = 0;
+		bone.rotZ = arm.roll();
+		bone.scaleX = bone.scaleZ = firstPerson ? ArmhangPoseMath.FIRST_PERSON_THICKNESS : 1;
+		bone.scaleY = arm.length();
 	}
 }

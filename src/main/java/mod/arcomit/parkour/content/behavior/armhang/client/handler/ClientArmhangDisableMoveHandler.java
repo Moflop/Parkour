@@ -2,6 +2,7 @@ package mod.arcomit.parkour.content.behavior.armhang.client.handler;
 
 import mod.arcomit.parkour.ParkourMod;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMantleState;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -35,7 +36,7 @@ public class ClientArmhangDisableMoveHandler {
 		Player player = event.getEntity();
 		StateData stateData = ParkourContext.get(player).state();
 		IParkourState currentState = stateData.getState();
-		if (!(currentState instanceof ArmhangState)) {
+		if (!(currentState instanceof ArmhangState) && !(currentState instanceof ArmhangMantleState)) {
 			return;
 		}
 
@@ -45,5 +46,6 @@ public class ClientArmhangDisableMoveHandler {
 		InputData inputData = ParkourContext.get(player).input();
 		inputData.setLeftImpulse(input.leftImpulse);
 		input.leftImpulse = 0;
+		input.jumping = false;
 	}
 }

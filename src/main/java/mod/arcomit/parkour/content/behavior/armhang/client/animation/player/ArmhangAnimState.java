@@ -1,84 +1,69 @@
 package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 
+import mod.arcomit.parkour.compat.DynamicCollisionSource;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangData;
 import mod.arcomit.parkour.content.context.ParkourContext;
-import mod.arcomit.parkour.content.context.WallMovementData;
 import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
-/**
- * 负责维护与更新垂挂动画的独立状态机（如移动振幅、转身权重等）。
- */
-public class ArmhangAnimState {
-	/** 前一帧的移动相位 */
-	public float animPhaseO = 0f;
-	/** 当前帧的移动相位，用于驱动手臂摆动和身体弹跳 */
-	public float animPhase = 0f;
-	/** 前一帧的摆动幅度 */
-	public float amplitudeO = 0f;
-	/** 当前帧的摆动幅度，由移动强度驱动 */
-	public float amplitude = 0f;
-
-	/** 前一帧的侧身观察权重 */
-	public float lookAwayWeightO = 0f;
-	/** 当前帧的侧身观察权重，0 表示正对墙面，1 表示完全侧身 */
-	public float lookAwayWeight = 0f;
-	/** 侧身方向符号：1.0 向右看，-1.0 向左看，锁定后不会在阈值附近来回翻转 */
-	public float currentLookAwaySign = 1.0f;
-
-	/** 静态墙转角的平滑朝向；动态结构渲染时直接使用当前表面角度。 */
-	public float armhangYawO = 0f;
-	public float armhangYaw = 0f;
+/** Tick interpolation for the suspended body; the hands have independent world constraints. */
+public final class ArmhangAnimState {
+	public float animPhaseO, animPhase, amplitudeO, amplitude;
+	public float lookAwayWeightO, lookAwayWeight, currentLookAwaySign = 1;
+	public float armhangYawO, armhangYaw;
 	private boolean firstTick = true;
+	private Vec3 previousPosition;
+	private DynamicCollisionSource previousSource;
 
 	public void tick(Player player) {
-		this.animPhaseO = this.animPhase;
-		this.amplitudeO = this.amplitude;
-		this.lookAwayWeightO = this.lookAwayWeight;
-		this.armhangYawO = this.armhangYaw;
-
-		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		Direction armhangDir = wallMovementData.getArmhang();
-
-		if (armhangDir != null) {
-			// 1. 获取绝对的目标墙面角度
-			float targetYaw = Directions.horizontalYaw(
-					DynamicSurfaceMotion.renderWallNormal(player, armhangDir, 1.0f));
-			float cameraYaw = player.getYRot();
-
-			float targetRelLook = Mth.wrapDegrees(cameraYaw - targetYaw);
-
-			// 侧身判定 (曲线：0.2f Lerp)
-			if (Math.abs(targetRelLook) > 75.0f) {
-				this.lookAwayWeight = Mth.lerp(0.2f, this.lookAwayWeight, 1.0f);
-				this.currentLookAwaySign = targetRelLook > 0 ? 1.0f : -1.0f;
-			} else {
-				this.lookAwayWeight = Mth.lerp(0.2f, this.lookAwayWeight, 0f);
-			}
-
-			if (this.firstTick || DynamicSurfaceMotion.hasRenderSurface(player, armhangDir)) {
-				this.armhangYaw = targetYaw;
-				this.armhangYawO = targetYaw;
-				this.firstTick = false;
-			} else {
-				this.armhangYaw = Mth.rotLerp(0.2f, this.armhangYaw, targetYaw);
-			}
+		animPhaseO = animPhase;
+		amplitudeO = amplitude;
+		lookAwayWeightO = lookAwayWeight;
+		armhangYawO = armhangYaw;
+		Direction direction = ParkourContext.get(player).wall().getArmhang();
+		if (direction == null) {
+			firstTick = true;
+			previousPosition = null;
+			return;
+		}
+		var grip = ArmhangData.get(player).grip;
+		Vec3 normal = grip == null ? DynamicSurfaceMotion.renderWallNormal(player, direction, 1) : grip.normal(1);
+		float targetYaw = Directions.horizontalYaw(normal);
+		float relativeLook = Mth.wrapDegrees(player.getYRot() - targetYaw);
+		float lookTarget = ArmhangPoseMath.smoothStep((Math.abs(relativeLook) - 55) / 60);
+		lookAwayWeight = Mth.lerp(.3F, lookAwayWeight, lookTarget);
+		// Crossing directly behind the player must not swap the supporting arm every tick.
+		if (lookAwayWeight < .2F || Math.abs(relativeLook) < 145) {
+			currentLookAwaySign = relativeLook >= 0 ? 1 : -1;
+		}
+		if (firstTick || DynamicSurfaceMotion.hasRenderSurface(player, direction)) {
+			armhangYaw = armhangYawO = targetYaw;
 		} else {
-			this.firstTick = true;
+			armhangYaw = Mth.rotLerp(.35F, armhangYaw, targetYaw);
 		}
 
-		// 处理移动动画（仅在面向墙面时产生有效移动）
-		double dx = player.getX() - player.xo;
-		double dz = player.getZ() - player.zo;
-		float movementIntensity = (float) Math.sqrt(dx * dx + dz * dz) * 10.0f;
-
-		if (movementIntensity > 0.05f && this.lookAwayWeight < 0.5f) {
-			this.animPhase += 0.6f;
-			this.amplitude = Mth.lerp(0.2f, this.amplitude, 1.0f);
-		} else {
-			this.amplitude = Mth.lerp(0.2f, this.amplitude, 0f);
+		DynamicCollisionSource source = grip == null ? DynamicSurfaceMotion.attachedSource(player, direction) : grip.source();
+		Vec3 motion = Vec3.ZERO;
+		if (previousPosition != null && sameSource(source, previousSource)) {
+			Vec3 previousWorld = source == null ? previousPosition : source.toWorld(previousPosition);
+			motion = player.position().subtract(previousWorld);
 		}
+		previousPosition = source == null ? player.position() : source.toLocal(player.position());
+		previousSource = source;
+		firstTick = false;
+		Vec3 tangent = new Vec3(normal.z, 0, -normal.x).normalize();
+		double along = Mth.clamp(motion.dot(tangent), -.25, .25);
+		// A translating/rotating ledge does not make stationary hands walk along it.
+		animPhase += (float) (along * Math.PI * 2 / .8);
+		float targetAmplitude = (float) Mth.clamp(Math.abs(along) / .12, 0, 1);
+		amplitude = Mth.lerp(.35F, amplitude, targetAmplitude);
+	}
+
+	private static boolean sameSource(DynamicCollisionSource left, DynamicCollisionSource right) {
+		return left == right || left != null && right != null && left.identity().equals(right.identity());
 	}
 }

@@ -37,7 +37,7 @@ public class WallJumpEligibilityChecker {
 		if (ParkourChecks.isVanillaState(ParkourContext.get(player))) {
 			return false;
 		}
-		if (currentState instanceof WallRunState || currentState instanceof WallSlideState || currentState instanceof ArmhangState) {
+		if (currentState instanceof WallRunState || currentState instanceof WallSlideState) {
 			return true;
 		}
 		if (currentState instanceof DefaultState) {

@@ -4,6 +4,7 @@ import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.compat.DynamicSurfaceFacing;
 import mod.arcomit.parkour.content.behavior.armhang.client.ClientArmhangMovement;
 import mod.arcomit.parkour.content.behavior.armhang.server.ServerArmhangSound;
+import mod.arcomit.parkour.content.behavior.armhang.network.SyncArmhangGripS2CPayload;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.context.StateData;
@@ -19,11 +20,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * 手臂悬挂状态。
  * <p>
- * 玩家向前走到方块边缘时自动抓住边缘悬挂。悬挂时可以左右平移，按下跳跃键翻上平台， 按下潜行键主动退出。退出后有短暂冷却防止立即重新挂上同一位置。
+ * 腾空接近可达的真实棱边时抓握。悬挂时左右换手横移，松开起跳键后重新按下可翻上平台或朝视线跃离，潜行松手。
  * <p>
  * 该状态在逻辑端与服务端同时运行（模拟端），客户端额外负责移动输入和音效表现。
  *
@@ -32,7 +35,7 @@ import net.minecraft.world.entity.player.Player;
  */
 public class ArmhangState extends AbstractParkourState {
 	/** 退出悬挂后的冷却时长（单位：刻），防止退出后立即重新进入 */
-	private static final int EXIT_COOLDOWN_TICKS = 5;
+	private static final int EXIT_COOLDOWN_TICKS = 10;
 
 	/**
 	 * 注册状态转换规则：本状态下按下潜行键（Shift）即退回到默认状态。
@@ -67,6 +70,9 @@ public class ArmhangState extends AbstractParkourState {
 	public void onEnter(Player player, ParkourContext context) {
 		WallMovementData wallMovementData = context.wall();
 		Direction direction = DynamicSurfaceFacing.hangDirection(player);
+		if (player.level().isClientSide() && !player.isLocalPlayer() && wallMovementData.getArmhang() != null) {
+			direction = wallMovementData.getArmhang();
+		}
 		wallMovementData.setArmhang(direction == null ? player.getDirection() : direction);
 		context.state().setStateInvalidTicks(0);
 		// Simulation entry needs the direction immediately to stop the incoming fall.
@@ -92,6 +98,7 @@ public class ArmhangState extends AbstractParkourState {
 		WallMovementData wallMovementData = context.wall();
 		wallMovementData.setArmhangLastPos(player.position());
 		wallMovementData.setArmhangMoveDist(0f);
+		syncGrip(player);
 	}
 
 	/**
@@ -100,6 +107,7 @@ public class ArmhangState extends AbstractParkourState {
 	@Override
 	public void onSimulationEnter(Player player, ParkourContext context) {
 		WallMovementData wallMovementData = context.wall();
+		ArmhangData.get(player).begin(player, ArmhangLedge.find(player, wallMovementData.getArmhang()));
 		ArmhangPhysics.applyLevitateAndAdhesion(player, wallMovementData);
 
 		if (ParkourConfig.armhangResetWallClimb) {
@@ -115,6 +123,8 @@ public class ArmhangState extends AbstractParkourState {
 		WallMovementData wallMovementData = context.wall();
 		ArmhangPhysics.applyLevitateAndAdhesion(player, wallMovementData);
 		ArmhangRotation.tryInsideCornerRotation(player, wallMovementData);
+		ArmhangData data = ArmhangData.get(player);
+		data.updateGrip(player, ArmhangLedge.find(player, wallMovementData.getArmhang()));
 	}
 
 	/**
@@ -127,21 +137,27 @@ public class ArmhangState extends AbstractParkourState {
 		if (player.isLocalPlayer()) {
 			ClientArmhangMovement.applyArmhangMovement(player, inputData,
 					wallMovementData);
+		} else {
+			ArmhangData.get(player).resolveSource(player);
 		}
 	}
 
 	@Override
 	public void onServerTick(Player player, ParkourContext context) {
 		ServerArmhangSound.playMovementSound(player, context.wall());
+		ArmhangData data = ArmhangData.get(player);
+		if (data.grip != data.lastBroadcastGrip || player.tickCount % 20 == 0) syncGrip(player);
 	}
 
 	/**
-	 * 退出悬挂时设置 {@value #EXIT_COOLDOWN_TICKS} tick（0.25 秒）冷却，防止主动退出后立刻被判定重新进入。
+	 * 退出悬挂后设置短暂冷却，防止松手后立刻重新抓住原来的边缘。
 	 */
 	@Override
 	public void onSimulationExit(Player player, ParkourContext context) {
 		WallMovementData wallMovementData = context.wall();
 		wallMovementData.setArmhangCooldown(EXIT_COOLDOWN_TICKS);
+		ArmhangData.get(player).active = false;
+		ArmhangData.get(player).shimmySpeed = 0;
 	}
 
 	/**
@@ -164,7 +180,8 @@ public class ArmhangState extends AbstractParkourState {
 				player)) {
 			return false;
 		}
-		if (DynamicSurfaceFacing.hangDirection(player) == null) {
+		Direction direction = DynamicSurfaceFacing.hangDirection(player);
+		if (direction == null || ArmhangLedge.find(player, direction) == null) {
 			return false;
 		}
 		return true;
@@ -218,5 +235,18 @@ public class ArmhangState extends AbstractParkourState {
 	@Override
 	public ResourceLocation animId(Player player) {
 		return ParkourAnimationIds.ARMHANG;
+	}
+
+	private static void syncGrip(Player player) {
+		if (ArmhangData.get(player).grip != null) {
+			PacketDistributor.sendToPlayersTrackingEntity(player, SyncArmhangGripS2CPayload.of(player));
+			ArmhangData.get(player).lastBroadcastGrip = ArmhangData.get(player).grip;
+		}
+	}
+
+	@Override public void onTrackingStart(ServerPlayer tracker, Player target, ParkourContext context) {
+		if (ArmhangData.get(target).grip != null) {
+			PacketDistributor.sendToPlayer(tracker, SyncArmhangGripS2CPayload.of(target));
+		}
 	}
 }

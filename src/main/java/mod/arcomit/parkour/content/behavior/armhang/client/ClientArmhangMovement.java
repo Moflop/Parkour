@@ -5,9 +5,11 @@ import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.compat.DynamicSurfaceMotion;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangCollision;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangMoveSnapshot;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangData;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangLedge;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMotion;
 import mod.arcomit.parkour.content.context.InputData;
 import mod.arcomit.parkour.content.context.WallMovementData;
-import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 客户端悬挂平移处理。
  * <p>
- * 仅当玩家面向悬挂方向（误差 75 度以内）且有横向输入时才执行移动。 移动后若悬挂点依然有效则结束；否则委托给外角旋转处理。
+ * 沿抓沿切线加减速移动；转头观察不会锁住横移。每个小步都验证抓点，边缘无路时保留原挂点。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -26,7 +28,7 @@ public class ClientArmhangMovement {
 	/**
 	 * 根据玩家输入执行悬挂状态下的水平移动。
 	 * <p>
-	 * 移动方向由悬挂方向的法向量和输入的左右符号共同决定， 速度由 {@code ParkourConfig.armhangMoveSpeed} 控制。
+	 * 移动方向由抓沿法向量和横向输入决定，最高速度由 {@code ParkourConfig.armhangMoveSpeed} 控制。
 	 * 若移动后失去悬挂点，会尝试外角旋转（绕过墙角）而非直接退出。
 	 *
 	 * @param player           目标玩家，不可为 null
@@ -37,39 +39,28 @@ public class ClientArmhangMovement {
 			WallMovementData wallMovementData) {
 		Direction armhangDir = wallMovementData.getArmhang();
 		if (armhangDir == null || !armhangDir.getAxis().isHorizontal()) return;
-		float leftImpulse = inputData.getLeftImpulse();
-
-		// 玩家必须面向悬挂方向且有横向输入
-		if (!Directions.isFacing(player, DynamicSurfaceMotion.wallNormal(player, armhangDir), 75.0f)
-				|| leftImpulse == 0.0f) {
-			return;
+		ArmhangData data = ArmhangData.get(player);
+		data.shimmySpeed = ArmhangMotion.shimmySpeed(data.shimmySpeed, inputData.getLeftImpulse(), ParkourConfig.armhangMoveSpeed);
+		if (Math.abs(data.shimmySpeed) < 1.0E-6) return;
+		// Small verified steps keep configured high speeds from skipping narrow edges or corners.
+		int steps = Math.max(1, (int) Math.ceil(Math.abs(data.shimmySpeed) / 0.045));
+		for (int step = 0; step < steps; step++) {
+			Direction direction = wallMovementData.getArmhang();
+			Vec3 normal = DynamicSurfaceMotion.wallNormal(player, direction);
+			Vec3 tangent = new Vec3(normal.z, 0, -normal.x);
+			ArmhangMoveSnapshot before = ArmhangMoveSnapshot.capture(player);
+			DynamicCollisions.move(player, MoverType.PLAYER, tangent.scale(data.shimmySpeed / steps));
+			if (!ArmhangCollision.hasValidHangPoint(player, direction)) {
+				ClientArmhangRotation.tryOutsideCornerRotation(player, (float) data.shimmySpeed, direction, wallMovementData, before);
+			}
+			double travelled = player.position().subtract(before.position()).dot(tangent);
+			data.shimmyDistance += travelled;
+			if (Math.abs(travelled) < 1.0E-5 && direction == wallMovementData.getArmhang()) {
+				data.shimmySpeed = 0;
+				break;
+			}
 		}
-
-		Vec3 horizontalMovement = computeHorizontalMovement(player, leftImpulse, armhangDir);
-		ArmhangMoveSnapshot beforeMove = ArmhangMoveSnapshot.capture(player);
-		DynamicCollisions.move(player, MoverType.PLAYER, horizontalMovement);
-
-		// 移动后仍能保持悬挂，正常结束
-		if (ArmhangCollision.hasValidHangPoint(player, armhangDir)) {
-			return;
-		}
-
-		// 否则尝试外角旋转，将处理权委派给边界处理类
-		ClientArmhangRotation.tryOutsideCornerRotation(player, leftImpulse, armhangDir,
-				wallMovementData, beforeMove);
+		data.updateGrip(player, ArmhangLedge.find(player, wallMovementData.getArmhang()));
 	}
 
-	/**
-	 * 根据输入方向和悬挂方向计算水平移动向量。 速度大小为配置的固定值，方向为悬挂法线方向（左右）乘以输入符号。
-	 *
-	 * @param leftImpulse 横向输入值，正数右移负数左移，可为任意浮点数
-	 * @param armhangDir  当前悬挂方向，不可为 null
-	 * @return 水平移动向量，速度固定由配置决定
-	 */
-	private static Vec3 computeHorizontalMovement(Player player, float leftImpulse, Direction armhangDir) {
-		Vec3 normal = DynamicSurfaceMotion.wallNormal(player, armhangDir);
-		Vec3 rightDirection = new Vec3(normal.z, 0, -normal.x);
-		float sign = Math.signum(leftImpulse);
-		return rightDirection.scale(sign * ParkourConfig.armhangMoveSpeed);
-	}
 }

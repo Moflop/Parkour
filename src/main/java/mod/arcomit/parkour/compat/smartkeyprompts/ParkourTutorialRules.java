@@ -9,6 +9,7 @@ import mod.arcomit.parkour.content.action.walljump.WallJumpEligibilityChecker;
 import mod.arcomit.parkour.content.action.walljump.WallJumpType;
 import mod.arcomit.parkour.content.action.walljump.WallJumpTypeResolver;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMantle;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingData;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingState;
 import mod.arcomit.parkour.content.behavior.base.DefaultState;
@@ -141,11 +142,10 @@ public final class ParkourTutorialRules {
         List<Tip> tips = new ArrayList<>();
         // Same angle as ClientArmhangMovement/SupportWallJumpTypeResolver, without capturing a grip.
         boolean facesLedge = Directions.isFacing(player, DynamicSurfaceMotion.readOnlyWallNormal(player, wall), 75.0F);
-        if (facesLedge) {
-            tips.add(new Tip("armhang_shimmy", List.of(hold(Binding.LEFT), hold(Binding.RIGHT)), true));
-        }
-        if (ParkourConfig.enableSupportWallJump && !sneaking(player)) {
-            tips.add(tip(facesLedge ? "armhang_up" : "armhang_jump", press(Binding.JUMP)));
+        tips.add(new Tip("armhang_shimmy", List.of(hold(Binding.LEFT), hold(Binding.RIGHT)), true));
+        if (!sneaking(player)) {
+            if (facesLedge && ArmhangMantle.plan(player) != null) tips.add(tip("armhang_up", press(Binding.JUMP)));
+            else if (!facesLedge && ParkourConfig.enableSupportWallJump) tips.add(tip("armhang_jump", press(Binding.JUMP)));
         }
         tips.add(tip("release", press(Binding.SNEAK)));
         return group("armhang", tips);

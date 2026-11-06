@@ -1,108 +1,44 @@
 package mod.arcomit.parkour.content.behavior.armhang.client.animation.player;
 
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangData;
+import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.core.client.animation.player.SurfaceAnimationMath;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
-/**
- * 负责垂挂动画的骨骼旋转与位置数学计算。每一帧仅需调用一次计算，生成该帧所有骨骼的偏移数据。
- *
- * @author Mitok
- * @since 2026-06-08
- */
-public class ArmhangAnimMath {
+/** The body loads and shifts underneath the independent hand constraints. */
+public final class ArmhangAnimMath {
+	private ArmhangAnimMath() {}
 
-	/**
-	 * 根据当前动画状态和玩家朝向，计算一帧内所有相关骨骼的旋转和平移偏移量。
-	 * <p>
-	 * 计算流程：
-	 * <ol>
-	 * <li>头部：独立于身体旋转，取玩家相机朝向并扣除身体转身分量</li>
-	 * <li>身体：Y 轴旋转对齐悬挂方向，叠加侧身观察时的扭转角</li>
-	 * <li>手臂：一侧下垂（模拟抓墙悬挂），另一侧跟随移动摆动</li>
-	 * <li>身体 Y 轴弹跳：随移动相位上下起伏</li>
-	 * </ol>
-	 * 同一帧只调用一次，结果缓存于 {@link FrameData} 中供所有骨骼复用。
-	 *
-	 * @param player      目标玩家，不可为 null
-	 * @param state       动画状态机，提供前帧/当前帧的插值权重和摆动相位，不可为 null
-	 * @param partialTick 渲染部分 tick 值，范围 [0, 1)，用于平滑动画
-	 * @param targetYaw   悬挂方向对应的 Yaw 角度（度），身体将向此方向对齐
-	 * @return 包含所有骨骼偏移的帧数据，不会为 null
-	 */
-	public static FrameData calculate(Player player, ArmhangAnimState state, float partialTick,
-			float targetYaw) {
-		FrameData data = new FrameData();
-
-		float smoothLookAway =
-				Mth.lerp(partialTick, state.lookAwayWeightO, state.lookAwayWeight);
-		float bodyTurnAngle =
-				smoothLookAway * state.currentLookAwaySign * 90.0f * Mth.DEG_TO_RAD;
-
-		// 头部独立修正
-		float pitch = Mth.lerp(partialTick, player.xRotO, player.getXRot());
-		// Use the head/camera yaw here. yRot is the body yaw and may remain locked
-		// to the ledge while the player looks around; using it made the first-person
-		// and third-person reference diverge as soon as the camera turned.
-		float netYaw = SurfaceAnimationMath.relativeYaw(player.yHeadRotO,
-				player.getYHeadRot(), targetYaw, partialTick);
-		data.headRotX = pitch * Mth.DEG_TO_RAD;
-		data.headRotY = netYaw * Mth.DEG_TO_RAD - bodyTurnAngle;
-
-		// 身体旋转逻辑
-		data.bodyRotY = SurfaceAnimationMath.bodyYawRadians(targetYaw,
-				player.yBodyRotO, player.yBodyRot, partialTick) + bodyTurnAngle;
-
-		// 手部及身体弹跳逻辑
-		float moveWeight = 1.0f - smoothLookAway;
-		float smoothPhase = Mth.lerp(partialTick, state.animPhaseO, state.animPhase);
-		float smoothAmplitude = Mth.lerp(partialTick, state.amplitudeO, state.amplitude);
-
-		float armSwingX = Mth.cos(smoothPhase) * smoothAmplitude * 0.15f * moveWeight;
-		float armSwingZ =
-				(Mth.sin(smoothPhase) * 0.25f - 0.15f) * smoothAmplitude * moveWeight;
-
-		// 下垂时的角度 (180度，即 PI)
-		float dropArmRotX = 135.0f * Mth.DEG_TO_RAD * smoothLookAway;
-		float dropArmRotZ = 15.0f * Mth.DEG_TO_RAD * smoothLookAway;
-
-		// 身体弹跳 (Bounce)
-		data.bodyPosY =
-				(1.0f - Mth.cos(smoothPhase * 2.0f)) * 0.5f * smoothAmplitude * 1.2f * moveWeight;
-
-		// 左手计算
-		data.leftArmRotX = armSwingX;
-		data.leftArmRotZ = -armSwingZ;
-		data.leftArmRotY = 0f;
-		if (state.currentLookAwaySign > 0) {
-			data.leftArmRotY = -bodyTurnAngle;
-		} else {
-			data.leftArmRotX += dropArmRotX;
-			data.leftArmRotZ -= dropArmRotZ;
-		}
-
-		// 右手计算
-		data.rightArmRotX = armSwingX;
-		data.rightArmRotZ = armSwingZ;
-		data.rightArmRotY = 0f;
-		if (state.currentLookAwaySign < 0) {
-			data.rightArmRotY = -bodyTurnAngle;
-		} else {
-			data.rightArmRotX += dropArmRotX;
-			data.rightArmRotZ += dropArmRotZ;
-		}
-
-		return data;
+	public static FrameData calculate(Player player, ArmhangAnimState state, float partial,
+			float targetYaw, Vec3 normal, Vec3 leftPalm, Vec3 rightPalm, boolean mantle) {
+		float phase = Mth.lerp(partial, state.animPhaseO, state.animPhase);
+		float amplitude = Mth.lerp(partial, state.amplitudeO, state.amplitude);
+		float look = Mth.lerp(partial, state.lookAwayWeightO, state.lookAwayWeight);
+		float turn = mantle ? 0 : look * state.currentLookAwaySign * 25 * Mth.DEG_TO_RAD;
+		var context = ParkourContext.get(player);
+		double age = Math.max(0, context.state().getTicksInState() - 1 + partial);
+		double drop = mantle ? 0 : ArmhangPoseMath.catchDrop(age, ArmhangData.get(player).catchImpact);
+		double sway = mantle ? 0 : Math.sin(phase) * amplitude * .018;
+		Vec3 feet = player.getPosition(partial);
+		var rig = mantle ? ArmhangPoseMath.mantleRig(feet, normal, leftPalm, rightPalm, player.getScale(), age)
+				: ArmhangPoseMath.hangingRig(feet, normal, leftPalm, rightPalm, player.getScale(), drop, sway, turn);
+		float modelYaw = Mth.rotLerp(partial, player.yBodyRotO, player.yBodyRot) * Mth.DEG_TO_RAD;
+		Vec3 worldOffset = ArmhangPoseMath.rootOffset(rig, feet, player.getScale());
+		Vec3 offset = new Vec3(worldOffset.x * Mth.cos(modelYaw) + worldOffset.z * Mth.sin(modelYaw),
+				worldOffset.y, worldOffset.x * Mth.sin(modelYaw) - worldOffset.z * Mth.cos(modelYaw)).scale(16);
+		float pitch = Mth.lerp(partial, player.xRotO, player.getXRot()) * Mth.DEG_TO_RAD;
+		float headYaw = SurfaceAnimationMath.relativeYaw(player.yHeadRotO,
+				player.getYHeadRot(), targetYaw, partial) * Mth.DEG_TO_RAD - turn;
+		float progress = mantle ? Mth.clamp((float) age / 14, 0, 1) : 0;
+		float pull = (float) Math.sin(progress * Math.PI);
+		return new FrameData(rig, ArmhangPoseMath.bodyRotation(rig, modelYaw), offset,
+				pitch + (mantle ? pull * .28F : 0), headYaw, 0,
+				mantle ? pull * .85F : (.10F + amplitude * .06F * Mth.sin(phase)),
+				mantle ? pull * .35F : (.18F - amplitude * .06F * Mth.sin(phase)));
 	}
 
-
-	/**
-	 * 用于存储某一帧中所有受影响骨骼的变换数据，避免逐个骨骼渲染时重复计算插值。
-	 */
-	public static class FrameData {
-		public float headRotX, headRotY;
-		public float bodyRotY, bodyPosY;
-		public float leftArmRotX, leftArmRotY, leftArmRotZ;
-		public float rightArmRotX, rightArmRotY, rightArmRotZ;
-	}
+	public record FrameData(ArmhangPoseMath.Rig rig, Vec3 rotation, Vec3 offset,
+			float headPitch, float headYaw, float torsoPitch, float leftLegPitch, float rightLegPitch) {}
 }

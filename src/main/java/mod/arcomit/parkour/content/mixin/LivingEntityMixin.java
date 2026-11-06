@@ -9,6 +9,7 @@ import mod.arcomit.parkour.ParkourConfig;
 import mod.arcomit.parkour.compat.DynamicCollisions;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangState;
 import mod.arcomit.parkour.content.behavior.armhang.ArmhangTravelGuard;
+import mod.arcomit.parkour.content.behavior.armhang.ArmhangMantle;
 import mod.arcomit.parkour.content.behavior.barswing.BarSwingPhysics;
 import mod.arcomit.parkour.content.context.ParkourContext;
 import mod.arcomit.parkour.content.event.LivingJumpCancellableEvent;
@@ -63,6 +64,7 @@ public abstract class LivingEntityMixin extends Entity {
 	private void parkour$guardTravel(Vec3 input, Operation<Void> original) {
 		Player player = (Object) this instanceof Player value ? value : null;
 		if (player != null && BarSwingPhysics.travel(player)) return;
+		if (player != null && ArmhangMantle.travel(player)) return;
 		ArmhangTravelGuard.Snapshot before = player == null ? null : ArmhangTravelGuard.begin(player);
 		if (player != null) parkour$sprintClimb.beginTravel(player);
 		if (player != null) ParkourContext.get(player).ground().getEntitySupport().beforeTravel(player);

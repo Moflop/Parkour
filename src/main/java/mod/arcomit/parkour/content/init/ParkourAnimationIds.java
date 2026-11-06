@@ -25,6 +25,7 @@ public class ParkourAnimationIds {
 	public static final ResourceLocation WALL_CLIMB = ParkourMod.prefix("wall_climb");
 
 	public static final ResourceLocation ARMHANG = ParkourMod.prefix("armhang");
+	public static final ResourceLocation ARMHANG_MANTLE = ParkourMod.prefix("armhang_mantle");
 
 	public static final ResourceLocation BAR_SWING = ParkourMod.prefix("bar_swing");
 	public static final ResourceLocation BAR_SWING_JUMP = ParkourMod.prefix("bar_swing_jump");
