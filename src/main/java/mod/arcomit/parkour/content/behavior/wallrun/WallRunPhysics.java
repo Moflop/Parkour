@@ -41,7 +41,12 @@ public class WallRunPhysics {
 	 * @param wallMovementData 墙体数据，包含运动方向和碰撞方向，不能为 null
 	 */
 	public static void applyWallRunMovement(Player player, WallMovementData wallMovementData) {
-		Direction movementDir = Direction.from3DDataValue(wallMovementData.getRunMoveRaw());
+		Direction movementDir = wallMovementData.getRunMove();
+		Direction wallCollisionDirection = wallMovementData.getRunCollision();
+		if (movementDir == null || !movementDir.getAxis().isHorizontal()
+				|| wallCollisionDirection == null || !wallCollisionDirection.getAxis().isHorizontal()) {
+			return;
+		}
 
 		Vec3 runDirection = new Vec3(movementDir.getStepX(), 0,
 				movementDir.getStepZ()).normalize();
@@ -49,26 +54,21 @@ public class WallRunPhysics {
 		double attributeSpeed = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
 		double targetSpeed = attributeSpeed * VANILLA_SPRINT_SPEED_MULTIPLIER;
 
-		Direction wallCollisionDirection =
-				Direction.from3DDataValue(wallMovementData.getRunCollisionRaw());
+		DynamicCollisions.clearSurfaceInertia(player);
+		runDirection = DynamicSurfaceMotion.wallTangent(player, wallCollisionDirection, runDirection);
+		// 向固定的运动方向移动
+		player.setDeltaMovement(runDirection.scale(targetSpeed));
 
-		if (wallCollisionDirection != null) {
-			DynamicCollisions.clearSurfaceInertia(player);
-			runDirection = DynamicSurfaceMotion.wallTangent(player, wallCollisionDirection, runDirection);
-			// 向固定的运动方向移动
-			player.setDeltaMovement(runDirection.scale(targetSpeed));
-
-			// 墙面吸附
-			Vec3 wallNormal = DynamicSurfaceMotion.wallNormal(player, wallCollisionDirection);
-			Vec3 adhesionForce = wallNormal.scale(ParkourConstants.WALL_ADHESION_FORCE);
-			boolean wasOnGround = player.onGround();
-			DynamicCollisions.move(player, MoverType.PLAYER, adhesionForce);
-			if (wasOnGround) {
-				// 恢复 onGround 状态，防止由于水平贴墙导致的意外状态结束
-				player.setOnGround(true);
-			}
-
-			player.resetFallDistance();
+		// 墙面吸附
+		Vec3 wallNormal = DynamicSurfaceMotion.wallNormal(player, wallCollisionDirection);
+		Vec3 adhesionForce = wallNormal.scale(ParkourConstants.WALL_ADHESION_FORCE);
+		boolean wasOnGround = player.onGround();
+		DynamicCollisions.move(player, MoverType.PLAYER, adhesionForce);
+		if (wasOnGround) {
+			// 恢复 onGround 状态，防止由于水平贴墙导致的意外状态结束
+			player.setOnGround(true);
 		}
+
+		player.resetFallDistance();
 	}
 }

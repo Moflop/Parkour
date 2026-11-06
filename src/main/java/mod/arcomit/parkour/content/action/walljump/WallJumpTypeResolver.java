@@ -28,7 +28,7 @@ public class WallJumpTypeResolver {
 	 * @return 解析出的跳跃类型，NONE表示当前不可跳跃
 	 */
 	public static WallJumpType resolve(Player player, Direction wallDir) {
-		if (player == null || wallDir == null) {
+		if (player == null || wallDir == null || !wallDir.getAxis().isHorizontal()) {
 			return WallJumpType.NONE;
 		}
 

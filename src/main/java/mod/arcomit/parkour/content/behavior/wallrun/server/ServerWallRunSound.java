@@ -39,13 +39,15 @@ public class ServerWallRunSound {
 	 * @param wallMovementData 墙体运动数据，记录碰撞方向，不能为 null
 	 */
 	public static void playFootstepSound(Player player, WallMovementData wallMovementData) {
+		Direction wallDirection = wallMovementData.getRunCollision();
+		if (wallDirection == null || !wallDirection.getAxis().isHorizontal()) {
+			return;
+		}
 		Level level = player.level();
 		// 必须在服务端执行
 		if (level.isClientSide()) {
 			return;
 		}
-		Direction wallDirection =
-				Direction.from3DDataValue(wallMovementData.getRunCollisionRaw());
 		Vec3 velocity = player.getDeltaMovement();
 		// 使用速度向量的长度作为移动距离
 		float distanceMovedThisTick = (float) velocity.length();

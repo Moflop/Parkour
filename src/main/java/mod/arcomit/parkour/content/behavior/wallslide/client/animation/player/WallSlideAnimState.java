@@ -32,35 +32,32 @@ public class WallSlideAnimState {
 		this.prevBackWeight = this.currentBackWeight;
 
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		int dirIndex = wallMovementData.getSlideRaw();
+		Direction wallDir = wallMovementData.getSlide();
 
-		if (dirIndex >= 0 && dirIndex <= 5) {
-			Direction wallDir = Direction.from3DDataValue(dirIndex);
-			if (wallDir != null) {
-				float targetWorldYaw = Directions.horizontalYaw(
-						DynamicSurfaceMotion.renderWallNormal(player, wallDir, 1.0f));
-				float yawToWall = Mth.wrapDegrees(targetWorldYaw - player.yBodyRot);
-				float absYaw = Math.abs(yawToWall);
+		if (wallDir != null && wallDir.getAxis().isHorizontal()) {
+			float targetWorldYaw = Directions.horizontalYaw(
+					DynamicSurfaceMotion.renderWallNormal(player, wallDir, 1.0f));
+			float yawToWall = Mth.wrapDegrees(targetWorldYaw - player.yBodyRot);
+			float absYaw = Math.abs(yawToWall);
 
-				// 动画加载第一帧直接锁定目标姿势
-				if (this.isFirstTick) {
-					this.isFirstTick = false;
-					if (absYaw > 130f) {
-						this.isBackPose = true;
-						this.currentBackWeight = 1.0f;
-						this.prevBackWeight = 1.0f;
-					} else {
-						this.isBackPose = false;
-						this.currentBackWeight = 0.0f;
-						this.prevBackWeight = 0.0f;
-					}
+			// 动画加载第一帧直接锁定目标姿势
+			if (this.isFirstTick) {
+				this.isFirstTick = false;
+				if (absYaw > 130f) {
+					this.isBackPose = true;
+					this.currentBackWeight = 1.0f;
+					this.prevBackWeight = 1.0f;
 				} else {
-					// 正常迟滞判定
-					if (!this.isBackPose && absYaw > 130f) {
-						this.isBackPose = true;
-					} else if (this.isBackPose && absYaw < 110f) {
-						this.isBackPose = false;
-					}
+					this.isBackPose = false;
+					this.currentBackWeight = 0.0f;
+					this.prevBackWeight = 0.0f;
+				}
+			} else {
+				// 正常迟滞判定
+				if (!this.isBackPose && absYaw > 130f) {
+					this.isBackPose = true;
+				} else if (this.isBackPose && absYaw < 110f) {
+					this.isBackPose = false;
 				}
 			}
 		}

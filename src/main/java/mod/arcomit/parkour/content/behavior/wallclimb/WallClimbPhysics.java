@@ -41,7 +41,7 @@ public class WallClimbPhysics {
 		Direction facing = DynamicSurfaceFacing.climbDirection(player);
 		if (facing != null) wall.setClimb(facing);
 		else facing = wall.getClimb();
-		if (facing == null) facing = player.getDirection();
+		if (facing == null || !facing.getAxis().isHorizontal()) facing = player.getDirection();
 		Vec3 facingVec = DynamicSurfaceMotion.wallNormal(player, facing);
 		Vec3 adhesionForce = facingVec.scale(ParkourConstants.WALL_ADHESION_FORCE);
 

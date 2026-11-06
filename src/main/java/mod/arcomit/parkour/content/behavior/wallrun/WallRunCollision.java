@@ -32,11 +32,12 @@ public class WallRunCollision {
 	 *
 	 * @param player  目标玩家，不能为 null
 	 * @param context 跑酷上下文，记录有之前锁定的碰撞方向，不能为 null
-	 * @return 碰撞方向仍有效返回 true，方向为 null 或墙体消失返回 false
+	 * @return 碰撞方向仍有效返回 true，方向缺失、非水平或墙体消失返回 false
 	 */
 	public static boolean wallCollisionIsValid(Player player, ParkourContext context) {
-		Direction wallDir = Direction.from3DDataValue(context.wall().getRunCollisionRaw());
-		if (wallDir == null) {
+		// 保留 -1 表示无方向的语义；from3DDataValue(-1) 会返回 UP。
+		Direction wallDir = context.wall().getRunCollision();
+		if (wallDir == null || !wallDir.getAxis().isHorizontal()) {
 			return false;
 		}
 		return checkWallCollision(player, wallDir);

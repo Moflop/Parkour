@@ -26,7 +26,7 @@ public class SupportWallJumpTypeResolver {
 	 * @return 解析出的跳跃类型，NONE表示参数无效
 	 */
 	public static SupportWallJumpType resolve(Player player, Direction armhangDir) {
-		if (player == null || armhangDir == null) {
+		if (player == null || armhangDir == null || !armhangDir.getAxis().isHorizontal()) {
 			return SupportWallJumpType.NONE;
 		}
 

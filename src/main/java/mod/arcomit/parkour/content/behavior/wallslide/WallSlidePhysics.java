@@ -33,7 +33,7 @@ public class WallSlidePhysics {
 			WallMovementData wallMovementData) {
 		Direction wallCollisionDirection = wallMovementData.getSlide();
 
-		if (wallCollisionDirection != null) {
+		if (wallCollisionDirection != null && wallCollisionDirection.getAxis().isHorizontal()) {
 			DynamicCollisions.clearSurfaceInertia(player);
 			Vec3 motion = player.getDeltaMovement();
 

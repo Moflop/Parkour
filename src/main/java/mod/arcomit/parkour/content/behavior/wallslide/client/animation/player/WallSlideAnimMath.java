@@ -43,12 +43,8 @@ public class WallSlideAnimMath {
 
 		// 检查墙面方向
 		WallMovementData wallMovementData = ParkourContext.get(player).wall();
-		int dirIndex = wallMovementData.getSlideRaw();
-		if (dirIndex < 0 || dirIndex > 5)
-			return data;
-
-		Direction wallDir = Direction.from3DDataValue(dirIndex);
-		if (wallDir == null)
+		Direction wallDir = wallMovementData.getSlide();
+		if (wallDir == null || !wallDir.getAxis().isHorizontal())
 			return data;
 
 		data.hasWallPose = true;

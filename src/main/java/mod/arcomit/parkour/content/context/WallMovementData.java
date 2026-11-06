@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>每个方向字段使用 int（{@link Direction#get3DDataValue()}）序列化 +
  * 运行时 {@link Direction} 懒加载缓存的双轨模式。int 字段值 -1 表示无有效方向。
+ * 方向访问器仅返回水平方向；垂直方向或越界的存档/网络值均视为无方向，避免原版解码回绕。
  *
  * <p>当某个碰撞方向发生变更时，通过 {@code onCollisionChanged} 自动
  * 清除互斥的其他方向（如爬墙开始时清除墙跑碰撞方向），保证动作互斥。
@@ -112,8 +114,8 @@ public class WallMovementData {
 
 	private static Direction resolve(int raw, Direction cache) {
 		if (cache != null)
-			return cache;
-		return raw == -1 ? null : Direction.from3DDataValue(raw);
+			return Directions.isHorizontal(cache) ? cache : null;
+		return Directions.horizontalFrom3DDataValue(raw);
 	}
 
 	// ==================== WallRun Collision ====================

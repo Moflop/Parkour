@@ -38,7 +38,7 @@ public class SupportWallJumpAction {
 
 		WallMovementData wallMovementData = context.wall();
 		Direction wallDir = wallMovementData.getArmhang();
-		if (wallDir == null)
+		if (wallDir == null || !wallDir.getAxis().isHorizontal())
 			return false;
 
 		SupportWallJumpType supportWallJumpType =

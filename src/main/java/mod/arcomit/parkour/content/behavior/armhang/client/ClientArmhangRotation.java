@@ -38,6 +38,7 @@ public class ClientArmhangRotation {
 	public static void tryOutsideCornerRotation(Player player, float leftImpulse,
 			Direction armhangDir, WallMovementData wallMovementData,
 			ArmhangMoveSnapshot beforeMove) {
+		if (armhangDir == null || !armhangDir.getAxis().isHorizontal()) return;
 
 		// 沿原悬挂方向微推，使玩家能够接触到侧面
 		Vec3 pushOffset = DynamicSurfaceMotion.wallNormal(player, armhangDir).scale(

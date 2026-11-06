@@ -14,6 +14,19 @@ import java.util.List;
  * @since 2026-06-08
  */
 public class Directions {
+	private static final int DIRECTION_COUNT = Direction.values().length;
+
+	/** Whether a nullable direction identifies a wall rather than a floor or ceiling. */
+	public static boolean isHorizontal(Direction direction) {
+		return direction != null && direction.getAxis().isHorizontal();
+	}
+
+	/** Decode a stored wall direction without vanilla's wrapping of missing or corrupt IDs. */
+	public static Direction horizontalFrom3DDataValue(int raw) {
+		if (raw < 0 || raw >= DIRECTION_COUNT) return null;
+		Direction direction = Direction.from3DDataValue(raw);
+		return isHorizontal(direction) ? direction : null;
+	}
 
 	/**
 	 * 从候选方向列表中选出相邻方块中心离玩家水平位置最近的一个。 仅在 XZ 平面计算距离，忽略 Y 轴差异。列表为空时返回 null。

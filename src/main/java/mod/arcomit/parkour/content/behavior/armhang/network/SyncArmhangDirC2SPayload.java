@@ -45,6 +45,7 @@ public record SyncArmhangDirC2SPayload(Direction direction) implements CustomPac
 		 */
 		public static void handle(SyncArmhangDirC2SPayload packet,
 				IPayloadContext context) {
+			if (packet.direction() == null || !packet.direction().getAxis().isHorizontal()) return;
 			context.enqueueWork(() -> {
 				if (context.player() instanceof ServerPlayer player) {
 					ParkourContext state = ParkourContext.get(player);

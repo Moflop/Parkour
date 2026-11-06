@@ -73,10 +73,11 @@ public class ArmhangCollision {
 	 * 采用双传感器逻辑：眼部传感器（检测头部可抓墙面）和顶部传感器（检测脚底有支撑盒）， 任一传感器返回 true 即认为可以悬挂。这样能兼容不同方块形状（如栅栏、台阶边缘）。
 	 *
 	 * @param player    目标玩家，不可为 null
-	 * @param direction 待检测的悬挂方向，不可为 null
+	 * @param direction 待检测的悬挂方向；缺失或非水平方向不可悬挂
 	 * @return true 表示该方向可悬挂
 	 */
 	public static boolean hasValidHangPoint(Player player, Direction direction) {
+		if (direction == null || !direction.getAxis().isHorizontal()) return false;
 		return ArmhangEyeSensor.isValidCollision(player,
 				direction) || ArmhangTopSensor.isValidCollision(player, direction);
 	}

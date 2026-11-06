@@ -184,7 +184,7 @@ public class ArmhangState extends AbstractParkourState {
 		}
 		WallMovementData wallMovementData = context.wall();
 		Direction armhangDir = wallMovementData.getArmhang();
-		if (armhangDir == null) {
+		if (armhangDir == null || !armhangDir.getAxis().isHorizontal()) {
 			return false;
 		}
 

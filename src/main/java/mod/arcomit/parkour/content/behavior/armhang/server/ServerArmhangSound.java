@@ -31,15 +31,13 @@ public class ServerArmhangSound {
 	private static final float SOUND_VOLUME_MULTIPLIER = 0.15F;
 
 	public static void playMovementSound(Player player, WallMovementData wallMovementData) {
-		Level level = player.level();
-		if (level.isClientSide()) {
-			return;
-		}
-
 		Direction wallDirection = wallMovementData.getArmhang();
 		Vec3 lastPos = wallMovementData.getArmhangLastPos();
-
-		if (wallDirection == null || lastPos == null) {
+		if (wallDirection == null || !wallDirection.getAxis().isHorizontal() || lastPos == null) {
+			return;
+		}
+		Level level = player.level();
+		if (level.isClientSide()) {
 			return;
 		}
 

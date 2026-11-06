@@ -29,7 +29,7 @@ public class ArmhangPhysics {
 	public static void applyLevitateAndAdhesion(Player player,
 			WallMovementData wallMovementData) {
 		Direction wallCollisionDirection = wallMovementData.getArmhang();
-		if (wallCollisionDirection != null) {
+		if (wallCollisionDirection != null && wallCollisionDirection.getAxis().isHorizontal()) {
 			DynamicCollisions.clearSurfaceInertia(player);
 			// 悬空
 			player.setDeltaMovement(Vec3.ZERO);

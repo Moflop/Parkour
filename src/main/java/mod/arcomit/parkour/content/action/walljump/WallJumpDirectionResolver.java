@@ -31,28 +31,18 @@ public class WallJumpDirectionResolver {
 	 */
 	public static Direction resolveWallDirection(Player player, IParkourState state,
 			ParkourContext context) {
+		Direction direction;
 		if (state instanceof WallRunState) {
 			WallMovementData wallMovementData = context.wall();
-			return wallMovementData.getRunCollision();
+			direction = wallMovementData.getRunCollision();
 		} else if (state instanceof WallSlideState) {
 			WallMovementData wallMovementData = context.wall();
-			return wallMovementData.getSlide();
+			direction = wallMovementData.getSlide();
 		} else if (state instanceof DefaultState || state instanceof WallClimbState) {
 			return WallJumpCollisionFinder.findClosestCollisionDir(player);
+		} else {
+			return null;
 		}
-		// else if (state == ParkourStates.ARMHANG.get()) {
-		// WallMovementData wallMovementData = context.wall();
-		// Direction armhangDir = wallMovementData.getArmhang();
-		// if (!Directions.isFacing(player, armhangDir,
-		// 75.0f)){
-		// return wallMovementData.getArmhang();
-		// }
-		// return null;
-		// }
-		// 为未来垂挂预留扩展点
-		// if (state == ParkourStates.ARMHANG.get()) {
-		// return Direction.from3DDataValue(wallData.getArmHangingDir());
-		// }
-		return null;
+		return direction != null && direction.getAxis().isHorizontal() ? direction : null;
 	}
 }

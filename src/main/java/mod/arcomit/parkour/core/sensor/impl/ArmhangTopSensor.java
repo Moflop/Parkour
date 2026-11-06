@@ -8,6 +8,7 @@ import mod.arcomit.parkour.core.sensor.SensorData;
 import mod.arcomit.parkour.core.sensor.SensorDataManager;
 import mod.arcomit.parkour.core.sensor.SensorType;
 import mod.arcomit.parkour.utils.BlockCollisions;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
@@ -58,6 +59,7 @@ public class ArmhangTopSensor {
 	 * @return true 表示该方向可以悬挂
 	 */
 	public static boolean isValidCollision(Player player, Direction direction) {
+		if (!Directions.isHorizontal(direction)) return false;
 		SensorData data = SensorDataManager.get(player).getData(SensorType.ARMHANG_TOP);
 		CollisionCache collisionCache = data.getCollisionCache(direction);
 		updateCacheIfNeeded(collisionCache, player, direction);

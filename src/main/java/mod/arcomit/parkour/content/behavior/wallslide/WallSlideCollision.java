@@ -58,6 +58,7 @@ public class WallSlideCollision {
 	 * @return 头部和脚部传感器同时检测到墙体碰撞时返回 true
 	 */
 	public static boolean hasValidWallPoint(Player player, Direction direction) {
-		return HeadFeetSensor.isValidCollision(player, direction);
+		return direction != null && direction.getAxis().isHorizontal()
+				&& HeadFeetSensor.isValidCollision(player, direction);
 	}
 }

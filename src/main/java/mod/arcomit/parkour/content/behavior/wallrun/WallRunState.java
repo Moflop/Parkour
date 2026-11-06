@@ -211,7 +211,10 @@ public class WallRunState extends AbstractParkourState {
 			return false;
 		}
 		WallMovementData wallMovementData = context.wall();
-		Direction movementDir = Direction.from3DDataValue(wallMovementData.getRunMoveRaw());
+		Direction movementDir = wallMovementData.getRunMove();
+		if (movementDir == null || !movementDir.getAxis().isHorizontal()) {
+			return false;
+		}
 		Vec3 movement = DynamicSurfaceMotion.wallTangent(player, wallMovementData.getRunCollision(),
 				Vec3.atLowerCornerOf(movementDir.getNormal()));
 		return Directions.isFacing(player, movement, FACING_ANGLE_TOLERANCE);

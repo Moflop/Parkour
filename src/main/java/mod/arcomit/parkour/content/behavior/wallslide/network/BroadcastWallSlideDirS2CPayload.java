@@ -49,6 +49,7 @@ public record BroadcastWallSlideDirS2CPayload(int entityId, Direction direction)
 		 */
 		public static void handle(BroadcastWallSlideDirS2CPayload packet,
 				IPayloadContext context) {
+			if (packet.direction() == null || !packet.direction().getAxis().isHorizontal()) return;
 			context.enqueueWork(() -> {
 				ClientLevel level = Minecraft.getInstance().level;
 				if (level != null) {

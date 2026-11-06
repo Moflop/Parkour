@@ -25,8 +25,9 @@ public class ArmhangRotation {
 	public static void tryInsideCornerRotation(Player player,
 			WallMovementData wallMovementData) {
 		Direction current = wallMovementData.getArmhang();
+		if (current == null || !current.getAxis().isHorizontal()) return;
 		Direction facing = DynamicSurfaceFacing.hangDirection(player);
-		if (current == null || facing == null || facing == current
+		if (facing == null || facing == current
 				|| facing == current.getOpposite()) return;
 		// Looking away does not release the old grip; a neighboring face must hold after adhesion.
 		wallMovementData.setArmhang(facing);

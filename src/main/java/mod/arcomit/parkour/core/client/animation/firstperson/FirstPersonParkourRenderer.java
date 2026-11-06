@@ -217,10 +217,7 @@ public final class FirstPersonParkourRenderer {
 	}
 
 	private static int wallSlideHandSide(Player player) {
-		var wall = ParkourContext.get(player).wall();
-		int raw = wall.getSlideRaw();
-		if (raw < 0 || raw > 5) return 0;
-		var direction = net.minecraft.core.Direction.from3DDataValue(raw);
+		var direction = ParkourContext.get(player).wall().getSlide();
 		if (direction == null) return 0;
 		float surfaceYaw = Directions.horizontalYaw(DynamicSurfaceMotion.renderWallNormal(player, direction, 1.0F));
 		float relative = net.minecraft.util.Mth.wrapDegrees(surfaceYaw - player.yBodyRot);

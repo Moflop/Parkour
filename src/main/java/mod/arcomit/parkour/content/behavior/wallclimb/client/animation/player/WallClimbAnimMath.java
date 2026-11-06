@@ -29,7 +29,7 @@ public class WallClimbAnimMath {
 		FrameData data = new FrameData();
 
 		Direction wall = ParkourContext.get(player).wall().getClimb();
-		if (wall == null) wall = player.getDirection();
+		if (wall == null || !wall.getAxis().isHorizontal()) wall = player.getDirection();
 		float targetYaw = Directions.horizontalYaw(
 				DynamicSurfaceMotion.renderWallNormal(player, wall, partialTick));
 		data.bodyYawDiff = SurfaceAnimationMath.bodyYawRadians(targetYaw,

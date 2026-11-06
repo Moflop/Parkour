@@ -38,7 +38,7 @@ public class WallJumpAction {
 		Direction wallDir =
 				WallJumpDirectionResolver.resolveWallDirection(player, currentState,
 						context);
-		if (wallDir == null)
+		if (wallDir == null || !wallDir.getAxis().isHorizontal())
 			return false;
 
 		WallJumpType wallJumpType = WallJumpTypeResolver.resolve(player, wallDir);

@@ -35,9 +35,9 @@ public class ClientArmhangMovement {
 	 */
 	public static void applyArmhangMovement(Player player, InputData inputData,
 			WallMovementData wallMovementData) {
-		float leftImpulse = inputData.getLeftImpulse();
 		Direction armhangDir = wallMovementData.getArmhang();
-		if (armhangDir == null) return;
+		if (armhangDir == null || !armhangDir.getAxis().isHorizontal()) return;
+		float leftImpulse = inputData.getLeftImpulse();
 
 		// 玩家必须面向悬挂方向且有横向输入
 		if (!Directions.isFacing(player, DynamicSurfaceMotion.wallNormal(player, armhangDir), 75.0f)

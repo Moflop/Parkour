@@ -40,12 +40,15 @@ public class ServerWallClimbSound {
 	 * @param wallMovementData 墙体运动数据，记录当前攀爬方向，不能为 null
 	 */
 	public static void playFootstepSound(Player player, WallMovementData wallMovementData) {
+		Direction wallDirection = wallMovementData.getClimb();
+		if (wallDirection == null || !wallDirection.getAxis().isHorizontal()) {
+			return;
+		}
 		Level level = player.level();
 		// 必须在服务端执行
 		if (level.isClientSide()) {
 			return;
 		}
-		Direction wallDirection = wallMovementData.getClimb();
 		Vec3 velocity = player.getDeltaMovement();
 		// 使用速度向量的长度作为移动距离
 		float distanceMovedThisTick = (float) velocity.length();

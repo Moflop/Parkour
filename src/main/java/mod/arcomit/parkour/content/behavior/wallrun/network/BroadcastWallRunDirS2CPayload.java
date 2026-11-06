@@ -50,6 +50,7 @@ public record BroadcastWallRunDirS2CPayload(int entityId, Direction direction)
 		 */
 		public static void handle(BroadcastWallRunDirS2CPayload packet,
 				IPayloadContext context) {
+			if (packet.direction() == null || !packet.direction().getAxis().isHorizontal()) return;
 			context.enqueueWork(() -> {
 				ClientLevel level = Minecraft.getInstance().level;
 				if (level != null) {

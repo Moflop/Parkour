@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mod.arcomit.parkour.utils.Directions;
 import net.minecraft.core.Direction;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -24,7 +25,8 @@ import net.minecraft.network.codec.StreamCodec;
  * </ul>
  *
  * <p>方向字段使用 int（{@link Direction#get3DDataValue()}）序列化 +
- * Direction 惰性缓存的双轨模式。
+ * Direction 惰性缓存的双轨模式。记录的是蹬踏墙面的水平方向，而非跳跃的竖直速度；
+ * -1、垂直方向和越界值均由方向访问器视为无有效墙面。
  *
  * @author Mitok
  * @since 2026-06-08
@@ -107,8 +109,8 @@ public class JumpData {
 
 	private static Direction resolve(int raw, Direction cache) {
 		if (cache != null)
-			return cache;
-		return raw == -1 ? null : Direction.from3DDataValue(raw);
+			return Directions.isHorizontal(cache) ? cache : null;
+		return Directions.horizontalFrom3DDataValue(raw);
 	}
 
 	private void onJumpChanged(int newRaw, Runnable resetConflicting) {

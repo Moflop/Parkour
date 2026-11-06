@@ -15,6 +15,7 @@ import mod.arcomit.parkour.core.sensor.impl.ArmhangTopSensor;
 import mod.arcomit.parkour.core.sensor.impl.HeadFeetSensor;
 import mod.arcomit.parkour.core.statemachine.state.IParkourState;
 import mod.arcomit.parkour.utils.BlockCollisions;
+import mod.arcomit.parkour.utils.Directions;
 import mod.arcomit.parkour.utils.FilteredBlockCollisions;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
@@ -57,6 +58,7 @@ public final class DynamicSurfaceMotion {
 	/** Read the current grip without capturing or changing its anchor. */
 	@Nullable
 	public static DynamicCollisionSource attachedSource(Player player, Direction direction) {
+		if (!Directions.isHorizontal(direction)) return null;
 		Contact contact = contact(player);
 		return matchesDirection(player, contact, direction) ? contact.source : null;
 	}
@@ -76,9 +78,11 @@ public final class DynamicSurfaceMotion {
 	public static void beforeTick(Player player) {
 		if (!DynamicCollisions.isEnabled()) return;
 		Contact contact = contact(player);
-		IParkourState state = ParkourContext.get(player).state().getState();
+		ParkourContext context = ParkourContext.get(player);
+		IParkourState state = context.state().getState();
 		if (contact.source == null) return;
 		if (contact.state != state || contact.level != player.level() || !contact.source.isValid()
+				|| !hasRecordedDirection(state, context.wall())
 				|| !player.isAlive() || player.isPassenger()
 				|| (DynamicCollisions.isOnGround(player) && !(state instanceof SpeedVaultState))
 				|| player.position().distanceToSqr(contact.worldAnchor) > 256) {
@@ -168,8 +172,19 @@ public final class DynamicSurfaceMotion {
 		return null;
 	}
 
+	/** A cleared/synchronized direction must release the old grip before it can carry the player. */
+	private static boolean hasRecordedDirection(IParkourState state, WallMovementData wall) {
+		if (state instanceof ArmhangState) return Directions.isHorizontal(wall.getArmhang());
+		if (state instanceof WallRunState) return Directions.isHorizontal(wall.getRunCollision())
+				&& Directions.isHorizontal(wall.getRunMove());
+		if (state instanceof WallSlideState) return Directions.isHorizontal(wall.getSlide());
+		if (state instanceof WallClimbState) return Directions.isHorizontal(wall.getClimb());
+		return state instanceof SpeedVaultState;
+	}
+
 	@Nullable
 	private static DynamicBlockHit findSupport(Player player, IParkourState state, Direction direction) {
+		if (!Directions.isHorizontal(direction)) return null;
 		TagKey<Block> skip = ParkourTags.Blocks.COMMON_IGNORED_BLOCKS;
 		AABB box;
 		if (state instanceof ArmhangState) {
@@ -235,6 +250,7 @@ public final class DynamicSurfaceMotion {
 	}
 
 	public static Vec3 wallNormal(Player player, Direction fallback) {
+		if (!Directions.isHorizontal(fallback)) return Vec3.ZERO;
 		Contact contact = contact(player);
 		// Entry physics and corner changes happen before the end-of-tick capture.
 		if (DynamicCollisions.isEnabled() && !matchesDirection(player, contact, fallback)) {
@@ -245,6 +261,7 @@ public final class DynamicSurfaceMotion {
 
 	/** Physics-frame query for observers such as tutorials; never captures or changes a grip. */
 	public static Vec3 readOnlyWallNormal(Player player, Direction fallback) {
+		if (!Directions.isHorizontal(fallback)) return Vec3.ZERO;
 		Contact contact = contact(player);
 		if (matchesDirection(player, contact, fallback)) {
 			Vec3 normal = transformDirection(contact.source, contact.localAnchor, contact.localNormal);
@@ -278,7 +295,7 @@ public final class DynamicSurfaceMotion {
 	}
 
 	public static Vec3 renderWallNormal(Player player, Direction fallback, float partialTick) {
-		if (fallback == null) return Vec3.directionFromRotation(0, player.getYRot());
+		if (!Directions.isHorizontal(fallback)) return Vec3.directionFromRotation(0, player.getYRot());
 		RenderContact render = renderContact(player, fallback);
 		if (render == null) return Vec3.atLowerCornerOf(fallback.getNormal());
 		Vec3 normal = render.source().toRenderWorld(render.anchor().add(render.normal()), partialTick)
@@ -288,7 +305,7 @@ public final class DynamicSurfaceMotion {
 	}
 
 	public static Vec3 renderWallTangent(Player player, Direction wall, Vec3 intended, float partialTick) {
-		if (wall == null) return intended.normalize();
+		if (!Directions.isHorizontal(wall)) return intended.normalize();
 		RenderContact render = renderContact(player, wall);
 		if (render == null) return intended.normalize();
 		Vec3 normal = renderWallNormal(player, wall, partialTick);
@@ -302,6 +319,7 @@ public final class DynamicSurfaceMotion {
 
 	@Nullable
 	private static RenderContact renderContact(Player player, Direction direction) {
+		if (!Directions.isHorizontal(direction)) return null;
 		if (!DynamicCollisions.isEnabled()) return null;
 		Contact contact = contact(player);
 		if (matchesDirection(player, contact, direction)) {
@@ -324,6 +342,7 @@ public final class DynamicSurfaceMotion {
 
 	/** Keep motion tangent to a rotated wall while preserving the player's chosen travel sign. */
 	public static Vec3 wallTangent(Player player, Direction wall, Vec3 intended) {
+		if (!Directions.isHorizontal(wall)) return intended.normalize();
 		Vec3 normal = wallNormal(player, wall);
 		if (contact(player).source == null) return intended.normalize();
 		Vec3 tangent = new Vec3(-normal.z, 0, normal.x);
@@ -345,6 +364,7 @@ public final class DynamicSurfaceMotion {
 	}
 
 	private static Vec3 jumpMotion(Player player, Direction direction, boolean wallJump) {
+		if (!Directions.isHorizontal(direction)) return Vec3.ZERO;
 		if (!DynamicCollisions.isEnabled()) return Vec3.ZERO;
 		AABB box = BlockCollisions.buildBox(player, direction, 0, 1, 0.2);
 		if (new FilteredBlockCollisions<>(player.level(), player, box, false,
